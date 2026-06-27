@@ -54,73 +54,93 @@
   </header>
 
   <!-- ==========================================================================
-       HERO / SLIDESHOW SECTION
+       HERO / SLIDESHOW SECTION (CINEMATOGRAPHIC FULLSCREEN)
        ========================================================================== -->
   <section class="hero" id="destinos">
+    <!-- Fullscreen Slideshow Background -->
+    <div class="hero-slideshow" id="hero-slideshow">
+      <div class="hero-slide active" data-index="0">
+        <img src="assets/images/Praia_Banje_Dubrovnik.jpg" alt="Costa da Europa" class="hero-slide-img" fetchpriority="high">
+      </div>
+      <div class="hero-slide" data-index="1">
+        <img src="assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg" alt="Praia do Nordeste" class="hero-slide-img" loading="lazy">
+      </div>
+      <div class="hero-slide" data-index="2">
+        <img src="assets/images/africa_safari.png" alt="Safari na África" class="hero-slide-img" loading="lazy">
+      </div>
+      <div class="hero-slide" data-index="3">
+        <img src="assets/images/Lencois-Maranhenses.jpg" alt="Fervedouros no Jalapão" class="hero-slide-img" loading="lazy">
+      </div>
+      <div class="hero-slide" data-index="4">
+        <img src="assets/images/noronha_exclusivo.png" alt="Vista de Fernando de Noronha" class="hero-slide-img" loading="lazy">
+      </div>
+      <div class="hero-slide" data-index="5">
+        <img src="assets/images/asia_exotic.png" alt="Templo na Ásia" class="hero-slide-img" loading="lazy">
+      </div>
+      <div class="hero-slide" data-index="6">
+        <img src="assets/images/usa_travel.png" alt="Canyon nos Estados Unidos" class="hero-slide-img" loading="lazy">
+      </div>
+      <div class="hero-slide" data-index="7">
+        <img src="assets/images/CURAÇAO.png" alt="Praia do Caribe" class="hero-slide-img" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Linear Gradient Protection Overlay -->
+    <div class="hero-overlay"></div>
+
+    <!-- Main Layout Container -->
     <div class="hero-container">
       
-      <!-- Coluna da Esquerda: Textos e CTAs -->
+      <!-- Coluna da Esquerda: Textos Fixos de Alto Impacto -->
       <div class="hero-left">
         <span class="hero-subtitle">Assessoria de Viagem Premium</span>
-        <h1 class="hero-title" id="hero-dynamic-title">Experiências extraordinárias desenhadas com propósito.</h1>
-        <p class="hero-desc" id="hero-dynamic-desc">Viajar vai além de visitar destinos: é vivenciar momentos extraordinários.</p>
+        <h1 class="hero-title">Experiências extraordinárias desenhadas com propósito.</h1>
+        <p class="hero-desc">Viajar vai além de visitar destinos: é vivenciar momentos extraordinários.</p>
         
         <div class="hero-cta-wrapper">
-          <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20minha%20próxima%20viagem%20personalizada%20com%20a%20WallTravel." target="_blank" rel="noopener" class="btn-primary">Fale com um especialista</a>
+          <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20minha%20próxima%20viagem%20personalizada%20com%20a%20WallTravel." target="_blank" rel="noopener" class="btn-primary" aria-label="Falar com especialista no WhatsApp">Fale com um especialista</a>
           <a href="#destinos-experiencias" class="btn-outline">Conhecer Destinos</a>
         </div>
       </div>
-      
-      <!-- Coluna da Direita: Slideshow Enquadrado -->
-      <div class="hero-right">
-        <div class="hero-slideshow" id="hero-slideshow">
-          <div class="hero-slide active" data-index="0">
-            <img src="assets/images/Praia_Banje_Dubrovnik.jpg" alt="Costa da Europa" class="hero-slide-img" fetchpriority="high">
-            <div class="hero-overlay"></div>
-          </div>
-          <div class="hero-slide" data-index="1">
-            <img src="assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg" alt="Praia do Nordeste" class="hero-slide-img" loading="lazy">
-            <div class="hero-overlay"></div>
-          </div>
-          <div class="hero-slide" data-index="2">
-            <img src="assets/images/africa_safari.png" alt="Safari na África" class="hero-slide-img" loading="lazy">
-            <div class="hero-overlay"></div>
-          </div>
-          <div class="hero-slide" data-index="3">
-            <img src="assets/images/Lencois-Maranhenses.jpg" alt="Fervedouros no Jalapão" class="hero-slide-img" loading="lazy">
-            <div class="hero-overlay"></div>
-          </div>
-          <div class="hero-slide" data-index="4">
-            <img src="assets/images/noronha_exclusivo.png" alt="Vista de Fernando de Noronha" class="hero-slide-img" loading="lazy">
-            <div class="hero-overlay"></div>
-          </div>
-          <div class="hero-slide" data-index="5">
-            <img src="assets/images/asia_exotic.png" alt="Templo na Ásia" class="hero-slide-img" loading="lazy">
-            <div class="hero-overlay"></div>
-          </div>
-          <div class="hero-slide" data-index="6">
-            <img src="assets/images/usa_travel.png" alt="Canyon nos Estados Unidos" class="hero-slide-img" loading="lazy">
-            <div class="hero-overlay"></div>
-          </div>
-          <div class="hero-slide" data-index="7">
-            <img src="assets/images/CURAÇAO.png" alt="Praia do Caribe" class="hero-slide-img" loading="lazy">
-            <div class="hero-overlay"></div>
-          </div>
-        </div>
 
-        <!-- Progress Indicators -->
-        <div class="hero-progress-container" id="hero-progress-nav">
-          <div class="progress-bar-track active" data-index="0"><div class="progress-bar-fill"></div></div>
-          <div class="progress-bar-track" data-index="1"><div class="progress-bar-fill"></div></div>
-          <div class="progress-bar-track" data-index="2"><div class="progress-bar-fill"></div></div>
-          <div class="progress-bar-track" data-index="3"><div class="progress-bar-fill"></div></div>
-          <div class="progress-bar-track" data-index="4"><div class="progress-bar-fill"></div></div>
-          <div class="progress-bar-track" data-index="5"><div class="progress-bar-fill"></div></div>
-          <div class="progress-bar-track" data-index="6"><div class="progress-bar-fill"></div></div>
-          <div class="progress-bar-track" data-index="7"><div class="progress-bar-fill"></div></div>
+      <!-- Coluna da Direita: Card Editorial do Destino Ativo (Desktop) -->
+      <div class="hero-slide-card" id="hero-slide-card">
+        <div>
+          <span class="slide-card-label">Curadoria WallTravel</span>
+          <h2 class="slide-card-title" id="slide-card-title">Europa sob medida</h2>
+          <p class="slide-card-desc" id="slide-card-desc">Exploração histórica, alta gastronomia e hospedagens boutique por quem já morou lá.</p>
         </div>
+        <a href="https://wa.me/5521997138461?text=Olá!%20Quero%20planejar%20minha%20viagem%20para%20a%20Europa." target="_blank" rel="noopener" class="slide-card-cta" id="slide-card-cta" aria-label="Planejar viagem no WhatsApp">
+          Planejar minha viagem
+          <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21 12l-8.15-8.15-1.42 1.42 5.43 5.43H5v2z"/></svg>
+        </a>
       </div>
 
+    </div>
+
+    <!-- Setas Discretas de Navegação (Desktop) -->
+    <div class="hero-nav-arrows">
+      <button class="hero-arrow-btn" id="hero-prev-btn" aria-label="Slide anterior">
+        <svg viewBox="0 0 24 24"><path d="M15.41 16.58L10.83 12l4.58-4.58L14 6l-6 6 6 6 1.41-1.42z"/></svg>
+      </button>
+      <button class="hero-arrow-btn" id="hero-next-btn" aria-label="Próximo slide">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </button>
+    </div>
+
+    <!-- Barra de Progresso e Número do Slide (Base) -->
+    <div class="hero-progress-wrapper">
+      <span class="slide-number-indicator" id="slide-number-indicator">01 / 08</span>
+      <div class="hero-progress-nav" id="hero-progress-nav">
+        <div class="progress-bar-track active" data-index="0"><div class="progress-bar-fill"></div></div>
+        <div class="progress-bar-track" data-index="1"><div class="progress-bar-fill"></div></div>
+        <div class="progress-bar-track" data-index="2"><div class="progress-bar-fill"></div></div>
+        <div class="progress-bar-track" data-index="3"><div class="progress-bar-fill"></div></div>
+        <div class="progress-bar-track" data-index="4"><div class="progress-bar-fill"></div></div>
+        <div class="progress-bar-track" data-index="5"><div class="progress-bar-fill"></div></div>
+        <div class="progress-bar-track" data-index="6"><div class="progress-bar-fill"></div></div>
+        <div class="progress-bar-track" data-index="7"><div class="progress-bar-fill"></div></div>
+      </div>
     </div>
   </section>
 

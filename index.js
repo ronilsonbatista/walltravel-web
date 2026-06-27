@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
-  // 1. STICKY HEADER SCROLL EFFECT
+  // 1. STICKY HEADER SCROLL EFFECT (DYNAMIC TRANSPARENT -> SCROLLED)
   // ==========================================================================
   const header = document.querySelector('.header');
   
@@ -41,25 +41,30 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // 3. HERO AUTOMATIC SLIDESHOW & TEXTS
+  // 3. HERO AUTOMATIC FULLSCREEN SLIDESHOW & TEXT CARD SYNC
   // ==========================================================================
   const slideTexts = [
-    { title: "Viva a Europa como um verdadeiro europeu!", desc: "Com a Walltravel, você explora o continente com quem já morou lá." },
-    { title: "Descubra o Nordeste além das praias!", desc: "Roteiros exclusivos e curadoria das melhores hospedagens e experiências." },
-    { title: "Safari na África com segurança total!", desc: "Vivencie a vida selvagem com a melhor logística e suporte." },
-    { title: "Jalapão selvagem sem perrengue!", desc: "Aventura e ecoturismo com conforto e guias especializados." },
-    { title: "Noronha exclusiva, longe das multidões!", desc: "Praias intocadas e experiências privativas na ilha mais bonita do Brasil." },
-    { title: "Ásia exótica sem barreiras culturais!", desc: "Imersão cultural, templos sagrados e gastronomia com guias locais." },
-    { title: "EUA além dos pontos turísticos!", desc: "Cidades vibrantes e parques naturais através de um olhar sob medida." },
-    { title: "Caribe paradisíaco sob medida!", desc: "Resorts de luxo, águas cristalinas e passeios de iate exclusivos." }
+    { title: "Europa sob medida", desc: "Exploração histórica, alta gastronomia e hospedagens boutique por quem já morou lá.", urlText: "Europa" },
+    { title: "Nordeste de Charme", desc: "Praias intocadas e curadoria das melhores pousadas de charme com privacidade.", urlText: "Nordeste" },
+    { title: "África Selvagem", desc: "Safáris sob medida e hospedagens de alto luxo integradas com a natureza selvagem.", urlText: "África" },
+    { title: "Jalapão Exclusivo", desc: "Aventura nos fervedouros e expedições privativas com conforto absoluto no cerrado.", urlText: "Jalapão" },
+    { title: "Noronha Paradisíaco", desc: "Praias intocadas e experiências privativas na ilha mais bonita do Brasil.", urlText: "Noronha" },
+    { title: "Ásia Exótica", desc: "Imersão cultural, templos sagrados e gastronomia com guias locais.", urlText: "Ásia" },
+    { title: "EUA sob medida", desc: "Cidades vibrantes e parques naturais através de um olhar sob medida.", urlText: "EUA" },
+    { title: "Caribe Exclusivo", desc: "Resorts de luxo, águas cristalinas e passeios de iate exclusivos.", urlText: "Caribe" }
   ];
 
   let currentIndex = 0;
   const slides = document.querySelectorAll('.hero-slide');
   const progressTracks = document.querySelectorAll('.progress-bar-track');
-  const titleEl = document.getElementById('hero-dynamic-title');
-  const descEl = document.getElementById('hero-dynamic-desc');
+  const cardTitleEl = document.getElementById('slide-card-title');
+  const cardDescEl = document.getElementById('slide-card-desc');
+  const cardCtaEl = document.getElementById('slide-card-cta');
+  const numberIndicatorEl = document.getElementById('slide-number-indicator');
+  const slideCard = document.getElementById('hero-slide-card');
   let autoplayInterval;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const changeSlide = (index) => {
     if (slides.length === 0) return;
@@ -74,27 +79,37 @@ document.addEventListener('DOMContentLoaded', () => {
     slides[currentIndex].classList.add('active');
     progressTracks[currentIndex].classList.add('active');
 
-    // Fade text content smoothly
-    if (titleEl && descEl) {
-      titleEl.style.opacity = 0;
-      descEl.style.opacity = 0;
+    // Fade and transition the destination card on the right
+    if (slideCard) {
+      slideCard.style.opacity = 0;
+      slideCard.style.transform = 'translateY(8px)';
       setTimeout(() => {
-        titleEl.textContent = slideTexts[currentIndex].title;
-        descEl.textContent = slideTexts[currentIndex].desc;
-        titleEl.style.opacity = 1;
-        descEl.style.opacity = 1;
-      }, 350);
+        if (cardTitleEl) cardTitleEl.textContent = slideTexts[currentIndex].title;
+        if (cardDescEl) cardDescEl.textContent = slideTexts[currentIndex].desc;
+        if (cardCtaEl) {
+          cardCtaEl.href = `https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20minha%20viagem%20para%20a%20${encodeURIComponent(slideTexts[currentIndex].urlText)}.`;
+        }
+        if (numberIndicatorEl) {
+          numberIndicatorEl.textContent = `0${currentIndex + 1} / 0${slides.length}`;
+        }
+        slideCard.style.opacity = 1;
+        slideCard.style.transform = 'translateY(0)';
+      }, 300);
     }
 
-    startAutoplay();
+    if (!prefersReducedMotion) {
+      startAutoplay();
+    }
   };
 
   const startAutoplay = () => {
     clearInterval(autoplayInterval);
+    if (prefersReducedMotion) return;
+    
     autoplayInterval = setInterval(() => {
       let nextIndex = (currentIndex + 1) % slides.length;
       changeSlide(nextIndex);
-    }, 5000); // 5 seconds autoplay interval
+    }, 6000); // 6 seconds autoplay interval
   };
 
   // Add click listeners to progress bar tracks to manually switch slides
@@ -104,25 +119,79 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Prev / Next arrow buttons click
+  const prevBtn = document.getElementById('hero-prev-btn');
+  const nextBtn = document.getElementById('hero-next-btn');
+
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => {
+      let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+      changeSlide(prevIndex);
+    });
+    nextBtn.addEventListener('click', () => {
+      let nextIndex = (currentIndex + 1) % slides.length;
+      changeSlide(nextIndex);
+    });
+  }
+
+  // Keyboard navigation accessibility
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+      changeSlide(prevIndex);
+    } else if (e.key === 'ArrowRight') {
+      let nextIndex = (currentIndex + 1) % slides.length;
+      changeSlide(nextIndex);
+    }
+  });
+
+  // Swipe gesture navigation for Mobile
+  const heroSection = document.getElementById('destinos');
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  if (heroSection) {
+    heroSection.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    heroSection.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+  }
+
+  const handleSwipe = () => {
+    const swipeThreshold = 55;
+    if (touchStartX - touchEndX > swipeThreshold) {
+      // Swipe left -> Next slide
+      let nextIndex = (currentIndex + 1) % slides.length;
+      changeSlide(nextIndex);
+    } else if (touchEndX - touchStartX > swipeThreshold) {
+      // Swipe right -> Prev slide
+      let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+      changeSlide(prevIndex);
+    }
+  };
+
   // Initialize Autoplay on page load
-  if (slides.length > 0) {
+  if (slides.length > 0 && !prefersReducedMotion) {
     startAutoplay();
   }
 
   // Pause Autoplay on Hover
-  const heroRight = document.querySelector('.hero-right');
-  if (heroRight) {
-    heroRight.addEventListener('mouseenter', () => {
+  const hero = document.getElementById('destinos');
+  if (hero && !prefersReducedMotion) {
+    hero.addEventListener('mouseenter', () => {
       clearInterval(autoplayInterval);
-      // Pause progress fill by temporarily removing animation speed
-      const activeFill = heroRight.querySelector('.progress-bar-track.active .progress-bar-fill');
+      const activeFill = hero.querySelector('.progress-bar-track.active .progress-bar-fill');
       if (activeFill) {
         activeFill.style.animationPlayState = 'paused';
       }
     });
-    heroRight.addEventListener('mouseleave', () => {
+    hero.addEventListener('mouseleave', () => {
       startAutoplay();
-      const activeFill = heroRight.querySelector('.progress-bar-track.active .progress-bar-fill');
+      const activeFill = hero.querySelector('.progress-bar-track.active .progress-bar-fill');
       if (activeFill) {
         activeFill.style.animationPlayState = 'running';
       }
