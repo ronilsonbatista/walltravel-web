@@ -17,31 +17,28 @@
   font-display: swap;
 }
 
-/* Global CSS Variables & Design Tokens - Light Theme */
+/* Design Tokens - Light Theme Visual Correction */
 :root {
   /* Colors */
-  --bg-color: #F4F1E8;          /* Off-white quente de base */
-  --bg-color-alt: #EFEBDD;      /* Areia/Bege suave para seções alternadas */
-  --bg-card: #FFFFFF;           /* Cards limpos brancos */
-  --bg-card-hover: #FCFAF5;     /* Cards no hover */
-  --color-primary: #777745;     /* Oliva dourado envelhecido oficial */
-  --color-primary-light: #9B9668; /* Oliva claro para detalhes */
-  --color-primary-glow: rgba(119, 119, 69, 0.08);
-  --color-accent: #1C2E1B;      /* Verde escuro floresta profundo para impacto e botões */
-  --color-accent-light: #2A3E29; 
-  --color-text: #1F2421;        /* Grafite profundo oficial */
-  --color-text-muted: #5E6460;  /* Grafite atenuado para parágrafos */
-  --border-color: rgba(31, 36, 33, 0.08); /* Borda suave grafite */
-  --border-color-active: rgba(119, 119, 69, 0.25);
+  --bg-color: #F6F1E8;          /* Fundo principal claro */
+  --bg-color-alt: #E8DDC8;      /* Fundo secundário areia */
+  --bg-card: #FFFDF7;           /* Fundo dos cards branco quente */
+  --color-text: #16170F;        /* Texto principal grafite escuro */
+  --color-text-muted: #5C5E54;  /* Texto secundário */
+  --color-accent: #191909;      /* Verde escuro da marca para impacto e botões */
+  --color-primary: #777745;     /* Oliva detalhe */
+  --color-primary-light: #B8A66A; /* Dourado discreto */
+  --border-color: rgba(22, 23, 15, 0.08); /* Borda fina */
+  --border-color-active: rgba(184, 166, 106, 0.3); /* Borda ativa dourada */
   
   /* Fonts */
   --font-title: 'Faculty Glyphic', 'Faculty Glyphic Local', serif;
   --font-body: 'Rubik', 'Rubik Local', sans-serif;
   
   /* Spacing */
-  --section-padding-desktop: 7rem 2rem;
+  --section-padding-desktop: 7.5rem 2rem;
   --section-padding-mobile: 4.5rem 1.25rem;
-  --border-radius: 8px; /* Radius sutil e elegante */
+  --border-radius: 8px; /* Raio de borda sutil */
   --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -76,11 +73,11 @@ body {
   background: var(--bg-color);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary);
+  background: var(--color-primary-light);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-light);
+  background: var(--color-primary);
 }
 
 /* Typography Utilities */
@@ -109,13 +106,13 @@ a {
   align-items: center;
   justify-content: center;
   background-color: var(--color-accent);
-  color: var(--bg-color);
+  color: var(--bg-card);
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 1rem 2.2rem;
+  padding: 0.95rem 2rem;
   border: 1px solid var(--color-accent);
   border-radius: var(--border-radius);
   cursor: pointer;
@@ -140,7 +137,7 @@ a {
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 1rem 2.2rem;
+  padding: 0.95rem 2rem;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   cursor: pointer;
@@ -161,7 +158,7 @@ a {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: rgba(244, 241, 232, 0.85);
+  background-color: rgba(246, 241, 232, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
@@ -169,15 +166,15 @@ a {
 }
 
 .header.scrolled {
-  padding: 0.4rem 0;
-  background-color: rgba(244, 241, 232, 0.95);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  padding: 0.3rem 0;
+  background-color: rgba(246, 241, 232, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
 }
 
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.1rem 1.5rem;
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -187,7 +184,7 @@ a {
 .logo-link {
   display: flex;
   align-items: center;
-  height: 32px;
+  height: 28px;
 }
 
 .logo-svg {
@@ -220,7 +217,7 @@ a {
   left: 0;
   width: 0;
   height: 1px;
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-light);
   transition: var(--transition-smooth);
 }
 
@@ -235,19 +232,19 @@ a {
 .nav-cta {
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--bg-color);
+  color: var(--bg-card);
   background-color: var(--color-text);
-  padding: 0.6rem 1.2rem;
+  padding: 0.55rem 1.1rem;
   border-radius: var(--border-radius);
   transition: var(--transition-smooth);
 }
 
 .nav-cta:hover {
-  background-color: var(--color-primary);
-  color: var(--bg-color);
+  background-color: var(--color-primary-light);
+  color: var(--bg-card);
 }
 
 .menu-btn {
@@ -261,25 +258,87 @@ a {
 
 .menu-btn-bar {
   display: block;
-  width: 20px;
+  width: 18px;
   height: 1.5px;
   margin: 4px 0;
   background-color: var(--color-text);
   transition: var(--transition-smooth);
 }
 
-/* Hero Section with Embedded Slideshow Background */
+/* Hero Section (Two Columns Visual Format) */
 .hero {
   position: relative;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
   padding-top: 100px;
   overflow: hidden;
+  background-color: var(--bg-color);
 }
 
-/* Ken Burns Background Slideshow */
+.hero-container {
+  position: relative;
+  z-index: 4;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5rem;
+}
+
+.hero-left {
+  flex: 1.1;
+  max-width: 560px;
+}
+
+.hero-right {
+  flex: 0.9;
+  max-width: 500px;
+  height: 480px;
+  position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 12px 40px rgba(22, 23, 15, 0.03);
+}
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-primary);
+  margin-bottom: 1.25rem;
+  font-weight: 500;
+  display: block;
+}
+
+.hero-title {
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  margin-bottom: 1.5rem;
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+.hero-desc {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  font-weight: 300;
+  margin-bottom: 2.8rem;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.hero-cta-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Framed Ken Burns Slideshow inside Hero Right */
 .hero-slideshow {
   position: absolute;
   inset: 0;
@@ -305,116 +364,38 @@ a {
   height: 100%;
   object-fit: cover;
   transform: scale(1.06);
-  transition: transform 6.5s ease-in-out;
+  transition: transform 6s ease-in-out;
 }
 
 .hero-slide.active .hero-slide-img {
   transform: scale(1);
 }
 
-/* Linear overlay for readable text on top of images */
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(25, 25, 9, 0.45) 0%, rgba(25, 25, 9, 0.75) 100%);
+  background: linear-gradient(to bottom, transparent 40%, rgba(25, 25, 9, 0.35) 100%);
   z-index: 3;
 }
 
-.hero-container {
-  position: relative;
-  z-index: 4;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 1.5rem;
-}
-
-.hero-content {
-  max-width: 800px;
-}
-
-.hero-subtitle {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--color-primary-light);
-  margin-bottom: 1.5rem;
-  font-weight: 500;
-  display: block;
-}
-
-.hero-title {
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
-  margin-bottom: 1.5rem;
-  line-height: 1.15;
-  color: #FFFFFF; /* High contrast on dark overlay */
-}
-
-.hero-desc {
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 300;
-  margin-bottom: 2.8rem;
-  max-width: 600px;
-  transition: var(--transition-smooth);
-}
-
-.hero-cta-wrapper {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.hero-cta-wrapper .btn-primary {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #FFFFFF;
-}
-
-.hero-cta-wrapper .btn-primary:hover {
-  background-color: transparent;
-  border-color: #FFFFFF;
-  color: #FFFFFF;
-}
-
-.hero-cta-wrapper .btn-outline {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #FFFFFF;
-}
-
-.hero-cta-wrapper .btn-outline:hover {
-  background-color: #FFFFFF;
-  color: var(--bg-color);
-  border-color: #FFFFFF;
-}
-
-/* Minimal Slide Progress Indicator */
+/* Minimal Slider Progress Indicators inside Hero Right */
 .hero-progress-container {
-  position: relative;
-  z-index: 4;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 1.5rem 3.5rem;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 5;
   display: flex;
-  gap: 1rem;
-  justify-content: flex-start;
+  gap: 6px;
 }
 
 .progress-bar-track {
   height: 2px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.3);
   flex: 1;
-  max-width: 80px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: var(--transition-smooth);
 }
 
 .progress-bar-fill {
@@ -464,11 +445,11 @@ a {
 }
 
 .section-title {
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
   line-height: 1.25;
 }
 
-/* Section 1: Destinations Grid (Editorial Visual) */
+/* Section 1: Destinations Grid (Editorial Layout 3:4) */
 .destinos-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -482,14 +463,14 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 380px;
+  height: 390px;
   transition: var(--transition-smooth);
   cursor: pointer;
 }
 
 .destino-card-img-wrapper {
   width: 100%;
-  height: 60%;
+  height: 64%;
   overflow: hidden;
   position: relative;
 }
@@ -502,11 +483,12 @@ a {
 }
 
 .destino-card-content {
-  padding: 1.5rem;
+  padding: 1.25rem;
+  background-color: var(--bg-card);
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  flex: 1;
+  justify-content: flex-start;
 }
 
 .destino-card-title {
@@ -515,32 +497,32 @@ a {
 }
 
 .destino-card-desc {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   line-height: 1.5;
   color: var(--color-text-muted);
 }
 
 .destino-card:hover {
   transform: translateY(-2px);
-  border-color: var(--color-primary);
-  box-shadow: 0 10px 25px rgba(31, 36, 33, 0.04);
+  border-color: var(--color-primary-light);
+  box-shadow: 0 10px 25px rgba(22, 23, 15, 0.02);
 }
 
 .destino-card:hover .destino-card-img {
   transform: scale(1.04);
 }
 
-/* Section 2: Institutional */
+/* Section 2: Institutional Block */
 .about-intro {
   text-align: center;
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
-  padding: 3.5rem 0;
+  padding: 4rem 0;
   position: relative;
 }
 
 .about-intro-title {
-  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
   line-height: 1.35;
   margin-bottom: 2rem;
   font-family: var(--font-title);
@@ -559,14 +541,14 @@ a {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 50%;
-  max-width: 450px;
-  opacity: 0.02;
+  width: 45%;
+  max-width: 400px;
+  opacity: 0.03;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Section 3: Services Cards */
+/* Section 3: Services Section (Clean Split Layout) */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -601,11 +583,11 @@ a {
 .service-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, rgba(31, 36, 33, 0.4) 100%);
+  background: linear-gradient(to bottom, transparent 60%, rgba(22, 23, 15, 0.25) 100%);
 }
 
 .service-card-content {
-  padding: 2.2rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -616,9 +598,9 @@ a {
 .service-card-num {
   font-family: var(--font-title);
   font-size: 1.5rem;
-  color: var(--color-primary);
-  opacity: 0.5;
-  margin-bottom: 0.5rem;
+  color: var(--color-primary-light);
+  margin-bottom: 0.4rem;
+  display: block;
 }
 
 .service-card-title {
@@ -655,8 +637,8 @@ a {
 
 .service-card:hover {
   transform: translateY(-3px);
-  border-color: var(--color-primary);
-  box-shadow: 0 12px 30px rgba(31, 36, 33, 0.03);
+  border-color: var(--color-primary-light);
+  box-shadow: 0 12px 30px rgba(22, 23, 15, 0.02);
 }
 
 .service-card:hover .service-card-img-wrapper img {
@@ -671,7 +653,7 @@ a {
   transform: translateX(3px);
 }
 
-/* Section 4: Differentials */
+/* Section 4: Differentials Minimalist Layout */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -687,9 +669,18 @@ a {
 }
 
 .feature-item:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-light);
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(31, 36, 33, 0.02);
+  box-shadow: 0 10px 25px rgba(22, 23, 15, 0.02);
+}
+
+.feature-number {
+  display: block;
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  color: var(--color-primary-light);
+  margin-bottom: 0.8rem;
+  line-height: 1;
 }
 
 .feature-title {
@@ -740,9 +731,10 @@ a {
 }
 
 .premium-block-content .btn-primary {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #FFFFFF;
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  color: var(--color-accent);
+  font-weight: 500;
 }
 
 .premium-block-content .btn-primary:hover {
@@ -767,18 +759,18 @@ a {
   color: #FFFFFF;
 }
 
-/* Section 6: Testimonials */
+/* Section 6: Testimonials (3 Columns Desktop layout) */
 .testimonials-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
 }
 
 .testimonial-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: 3rem;
+  padding: 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -793,7 +785,7 @@ a {
   font-family: var(--font-title);
   font-size: 5rem;
   color: var(--color-primary);
-  opacity: 0.1;
+  opacity: 0.08;
   line-height: 1;
 }
 
@@ -825,7 +817,7 @@ a {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primary);
+  color: var(--color-primary-light);
 }
 
 /* Section 7: Team Section */
@@ -902,9 +894,10 @@ a {
   color: var(--color-text-muted);
 }
 
-/* CTA Final Section (High-Impact oliva/escura) */
+/* CTA Final Section */
 .cta-final {
-  background-color: var(--color-accent);
+  background-color: var(--bg-color-alt);
+  border-top: 1px solid var(--border-color);
   text-align: center;
   padding: 7.5rem 2rem;
 }
@@ -915,32 +908,32 @@ a {
 }
 
 .cta-final-title {
-  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   margin-bottom: 1.5rem;
-  color: #FFFFFF;
+  color: var(--color-text);
 }
 
 .cta-final-desc {
   font-size: 1.15rem;
   margin-bottom: 2.8rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-muted);
 }
 
 .cta-final .btn-primary {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #FFFFFF;
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--bg-card);
 }
 
 .cta-final .btn-primary:hover {
   background-color: transparent;
-  border-color: #FFFFFF;
-  color: #FFFFFF;
+  border-color: var(--color-text);
+  color: var(--color-text);
 }
 
-/* Footer Section */
+/* Footer Section (Minimalist & Anchored) */
 .footer {
-  background-color: var(--bg-color-alt);
+  background-color: var(--bg-color);
   border-top: 1px solid var(--border-color);
   padding: 5rem 2rem 2.5rem;
 }
@@ -957,18 +950,18 @@ a {
 .footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .footer-logo {
-  height: 32px;
+  height: 24px;
   width: auto;
   align-self: flex-start;
 }
 
 .footer-brand p {
-  font-size: 0.88rem;
-  max-width: 300px;
+  font-size: 0.85rem;
+  max-width: 280px;
   line-height: 1.6;
 }
 
@@ -1015,6 +1008,12 @@ a {
   font-size: 0.8rem;
 }
 
+.footer-legal {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
 .footer-socials {
   display: flex;
   gap: 1.5rem;
@@ -1031,13 +1030,13 @@ a {
   color: var(--color-primary);
 }
 
-/* Floating WhatsApp Button (Discret & Premium) */
+/* Floating WhatsApp Button */
 .whatsapp-float {
   position: fixed;
   bottom: 24px;
   right: 24px;
   background-color: var(--bg-card);
-  border: 1px solid var(--color-primary);
+  border: 1px solid var(--color-primary-light);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--color-text);
@@ -1047,7 +1046,7 @@ a {
   padding: 0.75rem 1.3rem;
   border-radius: 30px;
   z-index: 999;
-  box-shadow: 0 4px 20px rgba(31, 36, 33, 0.05);
+  box-shadow: 0 4px 20px rgba(22, 23, 15, 0.03);
   transform: translateY(100px);
   opacity: 0;
   transition: var(--transition-smooth);
@@ -1066,7 +1065,7 @@ a {
 .whatsapp-float:hover {
   border-color: var(--color-accent);
   background-color: var(--color-accent);
-  color: var(--bg-color);
+  color: var(--bg-card);
 }
 
 .whatsapp-float-icon {
@@ -1103,6 +1102,10 @@ a {
     padding: var(--section-padding-mobile);
   }
 
+  .hero-container {
+    gap: 3rem;
+  }
+
   .destinos-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
@@ -1125,6 +1128,11 @@ a {
   .premium-block {
     padding: 4rem 3rem;
     gap: 2.5rem;
+  }
+
+  .testimonials-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 
   .team-container {
@@ -1188,7 +1196,20 @@ a {
   }
   
   .hero-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 2.5rem;
     padding-bottom: 2rem;
+  }
+  
+  .hero-left {
+    max-width: 100%;
+  }
+
+  .hero-right {
+    width: 100%;
+    max-width: 100%;
+    height: 350px;
   }
 
   .hero-title {

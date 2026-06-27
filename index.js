@@ -109,6 +109,26 @@ document.addEventListener('DOMContentLoaded', () => {
     startAutoplay();
   }
 
+  // Pause Autoplay on Hover
+  const heroRight = document.querySelector('.hero-right');
+  if (heroRight) {
+    heroRight.addEventListener('mouseenter', () => {
+      clearInterval(autoplayInterval);
+      // Pause progress fill by temporarily removing animation speed
+      const activeFill = heroRight.querySelector('.progress-bar-track.active .progress-bar-fill');
+      if (activeFill) {
+        activeFill.style.animationPlayState = 'paused';
+      }
+    });
+    heroRight.addEventListener('mouseleave', () => {
+      startAutoplay();
+      const activeFill = heroRight.querySelector('.progress-bar-track.active .progress-bar-fill');
+      if (activeFill) {
+        activeFill.style.animationPlayState = 'running';
+      }
+    });
+  }
+
   // ==========================================================================
   // 4. DESTINATIONS CARD CLICK INTERACTION (SCROLL & JUMP TO SLIDE)
   // ==========================================================================
