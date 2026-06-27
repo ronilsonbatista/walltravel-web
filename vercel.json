@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/vitrine(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pacote(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

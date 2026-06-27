@@ -1,0 +1,636 @@
+{
+  "heroSlides": [
+    {
+      "id": "africa",
+      "order": 1,
+      "title": "África",
+      "subtitle": "Safáris, paisagens extraordinárias e experiências desenhadas com propósito.",
+      "image": "assets/images/africa_safari.png",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a África com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "maldivas",
+      "order": 2,
+      "title": "Maldivas",
+      "subtitle": "Refúgios exclusivos, águas cristalinas e hospedagens perfeitas para momentos especiais.",
+      "image": "assets/images/maldivas.png",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para Maldivas com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "noruega-aurora-boreal",
+      "order": 3,
+      "title": "Noruega com Aurora Boreal",
+      "subtitle": "Uma experiência única entre paisagens árticas, conforto e a magia da aurora boreal.",
+      "image": "assets/images/noruega_aurora.png",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para ver a Aurora Boreal na Noruega com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "europa",
+      "order": 4,
+      "title": "Europa",
+      "subtitle": "Exploração histórica, alta gastronomia e hospedagens boutique por quem já morou lá.",
+      "image": "assets/images/Praia_Banje_Dubrovnik.jpg",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a Europa com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "nordeste",
+      "order": 5,
+      "title": "Nordeste",
+      "subtitle": "Praias intocadas e curadoria das melhores pousadas de charme com privacidade.",
+      "image": "assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para o Nordeste com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "jalapao",
+      "order": 6,
+      "title": "Jalapão",
+      "subtitle": "Aventura nos fervedouros e expedições privativas com conforto absoluto no cerrado.",
+      "image": "assets/images/Lencois-Maranhenses.jpg",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para o Jalapão com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "noronha",
+      "order": 7,
+      "title": "Noronha",
+      "subtitle": "O refúgio ecológico mais exclusivo do Brasil com logística perfeita e lanchas.",
+      "image": "assets/images/noronha_exclusivo.png",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para Fernando de Noronha com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "asia",
+      "order": 8,
+      "title": "Ásia",
+      "subtitle": "Imersão em templos sagrados, cultura milenar e guias locais privativos.",
+      "image": "assets/images/asia_exotic.png",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a Ásia com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    },
+    {
+      "id": "usa",
+      "order": 9,
+      "title": "Estados Unidos",
+      "subtitle": "Parques naturais deslumbrantes e cidades icônicas com planejamento sob medida.",
+      "image": "assets/images/usa_travel.png",
+      "ctaLabel": "Planejar minha viagem",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para os Estados Unidos com a WallTravel.",
+      "objectPositionDesktop": "center center",
+      "objectPositionMobile": "center center"
+    }
+  ],
+  "homeSections": {
+    "honeymoon": {
+      "title": "Lua de mel sob medida",
+      "subtitle": "Experiências românticas, exclusivas e desenhadas para o casal.",
+      "description": "Da escolha do destino aos detalhes da viagem, a WallTravel cuida de cada etapa para criar uma lua de mel personalizada, leve, inesquecível e com mimos selecionados.",
+      "image": "assets/images/lua_de_mel.png",
+      "ctaLabel": "Planejar minha lua de mel",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem de lua de mel com a WallTravel.",
+      "items": [
+        "Maldivas",
+        "Europa romântica",
+        "Caribe",
+        "Experiências exclusivas"
+      ]
+    }
+  },
+  "categories": [
+    {
+      "id": "nacionais",
+      "slug": "nacionais",
+      "name": "Nacionais",
+      "title": "Viagens nacionais sob medida",
+      "description": "Experiências pelo Brasil com curadoria, conforto e logística completa.",
+      "image": "assets/images/noronha_exclusivo.png",
+      "featured": true,
+      "packageCount": 2
+    },
+    {
+      "id": "internacionais",
+      "slug": "internacionais",
+      "name": "Internacionais",
+      "title": "Experiências internacionais exclusivas",
+      "description": "Roteiros incríveis pelos cinco continentes, com suporte integral e hotéis boutique.",
+      "image": "assets/images/africa_safari.png",
+      "featured": true,
+      "packageCount": 3
+    },
+    {
+      "id": "europa",
+      "slug": "europa",
+      "name": "Europa",
+      "title": "Europa sob medida",
+      "description": "Exploração histórica, alta gastronomia e hospedagens boutique por quem já morou lá.",
+      "image": "assets/images/Praia_Banje_Dubrovnik.jpg",
+      "featured": true,
+      "packageCount": 1
+    },
+    {
+      "id": "africa",
+      "slug": "africa",
+      "name": "África",
+      "title": "África sob medida",
+      "description": "Safáris de luxo nas melhores reservas e contato próximo com a natureza.",
+      "image": "assets/images/africa_safari.png",
+      "featured": false,
+      "packageCount": 1
+    },
+    {
+      "id": "caribe",
+      "slug": "caribe",
+      "name": "Caribe",
+      "title": "Caribe sob medida",
+      "description": "Resorts pé na areia de alto padrão e águas cristalinas para relaxar.",
+      "image": "assets/images/CURAÇAO.png",
+      "featured": false,
+      "packageCount": 1
+    },
+    {
+      "id": "nordeste",
+      "slug": "nordeste",
+      "name": "Nordeste",
+      "title": "Charme no Nordeste",
+      "description": "Pousadas boutiques e praias reservadas com o melhor serviço local.",
+      "image": "assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg",
+      "featured": false,
+      "packageCount": 1
+    },
+    {
+      "id": "lua-de-mel",
+      "slug": "lua-de-mel",
+      "name": "Lua de Mel",
+      "title": "Lua de mel sob medida",
+      "description": "Experiências inesquecíveis a dois, planejadas nos mínimos detalhes com muito romance.",
+      "image": "assets/images/lua_de_mel.png",
+      "featured": true,
+      "packageCount": 3
+    },
+    {
+      "id": "experiencias-premium",
+      "slug": "experiencias-premium",
+      "name": "Experiências Premium",
+      "title": "Experiências de luxo exclusivas",
+      "description": "Viagens fora do comum e hospedagens extraordinárias com atendimento 24h.",
+      "image": "assets/images/bg_aspirational.png",
+      "featured": true,
+      "packageCount": 2
+    }
+  ],
+  "packages": [
+    {
+      "id": "lencois-maranhenses",
+      "slug": "lencois-maranhenses",
+      "categorySlug": "nacionais",
+      "name": "Lençóis Maranhenses",
+      "destination": "Maranhão, Brasil",
+      "duration": "6 noites",
+      "type": "Natureza e Experiência",
+      "shortDescription": "Uma viagem pelos Lençóis Maranhenses com hospedagem premium e logística completa.",
+      "description": "Desbrave as dunas e lagoas dos Lençóis Maranhenses. Inclui passeios privativos de 4x4, voo de sobrevoo pelas lagoas e hospedagens boutiques charmosas em Barreirinhas e Atins.",
+      "priceFrom": 4800,
+      "currency": "BRL",
+      "image": "assets/images/Lencois-Maranhenses.jpg",
+      "gallery": [
+        "assets/images/Lencois-Maranhenses.jpg",
+        "assets/images/noronha_exclusivo.png",
+        "assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg"
+      ],
+      "tags": ["Natureza", "Brasil", "Experiência"],
+      "included": [
+        "Hospedagem com café da manhã",
+        "Traslados terrestres privativos",
+        "Passeios de jipe 4x4 privativos",
+        "Suporte WallTravel 24h durante a viagem",
+        "Guia local bilíngue nos passeios"
+      ],
+      "notIncluded": [
+        "Passagens aéreas de ida e volta",
+        "Almoços e jantares",
+        "Despesas pessoais extras",
+        "Seguro viagem opcional"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Chegada a São Luís & Traslado para Barreirinhas",
+          "description": "Recepção no aeroporto de São Luís e traslado privativo em veículo executivo para o hotel em Barreirinhas."
+        },
+        {
+          "day": 2,
+          "title": "Circuito Lagoa Azul & Lagoa Bonita",
+          "description": "Partida em veículo 4x4 para explorar as espetaculares lagoas de águas cristalinas do parque nacional com guia privativo."
+        },
+        {
+          "day": 3,
+          "title": "Travessia do Rio Preguiças de lancha rápida",
+          "description": "Passeio de lancha rápida pelo Rio Preguiças, visitando os povoados de Vassouras, Mandacaru e Caburé, finalizando no vilarejo de Atins."
+        },
+        {
+          "day": 4,
+          "title": "Descobrindo o Canto do Atins",
+          "description": "Caminhada leve pelas dunas e banho nas lagoas sazonais de Atins, com almoço típico no famoso restaurante do Canto."
+        },
+        {
+          "day": 5,
+          "title": "Dia Livre em Atins",
+          "description": "Aproveite para relaxar, praticar kitesurf ou desfrutar do beach club da pousada de charme."
+        },
+        {
+          "day": 6,
+          "title": "Retorno para São Luís",
+          "description": "Traslado de Atins de volta para Barreirinhas e em seguida para o aeroporto de São Luís para embarque de retorno."
+        }
+      ],
+      "importantNotes": [
+        "Valores expressos por pessoa em acomodação dupla.",
+        "Roteiro ideal para o período de cheia das lagoas (Junho a Setembro).",
+        "O roteiro pode ser 100% personalizado de acordo com o perfil dos viajantes."
+      ],
+      "featured": true
+    },
+    {
+      "id": "noronha-exclusivo",
+      "slug": "noronha-exclusivo",
+      "categorySlug": "nacionais",
+      "name": "Fernando de Noronha Privativo",
+      "destination": "Pernambuco, Brasil",
+      "duration": "5 noites",
+      "type": "Praia e Exclusividade",
+      "shortDescription": "O refúgio ecológico mais exclusivo do Brasil com logística perfeita e lancha privativa.",
+      "description": "Viva dias mágicos em Fernando de Noronha. Roteiro inclui passeio de lancha privativa ao entardecer, mergulho guiado com tartarugas e hospedagem nas pousadas mais requintadas da ilha.",
+      "priceFrom": 7900,
+      "currency": "BRL",
+      "image": "assets/images/noronha_exclusivo.png",
+      "gallery": [
+        "assets/images/noronha_exclusivo.png",
+        "assets/images/CURAÇAO.png",
+        "assets/images/Praia_Banje_Dubrovnik.jpg"
+      ],
+      "tags": ["Praia", "Brasil", "Exclusivo", "lua-de-mel"],
+      "included": [
+        "Hospedagem em pousada de luxo com café",
+        "Traslado Aeroporto/Pousada/Aeroporto privativo",
+        "1 passeio de lancha privativa (4 horas)",
+        "Mergulho de batismo com instrutor credenciado",
+        "Suporte WallTravel VIP 24h"
+      ],
+      "notIncluded": [
+        "Taxa de Preservação Ambiental (TPA)",
+        "Ingresso do Parque Nacional Marinho",
+        "Alimentação e bebidas não descritas"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Boas-vindas a Noronha",
+          "description": "Chegada à ilha, assistência vip e traslado privativo até a sua pousada de charme."
+        },
+        {
+          "day": 2,
+          "title": "Ilha Tour Privativo",
+          "description": "Exploração completa dos principais mirantes, praias icônicas como Sancho e Baía dos Porcos com guia exclusivo."
+        },
+        {
+          "day": 3,
+          "title": "Navegação ao Entardecer",
+          "description": "Embarque em lancha privativa para navegar ao longo da costa interna da ilha com parada para snorkel e petiscos a bordo."
+        },
+        {
+          "day": 4,
+          "title": "Mergulho de Batismo ou Trilhas",
+          "description": "Dia de explorar a rica vida marinha de Noronha com mergulho guiado ou realizar trilhas históricas."
+        },
+        {
+          "day": 5,
+          "title": "Dia Livre",
+          "description": "Dia livre para relaxar na Praia da Conceição ou desfrutar do pôr do sol clássico no Forte do Boldró."
+        },
+        {
+          "day": 6,
+          "title": "Despedida da Ilha",
+          "description": "Traslado privativo ao aeroporto de Noronha para voo de retorno."
+        }
+      ],
+      "importantNotes": [
+        "Recomendamos reservar com bastante antecedência devido à capacidade limitada da ilha.",
+        "As taxas ambientais devem ser pagas previamente online para evitar filas no desembarque."
+      ],
+      "featured": true
+    },
+    {
+      "id": "safari-africa",
+      "slug": "safari-africa",
+      "categorySlug": "internacionais",
+      "name": "Safári de Luxo na África do Sul",
+      "destination": "Kruger Area, África do Sul",
+      "duration": "7 noites",
+      "type": "Safári e Natureza",
+      "shortDescription": "Safáris sob medida e hospedagens de alto luxo integradas com a natureza selvagem.",
+      "description": "Uma experiência incomparável combinando o charme da Cidade do Cabo com safáris fotográficos de altíssimo nível em reservas privadas na região do Kruger Park, hospedando-se em lodges ultra-exclusivos.",
+      "priceFrom": null,
+      "currency": "USD",
+      "image": "assets/images/africa_safari.png",
+      "gallery": [
+        "assets/images/africa_safari.png",
+        "assets/images/bg_aspirational.png",
+        "assets/images/asia_exotic.png"
+      ],
+      "tags": ["Safári", "Luxo", "Natureza", "lua-de-mel"],
+      "included": [
+        "4 noites em hotel 5 estrelas na Cidade do Cabo",
+        "3 noites em Luxury Safari Lodge com pensão completa",
+        "Todos os safáris em veículos abertos 4x4 com rangers",
+        "Traslados privativos e voos internos inclusos",
+        "Consultoria e curadoria de reservas em restaurantes renomados"
+      ],
+      "notIncluded": [
+        "Passagem aérea internacional",
+        "Gastos com vistos e vacinas",
+        "Gorjetas e despesas extras"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Chegada à Cidade do Cabo",
+          "description": "Recepção no aeroporto com guia privativo em português e traslado para o hotel na icônica região de Waterfront."
+        },
+        {
+          "day": 2,
+          "title": "Península do Cabo Privativa",
+          "description": "Passeio de dia inteiro ao longo do Cabo da Boa Esperança, visitando a colônia de pinguins de Boulders Beach."
+        },
+        {
+          "day": 3,
+          "title": "Vinícolas de Stellenbosch",
+          "description": "Degustações exclusivas nas melhores vinícolas boutique da África do Sul com almoço harmonizado."
+        },
+        {
+          "day": 4,
+          "title": "Voo para a Reserva do Kruger",
+          "description": "Traslado privativo e voo para o lodge de safári. À tarde, primeiro safári fotográfico em busca dos Big Five."
+        },
+        {
+          "day": 5,
+          "title": "Safáris ao Amanhecer & Entardecer",
+          "description": "Dois safáris diários com paradas estratégicas para drinks no pôr do sol na savana africana."
+        },
+        {
+          "day": 6,
+          "title": "Dia de Imersão Selvagem",
+          "description": "Caminhadas guiadas pela mata com rangers, tratamentos de spa no lodge e jantar típico boma sob o céu estrelado."
+        },
+        {
+          "day": 7,
+          "title": "Voo para Joanesburgo & Retorno",
+          "description": "Último safári matinal, café da manhã especial e traslado ao aeroporto local para voo de conexão ao Brasil."
+        }
+      ],
+      "importantNotes": [
+        "Lodges de safári operam em regime tudo incluso (refeições, bebidas selecionadas e safáris).",
+        "Obrigatória a apresentação do certificado internacional de vacina contra febre amarela."
+      ],
+      "featured": true
+    },
+    {
+      "id": "aurora-noruega",
+      "slug": "aurora-noruega",
+      "categorySlug": "experiencias-premium",
+      "name": "Noruega & Aurora Boreal Ártica",
+      "destination": "Tromsø & Ilhas Lofoten, Noruega",
+      "duration": "7 noites",
+      "type": "Aventura e Inverno",
+      "shortDescription": "Uma expedição fascinante em busca da aurora boreal com hospedagem em cabines de vidro de luxo.",
+      "description": "Explore as paisagens polares da Noruega. Hospede-se em cabines modernas com teto de vidro para contemplar as luzes do norte deitado na cama, ande de trenó de husky e viva a verdadeira magia do inverno ártico.",
+      "priceFrom": null,
+      "currency": "EUR",
+      "image": "assets/images/noruega_aurora.png",
+      "gallery": [
+        "assets/images/noruega_aurora.png",
+        "assets/images/Lencois-Maranhenses.jpg"
+      ],
+      "tags": ["Inverno", "Aventura", "Exclusivo"],
+      "included": [
+        "Hospedagem em hotéis boutique e Glass Cabins de luxo",
+        "Caçadas de Aurora Boreal com fotógrafo profissional",
+        "Passeio de trenó puxado por huskies",
+        "Traslados privativos e roupas térmicas especiais inclusas",
+        "Suporte WallTravel ativo 24h em português"
+      ],
+      "notIncluded": [
+        "Voos internacionais",
+        "Refeições não especificadas",
+        "Atividades opcionais extras"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Chegada em Tromsø",
+          "description": "Traslado privativo do aeroporto para o hotel boutique no centro da capital ártica."
+        },
+        {
+          "day": 2,
+          "title": "Tromsø & Primeira Caçada de Aurora Boreal",
+          "description": "Dia livre para explorar a charmosa cidade. À noite, saída guiada por meteorologistas para fotografar a Aurora Boreal."
+        },
+        {
+          "day": 3,
+          "title": "Trenó de Husky & Cultura Sami",
+          "description": "Manhã de aventura conduzindo um trenó de huskies siberianos. À tarde, contato com a cultura nativa Sami e renas."
+        },
+        {
+          "day": 4,
+          "title": "Viagem para as Cabines de Vidro",
+          "description": "Viagem privativa pelas estradas cênicas dos fiordes árticos até as famosas Glass Cabins com vista panorâmica."
+        },
+        {
+          "day": 5,
+          "title": "Navegação pelos Fiordes & Pesca Ártica",
+          "description": "Cruzeiro privativo em catamarã híbrido silencioso para avistar baleias orcas e paisagens geladas."
+        },
+        {
+          "day": 6,
+          "title": "Noite Sob a Aurora Boreal",
+          "description": "Aproveite o conforto aquecido da sua cabine de vidro para contemplar as luzes dançantes no céu ártico."
+        },
+        {
+          "day": 7,
+          "title": "Retorno e Voo de Partida",
+          "description": "Traslado privativo ao aeroporto de Tromsø para voo de conexão internacional."
+        }
+      ],
+      "importantNotes": [
+        "A aurora boreal é um fenômeno natural. Nossos guias monitoram diariamente os mapas de satélite para maximizar as chances de visualização.",
+        "Recomendado para viagens entre os meses de Outubro e Março."
+      ],
+      "featured": true
+    },
+    {
+      "id": "costa-croacia",
+      "slug": "costa-croacia",
+      "categorySlug": "europa",
+      "name": "Costa da Croácia de Iate",
+      "destination": "Dubrovnik & Split, Croácia",
+      "duration": "7 noites",
+      "type": "Europa e Mar",
+      "shortDescription": "Navegação exclusiva pelas ilhas croatas com paradas históricas e praias secretas.",
+      "description": "Descubra a deslumbrante Costa do Adriático. Roteiro combina estadias em Dubrovnik e Split com um cruzeiro em iate privativo visitando as ilhas de Hvar, Korčula e as praias mais intocadas da região.",
+      "priceFrom": 5200,
+      "currency": "EUR",
+      "image": "assets/images/Praia_Banje_Dubrovnik.jpg",
+      "gallery": [
+        "assets/images/Praia_Banje_Dubrovnik.jpg",
+        "assets/images/Split-Dubrovnik.webp"
+      ],
+      "tags": ["Europa", "Praia", "História", "lua-de-mel"],
+      "included": [
+        "Hospedagem 5 estrelas em Dubrovnik e Split com café",
+        "Charter de iate privativo por 3 dias com skipper",
+        "Tours privativos a pé guiados nas cidades medievais",
+        "Entradas nos parques e museus selecionados",
+        "Concierge WallTravel ativo durante a estadia"
+      ],
+      "notIncluded": [
+        "Passagem aérea internacional",
+        "Combustível do iate e taxas de marinas",
+        "Refeições não descritas como inclusas"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Chegada em Dubrovnik",
+          "description": "Traslado privativo e recepção VIP no luxuoso hotel com vista para as muralhas da Cidade Antiga."
+        },
+        {
+          "day": 2,
+          "title": "Dubrovnik Medieval Privativo",
+          "description": "Passeio exclusivo a pé guiado pelas muralhas históricas e locações famosas da costa adriática."
+        },
+        {
+          "day": 3,
+          "title": "Embarque no Iate Privativo",
+          "description": "Embarque no iate executivo rumo às ilhas Elafiti, parando para mergulhos em grutas azuis e almoço em tabernas de pescadores."
+        },
+        {
+          "day": 4,
+          "title": "Korčula: A Ilha de Marco Polo",
+          "description": "Navegação até a ilha fortificada de Korčula, famosa por seus vinhos brancos locais e ruelas românticas."
+        },
+        {
+          "day": 5,
+          "title": "Hvar: Sol e Charme",
+          "description": "Estadia na badalada ilha de Hvar, explorando sua fortaleza espanhola e jantando em restaurantes exclusivos do porto."
+        },
+        {
+          "day": 6,
+          "title": "Navegação final até Split",
+          "description": "Navegação até Split com parada na famosa praia Golden Horn em Brač. Check-in no hotel e tour no Palácio de Diocleciano."
+        },
+        {
+          "day": 7,
+          "title": "Retorno",
+          "description": "Traslado privativo ao aeroporto de Split para embarque de retorno."
+        }
+      ],
+      "importantNotes": [
+        "O iate privativo inclui skipper profissional e combustível básico.",
+        "Roteiro ideal para operação de Maio a Setembro."
+      ],
+      "featured": false
+    },
+    {
+      "id": "maldivas-luxo",
+      "slug": "maldivas-luxo",
+      "categorySlug": "lua-de-mel",
+      "name": "Maldivas Romance & Luxo",
+      "destination": "Atol de Malé, Maldivas",
+      "duration": "6 noites",
+      "type": "Praia e Romance",
+      "shortDescription": "O refúgio de amor definitivo com bangalôs sobre as águas e mordomo exclusivo.",
+      "description": "Celebre o amor nas Maldivas. Hospede-se em um bangalô sobre as águas turquesa com piscina privativa, mordomo 24h, jantares românticos à luz de velas na areia e mimos especiais de lua de mel pensados pela WallTravel.",
+      "priceFrom": null,
+      "currency": "USD",
+      "image": "assets/images/maldivas.png",
+      "gallery": [
+        "assets/images/maldivas.png",
+        "assets/images/lua_de_mel.png"
+      ],
+      "tags": ["Praia", "Luxo", "lua-de-mel", "Romance"],
+      "included": [
+        "6 noites em Overwater Pool Villa com regime All-Inclusive",
+        "Traslados de hidroavião de ida e volta do aeroporto",
+        "1 jantar romântico exclusivo na praia para o casal",
+        "Massagem de casal de 60 minutos no SPA sobre as águas",
+        "Decoração especial de lua de mel e espumante de boas-vindas"
+      ],
+      "notIncluded": [
+        "Passagem aérea internacional",
+        "Gastos pessoais e atividades motorizadas extras",
+        "Seguro viagem obrigatório"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Chegada no Paraíso",
+          "description": "Recepção no aeroporto internacional de Malé e embarque em hidroavião com voo cênico até o resort de luxo."
+        },
+        {
+          "day": 2,
+          "title": "Descobrindo a Villa Sobre as Águas",
+          "description": "Aproveite para relaxar na sua piscina infinita privativa, com acesso direto ao mar repleto de peixes coloridos."
+        },
+        {
+          "day": 3,
+          "title": "Snorkel guiado no Recife de Corais",
+          "description": "Saída de barco com biólogos marinhos do resort para explorar o recife, nadando com arraias e tartarugas."
+        },
+        {
+          "day": 4,
+          "title": "SPA & Jantar na Praia",
+          "description": "Tarde dedicada ao relaxamento com massagem exclusiva de casal. Ao entardecer, jantar privativo à luz de velas pé na areia."
+        },
+        {
+          "day": 5,
+          "title": "Passeio de Barco ao Pôr do Sol",
+          "description": "Cruzeiro romântico de dhoni (barco tradicional) ao entardecer com alta chance de avistar golfinhos saltando."
+        },
+        {
+          "day": 6,
+          "title": "Dia de Relaxamento Total",
+          "description": "Desfrute do serviço de mordomo, pratique stand-up paddle ou simplesmente aproveite o sol nas águas mornas do atol."
+        },
+        {
+          "day": 7,
+          "title": "Despedida das Maldivas",
+          "description": "Voo de hidroavião de volta a Malé para conectar com seu voo internacional de retorno."
+        }
+      ],
+      "importantNotes": [
+        "All-Inclusive de luxo inclui refeições em múltiplos restaurantes finos e bebidas premium.",
+        "Necessário apresentar certidão de casamento recente (até 12 meses) para usufruir dos mimos de lua de mel."
+      ],
+      "featured": true
+    }
+  ]
+}
