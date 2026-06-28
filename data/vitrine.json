@@ -5,7 +5,7 @@
       "order": 1,
       "title": "África",
       "subtitle": "Safáris, paisagens extraordinárias e experiências desenhadas com propósito.",
-      "image": "assets/images/africa_safari.png",
+      "image": "/images/vitrine/africa.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a África com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -16,7 +16,7 @@
       "order": 2,
       "title": "Maldivas",
       "subtitle": "Refúgios exclusivos, águas cristalinas e hospedagens perfeitas para momentos especiais.",
-      "image": "assets/images/maldivas.png",
+      "image": "/images/vitrine/maldivas.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para Maldivas com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -27,7 +27,7 @@
       "order": 3,
       "title": "Noruega com Aurora Boreal",
       "subtitle": "Uma experiência única entre paisagens árticas, conforto e a magia da aurora boreal.",
-      "image": "assets/images/noruega_aurora.png",
+      "image": "/images/vitrine/noruega-aurora.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para ver a Aurora Boreal na Noruega com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -38,7 +38,7 @@
       "order": 4,
       "title": "Europa",
       "subtitle": "Exploração histórica, alta gastronomia e hospedagens boutique por quem já morou lá.",
-      "image": "assets/images/Praia_Banje_Dubrovnik.jpg",
+      "image": "/images/vitrine/europa.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a Europa com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -49,7 +49,7 @@
       "order": 5,
       "title": "Nordeste",
       "subtitle": "Praias intocadas e curadoria das melhores pousadas de charme com privacidade.",
-      "image": "assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg",
+      "image": "/images/vitrine/nordeste.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para o Nordeste com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -60,7 +60,7 @@
       "order": 6,
       "title": "Jalapão",
       "subtitle": "Aventura nos fervedouros e expedições privativas com conforto absoluto no cerrado.",
-      "image": "assets/images/Lencois-Maranhenses.jpg",
+      "image": "/images/vitrine/jalapao.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para o Jalapão com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -71,7 +71,7 @@
       "order": 7,
       "title": "Noronha",
       "subtitle": "O refúgio ecológico mais exclusivo do Brasil com logística perfeita e lanchas.",
-      "image": "assets/images/noronha_exclusivo.png",
+      "image": "/images/vitrine/noronha.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para Fernando de Noronha com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -82,7 +82,7 @@
       "order": 8,
       "title": "Ásia",
       "subtitle": "Imersão em templos sagrados, cultura milenar e guias locais privativos.",
-      "image": "assets/images/asia_exotic.png",
+      "image": "/images/vitrine/asia.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a Ásia com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -93,7 +93,7 @@
       "order": 9,
       "title": "Estados Unidos",
       "subtitle": "Parques naturais deslumbrantes e cidades icônicas com planejamento sob medida.",
-      "image": "assets/images/usa_travel.png",
+      "image": "/images/vitrine/usa.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para os Estados Unidos com a WallTravel.",
       "objectPositionDesktop": "center center",
@@ -105,7 +105,7 @@
       "title": "Lua de mel sob medida",
       "subtitle": "Experiências românticas, exclusivas e desenhadas para o casal.",
       "description": "Da escolha do destino aos detalhes da viagem, a WallTravel cuida de cada etapa para criar uma lua de mel personalizada, leve, inesquecível e com mimos selecionados.",
-      "image": "assets/images/lua_de_mel.png",
+      "image": "/images/vitrine/lua-de-mel.jpg",
       "ctaLabel": "Planejar minha lua de mel",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem de lua de mel com a WallTravel.",
       "items": [
@@ -123,8 +123,9 @@
       "name": "Nacionais",
       "title": "Viagens nacionais sob medida",
       "description": "Experiências pelo Brasil com curadoria, conforto e logística completa.",
-      "image": "assets/images/noronha_exclusivo.png",
+      "image": "/images/vitrine/nacionais.jpg",
       "featured": true,
+      "order": 1,
       "packageCount": 2
     },
     {
@@ -133,8 +134,9 @@
       "name": "Internacionais",
       "title": "Experiências internacionais exclusivas",
       "description": "Roteiros incríveis pelos cinco continentes, com suporte integral e hotéis boutique.",
-      "image": "assets/images/africa_safari.png",
+      "image": "/images/vitrine/internacionais.jpg",
       "featured": true,
+      "order": 2,
       "packageCount": 3
     },
     {
@@ -143,8 +145,9 @@
       "name": "Europa",
       "title": "Europa sob medida",
       "description": "Exploração histórica, alta gastronomia e hospedagens boutique por quem já morou lá.",
-      "image": "assets/images/Praia_Banje_Dubrovnik.jpg",
+      "image": "/images/vitrine/europa.jpg",
       "featured": true,
+      "order": 3,
       "packageCount": 1
     },
     {
@@ -153,8 +156,9 @@
       "name": "África",
       "title": "África sob medida",
       "description": "Safáris de luxo nas melhores reservas e contato próximo com a natureza.",
-      "image": "assets/images/africa_safari.png",
+      "image": "/images/vitrine/africa.jpg",
       "featured": false,
+      "order": 4,
       "packageCount": 1
     },
     {
@@ -163,8 +167,9 @@
       "name": "Caribe",
       "title": "Caribe sob medida",
       "description": "Resorts pé na areia de alto padrão e águas cristalinas para relaxar.",
-      "image": "assets/images/CURAÇAO.png",
+      "image": "/images/vitrine/caribe.jpg",
       "featured": false,
+      "order": 5,
       "packageCount": 1
     },
     {
@@ -173,8 +178,9 @@
       "name": "Nordeste",
       "title": "Charme no Nordeste",
       "description": "Pousadas boutiques e praias reservadas com o melhor serviço local.",
-      "image": "assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg",
+      "image": "/images/vitrine/nordeste.jpg",
       "featured": false,
+      "order": 6,
       "packageCount": 1
     },
     {
@@ -183,8 +189,9 @@
       "name": "Lua de Mel",
       "title": "Lua de mel sob medida",
       "description": "Experiências inesquecíveis a dois, planejadas nos mínimos detalhes com muito romance.",
-      "image": "assets/images/lua_de_mel.png",
+      "image": "/images/vitrine/lua-de-mel.jpg",
       "featured": true,
+      "order": 7,
       "packageCount": 3
     },
     {
@@ -193,8 +200,9 @@
       "name": "Experiências Premium",
       "title": "Experiências de luxo exclusivas",
       "description": "Viagens fora do comum e hospedagens extraordinárias com atendimento 24h.",
-      "image": "assets/images/bg_aspirational.png",
+      "image": "/images/vitrine/experiencias-premium.jpg",
       "featured": true,
+      "order": 8,
       "packageCount": 2
     }
   ],
@@ -211,11 +219,11 @@
       "description": "Desbrave as dunas e lagoas dos Lençóis Maranhenses. Inclui passeios privativos de 4x4, voo de sobrevoo pelas lagoas e hospedagens boutiques charmosas em Barreirinhas e Atins.",
       "priceFrom": 4800,
       "currency": "BRL",
-      "image": "assets/images/Lencois-Maranhenses.jpg",
+      "image": "/images/vitrine/lencois-maranhenses.jpg",
       "gallery": [
-        "assets/images/Lencois-Maranhenses.jpg",
-        "assets/images/noronha_exclusivo.png",
-        "assets/images/Sao-Miguel-dos-Milagres-–-Alagoas-e1703964909352.jpg"
+        "/images/vitrine/lencois-maranhenses.jpg",
+        "/images/vitrine/noronha.jpg",
+        "/images/vitrine/nordeste.jpg"
       ],
       "tags": ["Natureza", "Brasil", "Experiência"],
       "included": [
@@ -282,11 +290,11 @@
       "description": "Viva dias mágicos em Fernando de Noronha. Roteiro inclui passeio de lancha privativa ao entardecer, mergulho guiado com tartarugas e hospedagem nas pousadas mais requintadas da ilha.",
       "priceFrom": 7900,
       "currency": "BRL",
-      "image": "assets/images/noronha_exclusivo.png",
+      "image": "/images/vitrine/noronha.jpg",
       "gallery": [
-        "assets/images/noronha_exclusivo.png",
-        "assets/images/CURAÇAO.png",
-        "assets/images/Praia_Banje_Dubrovnik.jpg"
+        "/images/vitrine/noronha.jpg",
+        "/images/vitrine/caribe.jpg",
+        "/images/vitrine/europa.jpg"
       ],
       "tags": ["Praia", "Brasil", "Exclusivo", "lua-de-mel"],
       "included": [
@@ -351,11 +359,11 @@
       "description": "Uma experiência incomparável combinando o charme da Cidade do Cabo com safáris fotográficos de altíssimo nível em reservas privadas na região do Kruger Park, hospedando-se em lodges ultra-exclusivos.",
       "priceFrom": null,
       "currency": "USD",
-      "image": "assets/images/africa_safari.png",
+      "image": "/images/vitrine/safari-africa.jpg",
       "gallery": [
-        "assets/images/africa_safari.png",
-        "assets/images/bg_aspirational.png",
-        "assets/images/asia_exotic.png"
+        "/images/vitrine/safari-africa.jpg",
+        "/images/vitrine/experiencias-premium.jpg",
+        "/images/vitrine/asia.jpg"
       ],
       "tags": ["Safári", "Luxo", "Natureza", "lua-de-mel"],
       "included": [
@@ -425,10 +433,10 @@
       "description": "Explore as paisagens polares da Noruega. Hospede-se em cabines modernas com teto de vidro para contemplar as luzes do norte deitado na cama, ande de trenó de husky e viva a verdadeira magia do inverno ártico.",
       "priceFrom": null,
       "currency": "EUR",
-      "image": "assets/images/noruega_aurora.png",
+      "image": "/images/vitrine/aurora-noruega.jpg",
       "gallery": [
-        "assets/images/noruega_aurora.png",
-        "assets/images/Lencois-Maranhenses.jpg"
+        "/images/vitrine/aurora-noruega.jpg",
+        "/images/vitrine/lencois-maranhenses.jpg"
       ],
       "tags": ["Inverno", "Aventura", "Exclusivo"],
       "included": [
@@ -498,10 +506,10 @@
       "description": "Descubra a deslumbrante Costa do Adriático. Roteiro combina estadias em Dubrovnik e Split com um cruzeiro em iate privativo visitando as ilhas de Hvar, Korčula e as praias mais intocadas da região.",
       "priceFrom": 5200,
       "currency": "EUR",
-      "image": "assets/images/Praia_Banje_Dubrovnik.jpg",
+      "image": "/images/vitrine/costa-croacia.jpg",
       "gallery": [
-        "assets/images/Praia_Banje_Dubrovnik.jpg",
-        "assets/images/Split-Dubrovnik.webp"
+        "/images/vitrine/costa-croacia.jpg",
+        "/images/vitrine/europa.jpg"
       ],
       "tags": ["Europa", "Praia", "História", "lua-de-mel"],
       "included": [
@@ -571,10 +579,10 @@
       "description": "Celebre o amor nas Maldivas. Hospede-se em um bangalô sobre as águas turquesa com piscina privativa, mordomo 24h, jantares românticos à luz de velas na areia e mimos especiais de lua de mel pensados pela WallTravel.",
       "priceFrom": null,
       "currency": "USD",
-      "image": "assets/images/maldivas.png",
+      "image": "/images/vitrine/maldivas-luxo.jpg",
       "gallery": [
-        "assets/images/maldivas.png",
-        "assets/images/lua_de_mel.png"
+        "/images/vitrine/maldivas-luxo.jpg",
+        "/images/vitrine/lua-de-mel.jpg"
       ],
       "tags": ["Praia", "Luxo", "lua-de-mel", "Romance"],
       "included": [

@@ -2,11 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/vitrine(.*)",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/pacote(.*)",
+      "source": "/((?!assets/|images/|.*\\..*$).*)",
       "destination": "/index.html"
     }
   ]
