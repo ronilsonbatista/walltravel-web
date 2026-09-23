@@ -17,9 +17,8 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/((?!assets/|images/|.*\\..*$).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/images/(.*)", "destination": "/images/$1" },
+    { "source": "/((?!assets/|images/).*)", "destination": "/index.html" }
   ]
 }
