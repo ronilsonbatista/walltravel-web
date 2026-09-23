@@ -1,11 +1,12 @@
 {
   "name": "walltravel-web",
+  "type": "module",
   "version": "1.0.0",
   "description": "Redesign do site WallTravel com identidade visual premium, clean e responsiva.",
   "scripts": {
-    "dev": "vite --port 3000 --open",
+    "dev": "vite --port 5173 --strictPort",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --port 4173 --strictPort"
   },
   "devDependencies": {
     "vite": "^5.2.0"
