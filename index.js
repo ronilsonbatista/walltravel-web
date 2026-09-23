@@ -221,7 +221,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   if (menuBtn && navMenu) {
-    menuBtn.addEventListener('click', toggleMobileMenu);
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileMenu();
+    });
 
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -486,10 +489,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (groupSlug.endsWith('/')) groupSlug = groupSlug.slice(0, -1);
         await renderGroupPage(groupSlug);
       } else {
-        // Fallback
-        homeView.style.display = 'block';
-        startAutoplay();
-        handleHeaderScroll();
+        // Unknown route → 404 (do not silently fall back to Home)
+        header.classList.add('scrolled');
+        packageView.style.display = 'block';
+        renderEmptyState(
+          packageView,
+          "Página não encontrada",
+          "O endereço que você tentou abrir não existe ou foi removido."
+        );
       }
     }
   };

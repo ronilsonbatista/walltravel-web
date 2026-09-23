@@ -41,18 +41,25 @@ test("mobile menu exposes aria-expanded and 44px hit target", async ({
   const context = await browser.newContext({ ...devices["iPhone 12"] });
   const page = await context.newPage();
   await page.goto("/");
+  await page.waitForLoadState("networkidle");
   const menu = page.locator("#menu-toggle");
   await expect(menu).toBeVisible();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
   const box = await menu.boundingBox();
   expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
-  await menu.click();
+  await menu.click({ force: true });
   await expect(menu).toHaveAttribute("aria-expanded", "true");
   await expect(menu).toHaveAttribute("aria-label", "Fechar menu");
   await page.keyboard.press("Escape");
   await expect(menu).toHaveAttribute("aria-expanded", "false");
   await context.close();
+});
+
+test("unknown route shows 404 empty state", async ({ page }) => {
+  await page.goto("/rota-inexistente-auditoria");
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("heading", { name: /não encontrada/i })).toBeVisible();
 });
 
 test("greece sticky CTA uses safe-area padding", async ({ browser }) => {

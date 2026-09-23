@@ -13,7 +13,7 @@
   "priceUnit": "PER_PERSON",
   "currency": "BRL",
   "priceNote": "por pessoa · à vista, ou entrada + até 10x no cartão, com juros. Cotação do euro em 19 set 2026: R$ 5,9040. O valor acompanha a cotação do dia.",
-  "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
+  "coverImageUrl": "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
   "featured": true,
   "comingSoon": false,
   "ctaLabel": "Quero falar sobre a Grécia",
@@ -38,13 +38,13 @@
   "description": "12 a 24 de setembro de 2027 · 13 dias · 12 noites · grupo de apenas 10 pessoas.",
   "editorial": "A Grécia pede tempo. Por isso este roteiro não corre: duas noites em Atenas para ver a Acrópole com calma, três em Mykonos, três em Santorini, três em Corfu e uma última na capital antes de voltar. Entre uma ilha e outra, ferry pelo Egeu ou um voo curto, sempre com traslado privativo esperando.\n\nCorfu é o que quase nenhum grupo faz: a ilha do Jônico de praias de água transparente, falésias verdes e um centro histórico veneziano. E o grupo é de 10 pessoas de verdade, com hotel 4 estrelas em cada ilha, passeios privativos com guia em português e dias livres nos lugares certos.",
   "gallery": [
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/atenas-acropole.webp",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/mykonos-little-venice.webp",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/santorini-oia.webp",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/santorini-domes.webp",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/corfu.webp",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/mykonos-chora.webp"
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/atenas-acropole.webp",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/mykonos-little-venice.webp",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/santorini-oia.webp",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/santorini-domes.webp",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/corfu.webp",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/mykonos-chora.webp"
   ],
   "whyGroup": [
     {
@@ -363,7 +363,7 @@
     "name": "Wallace Maia",
     "title": "Líder da expedição WallTravel",
     "bio": "Sou fundador e sócio da WallTravel, apaixonado por viagens e por criar experiências que realmente façam sentido para cada pessoa. Ao longo dos anos conheci diferentes destinos pelo mundo e morei por mais de um ano na Europa, experiências que ampliaram meu olhar sobre culturas, roteiros e formas de viajar.\n\nTransformei essa paixão em profissão e hoje me dedico a planejar e acompanhar viagens especiais para os nossos clientes. A Grécia é um destino que já conheci pessoalmente e que me marcou pela história, pela cultura e pela beleza.\n\nNesta viagem, estarei com vocês como líder da expedição WallTravel, acompanhando cada etapa de perto para que todos aproveitem a experiência com tranquilidade, segurança e, principalmente, criem boas memórias.",
-    "photoUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/lider.webp",
+    "photoUrl": "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/lider.webp",
     "note": "Os passeios são conduzidos por guias locais em português. O líder coordena tudo com eles e fica com o grupo do desembarque em Atenas ao voo de volta."
   },
   "formFields": [

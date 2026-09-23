@@ -21,6 +21,16 @@
   outline-offset: 2px;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-primary-light, #B8A66A);
+  outline-offset: 3px;
+}
+
 /* Local Fallback Fonts */
 @font-face {
   font-family: 'Faculty Glyphic Local';
@@ -46,7 +56,7 @@
   --color-text: #16170F;        /* Texto principal grafite escuro */
   --color-text-muted: #5C5E54;  /* Texto secundário */
   --color-accent: #191909;      /* Verde escuro da marca para impacto e botões */
-  --color-primary: #777745;     /* Oliva detalhe */
+  --color-primary: #5C5E2E;     /* Oliva escuro — AA ≥4.5:1 on cream */
   --color-primary-light: #B8A66A; /* Dourado discreto */
   --border-color: rgba(22, 23, 15, 0.08); /* Borda fina */
   --border-color-active: rgba(184, 166, 106, 0.3); /* Borda ativa dourada */
@@ -2514,8 +2524,8 @@ a {
     min-height: 44px;
     font-size: 0.8rem;
     font-weight: 600;
-    background-color: #25d366;
-    border: 1px solid #25d366;
+    background-color: #1b7a3d;
+    border: 1px solid #1b7a3d;
     color: white;
     border-radius: var(--border-radius);
     text-decoration: none;
@@ -2968,6 +2978,7 @@ a {
 }
 
 .group-subnav.is-stuck {
+  top: var(--header-offset, 4.25rem);
   transform: none;
   opacity: 1;
   pointer-events: auto;
@@ -2991,6 +3002,10 @@ a {
   color: var(--color-text-muted);
   white-space: nowrap;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.75rem 0.35rem;
 }
 
 .group-subnav a.is-active,
@@ -4166,7 +4181,7 @@ a {
   }
 
   .group-subnav.is-stuck {
-    top: 0;
+    top: var(--header-offset, 4.25rem);
   }
 }
 
