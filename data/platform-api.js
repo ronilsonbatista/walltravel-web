@@ -77,16 +77,88 @@ export async function fetchPublicProductBySlug(slug) {
 
 /** Map Public API category → legacy vitrine category shape. */
 export function mapCategory(apiCat) {
+  const count =
+    apiCat.productCount ?? apiCat.experienceCount ?? apiCat.packageCount ?? 0;
   return {
     id: apiCat.slug,
     slug: apiCat.slug,
     name: apiCat.name,
     title: apiCat.title || apiCat.name,
     description: apiCat.description || "",
-    image: apiCat.coverImageUrl || "/images/vitrine/fallback.svg",
+    image: apiCat.coverImageUrl || null,
     featured: Boolean(apiCat.featured),
-    order: apiCat.sortOrder ?? 100,
-    packageCount: apiCat.productCount ?? 0,
+    order: apiCat.sortOrder ?? apiCat.order ?? 100,
+    packageCount: count,
+    experienceCount: count,
+  };
+}
+
+export async function fetchPublicGroups() {
+  const body = await getJson("/api/public/groups");
+  if (!body?.ok || !Array.isArray(body.items)) {
+    throw new Error("invalid_groups_payload");
+  }
+  return body.items;
+}
+
+export async function fetchPublicGroupBySlug(slug) {
+  const body = await getJson(
+    `/api/public/groups/${encodeURIComponent(slug)}`,
+  );
+  if (!body?.ok || !body.item) {
+    const err = new Error("not_found");
+    err.status = 404;
+    throw err;
+  }
+  return body.item;
+}
+
+/** Map Public API group summary/detail → web group shape. */
+export function mapGroup(apiGroup) {
+  if (!apiGroup?.slug) return null;
+  return {
+    slug: apiGroup.slug,
+    name: apiGroup.name,
+    shortDescription: apiGroup.shortDescription ?? null,
+    destinationLabel: apiGroup.destinationLabel ?? null,
+    durationLabel: apiGroup.durationLabel ?? null,
+    departureDate: apiGroup.departureDate ?? null,
+    returnDate: apiGroup.returnDate ?? null,
+    daysCount: apiGroup.daysCount ?? null,
+    nightsCount: apiGroup.nightsCount ?? null,
+    groupSize: apiGroup.groupSize ?? null,
+    priceFrom: apiGroup.priceFrom ?? null,
+    priceUnit: apiGroup.priceUnit ?? "PER_PERSON",
+    currency: apiGroup.currency ?? "BRL",
+    priceNote: apiGroup.priceNote ?? null,
+    coverImageUrl: apiGroup.coverImageUrl || null,
+    featured: Boolean(apiGroup.featured),
+    comingSoon: Boolean(apiGroup.comingSoon),
+    ctaLabel: apiGroup.ctaLabel ?? null,
+    highlights: Array.isArray(apiGroup.highlights) ? apiGroup.highlights : [],
+    description: apiGroup.description ?? null,
+    editorial: apiGroup.editorial ?? null,
+    gallery: Array.isArray(apiGroup.gallery) ? apiGroup.gallery : [],
+    whyGroup: Array.isArray(apiGroup.whyGroup) ? apiGroup.whyGroup : [],
+    routeStops: Array.isArray(apiGroup.routeStops) ? apiGroup.routeStops : [],
+    itinerary: Array.isArray(apiGroup.itinerary) ? apiGroup.itinerary : [],
+    investmentOptions: Array.isArray(apiGroup.investmentOptions)
+      ? apiGroup.investmentOptions
+      : [],
+    paymentMethods: Array.isArray(apiGroup.paymentMethods)
+      ? apiGroup.paymentMethods
+      : [],
+    optionals: Array.isArray(apiGroup.optionals) ? apiGroup.optionals : [],
+    includes: Array.isArray(apiGroup.includes) ? apiGroup.includes : [],
+    excludes: Array.isArray(apiGroup.excludes) ? apiGroup.excludes : [],
+    bomSaber: Array.isArray(apiGroup.bomSaber) ? apiGroup.bomSaber : [],
+    faq: Array.isArray(apiGroup.faq) ? apiGroup.faq : [],
+    leader: apiGroup.leader ?? null,
+    formFields: Array.isArray(apiGroup.formFields) ? apiGroup.formFields : [],
+    seoTitle: apiGroup.seoTitle ?? null,
+    seoDescription: apiGroup.seoDescription ?? null,
+    ctaWhatsappMessage: apiGroup.ctaWhatsappMessage ?? null,
+    publishedAt: apiGroup.publishedAt ?? null,
   };
 }
 

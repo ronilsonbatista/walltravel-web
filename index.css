@@ -676,6 +676,17 @@ a {
   box-shadow: 0 10px 25px rgba(22, 23, 15, 0.02);
 }
 
+.destino-card--no-image,
+.category-card--no-image {
+  height: auto;
+  min-height: 220px;
+}
+
+.destino-card--no-image .destino-card-content,
+.category-card--no-image .category-card-content {
+  padding-top: 1.5rem;
+}
+
 .destino-card:hover .destino-card-img {
   transform: scale(1.04);
 }
@@ -1907,7 +1918,7 @@ a {
 }
 
 /* Gallery Grid */
-.package-detail-gallery {
+.package-detail-gallery-carousel {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
@@ -2498,6 +2509,363 @@ a {
   .package-card-ctas {
     flex-direction: column;
     gap: 0.8rem;
+  }
+}
+
+/* Adjust WhatsApp float position if mobile sticky bottom bar is present */
+@media (max-width: 768px) {
+  body:has(.sticky-bottom-bar) .whatsapp-float {
+    bottom: 95px;
+  }
+}
+
+/* ==========================================================================
+   GROUP TRIPS (VIAGENS EM GRUPO)
+   ========================================================================== */
+.groups-page {
+  padding: 7rem 1.5rem 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.groups-header {
+  margin-bottom: 3rem;
+}
+
+.groups-header-desc {
+  color: var(--color-text-muted);
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+.groups-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.group-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background: var(--bg-card);
+  transition: var(--transition-smooth);
+  color: inherit;
+  text-decoration: none;
+}
+
+.group-card:hover {
+  border-color: var(--color-primary-light);
+  transform: translateY(-2px);
+}
+
+.group-card-img-wrap {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.group-card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.group-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.group-card-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.group-card-meta,
+.group-card-price {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.group-hero {
+  position: relative;
+  min-height: 52vh;
+  display: flex;
+  align-items: flex-end;
+  color: #fff;
+  overflow: hidden;
+}
+
+.group-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.group-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(22, 23, 15, 0.92) 0%,
+    rgba(22, 23, 15, 0.35) 55%,
+    rgba(22, 23, 15, 0.15) 100%
+  );
+}
+
+.group-hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 6.5rem 1.5rem 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.breadcrumb--light a {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.group-hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0.75rem 0;
+  max-width: 720px;
+}
+
+.group-hero-sub {
+  max-width: 640px;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.group-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.group-highlight-item {
+  min-width: 100px;
+}
+
+.group-highlight-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.group-highlight-label {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.group-detail-body {
+  padding: 3rem 1.5rem 5rem;
+}
+
+.group-section {
+  margin-bottom: 3rem;
+}
+
+.group-editorial {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--color-text-muted);
+  white-space: pre-line;
+}
+
+.group-why-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.group-why-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  background: var(--bg-card);
+}
+
+.group-why-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.group-route-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 2px solid var(--color-primary-light);
+}
+
+.group-route-item {
+  padding: 0 0 1.25rem 1.25rem;
+  margin-left: 0.5rem;
+}
+
+.group-route-name {
+  font-weight: 600;
+}
+
+.group-route-meta,
+.group-route-transport {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.group-itinerary-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.group-itinerary-day {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+}
+
+.group-itinerary-day summary {
+  cursor: pointer;
+  padding: 1rem 1.25rem;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.group-itinerary-day-num {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.group-itinerary-body {
+  padding: 0 1.25rem 1.25rem;
+  line-height: 1.65;
+}
+
+.group-investment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.group-investment-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  background: var(--bg-card);
+}
+
+.group-investment-price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+.group-faq-item {
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 0;
+}
+
+.group-leader-card {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.group-leader-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.group-lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 480px;
+}
+
+.group-form-field span {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.group-form-field input,
+.group-form-field textarea {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font: inherit;
+}
+
+.group-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.group-gallery-item img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.group-detail {
+  padding-bottom: 0;
+}
+
+.group-detail--teaser .group-detail-body {
+  max-width: 720px;
+}
+
+.group-specialist-link {
+  margin-top: 1.5rem;
+  display: inline-flex;
+}
+
+.group-subheading {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .groups-catalog-grid,
+  .group-why-grid,
+  .group-investment-grid,
+  .group-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .group-leader-card {
+    grid-template-columns: 1fr;
+  }
+
+  .group-detail:has(.group-sticky-bar) {
+    padding-bottom: 95px;
+  }
+
+  .group-sticky-bar .sticky-bottom-price-box {
+    flex: 1;
   }
 }
 

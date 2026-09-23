@@ -18,11 +18,33 @@ let categories = [...vitrineData.categories];
 let packages = [...vitrineData.packages];
 const detailCache = new Map();
 
+function categoryHasInventory(cat) {
+  const count = cat.packageCount ?? cat.experienceCount ?? 0;
+  return count > 0;
+}
+
+function buildLocalCategoriesFromPackages(pkgList) {
+  const counts = {};
+  for (const p of pkgList) {
+    const slug = p.categorySlug;
+    if (!slug) continue;
+    counts[slug] = (counts[slug] || 0) + 1;
+  }
+  return vitrineData.categories
+    .map((c) => ({
+      ...c,
+      packageCount: counts[c.slug] || 0,
+      experienceCount: counts[c.slug] || 0,
+      image: c.image || null,
+    }))
+    .filter(categoryHasInventory);
+}
+
 function useLocalFallback(reason) {
   source = "local";
   hydrateError = reason;
-  categories = [...vitrineData.categories];
   packages = [...vitrineData.packages];
+  categories = buildLocalCategoriesFromPackages(packages);
   trackStorefrontEvent("storefront_api_fallback", { reason });
 }
 
@@ -44,7 +66,7 @@ export async function hydrateStorefront() {
       fetchPublicCategories(),
       fetchPublicProducts(),
     ]);
-    categories = apiCats.map(mapCategory);
+    categories = apiCats.map(mapCategory).filter(categoryHasInventory);
     packages = apiProducts.map(mapProduct);
     source = "platform";
     hydrateError = null;
@@ -67,8 +89,8 @@ export function getStorefrontHydrateError() {
   return hydrateError;
 }
 
-// Categories
-export const getCategories = () => categories;
+// Categories (only populated categories)
+export const getCategories = () => categories.filter(categoryHasInventory);
 export const getFeaturedCategories = () => categories.filter((c) => c.featured);
 export const getCategoryBySlug = (slug) =>
   categories.find((c) => c.slug === slug);

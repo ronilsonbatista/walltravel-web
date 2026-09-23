@@ -1,0 +1,391 @@
+{
+  "slug": "grecia",
+  "name": "Grécia 2027",
+  "shortDescription": "Atenas, Mykonos, Santorini e Corfu em treze dias, num grupo de apenas 10 pessoas, com tudo privativo, guia em português e o líder da expedição junto do início ao fim.",
+  "description": "12 a 24 de setembro de 2027 · 13 dias · 12 noites · grupo de apenas 10 pessoas.",
+  "publishedAt": "2026-09-23T01:17:02.712Z",
+  "destinationLabel": "Atenas · Mykonos · Santorini · Corfu",
+  "durationLabel": "13 dias · 12 noites",
+  "departureDate": "2027-09-12",
+  "returnDate": "2027-09-24",
+  "daysCount": 13,
+  "nightsCount": 12,
+  "groupSize": 10,
+  "priceFrom": "31480.00",
+  "priceUnit": "PER_PERSON",
+  "currency": "BRL",
+  "priceNote": "por pessoa · à vista, ou entrada + até 10x no cartão, com juros. Cotação do euro em 19 set 2026: R$ 5,9040. O valor acompanha a cotação do dia.",
+  "coverImageUrl": "https://viagens.walltravel.com.br/grupos/images/grecia/hero-santorini.webp",
+  "highlights": [
+    {
+      "label": "10",
+      "value": "viajantes, mais o líder e o guia local"
+    },
+    {
+      "label": "4",
+      "value": "destinos, Corfu incluída"
+    },
+    {
+      "label": "12",
+      "value": "noites em hotel 4 estrelas, com café"
+    },
+    {
+      "label": "100%",
+      "value": "privativo, com guia em português"
+    }
+  ],
+  "whyGroup": [
+    {
+      "title": "Apenas 10 pessoas no grupo",
+      "description": "Dez viajantes, mais o líder da expedição e o guia local. Pequeno de verdade: ninguém vira número, e cada parada rende tempo para todo mundo."
+    },
+    {
+      "title": "Corfu, a ilha que os outros grupos pulam",
+      "description": "Três noites no Jônico: praias de água transparente, falésias verdes, o centro veneziano tombado pela UNESCO e a Ilha do Rato."
+    },
+    {
+      "title": "O líder da expedição com você o tempo todo",
+      "description": "Fundador da WallTravel, vai junto do desembarque em Atenas ao voo de volta, coordenando tudo com os guias locais."
+    },
+    {
+      "title": "Tudo privativo, guia em português",
+      "description": "Traslados, passeios e recepção só do grupo, com guia falando português do começo ao fim."
+    },
+    {
+      "title": "Ferry pelo Egeu e voos internos inclusos",
+      "description": "Pireu a Mykonos e Mykonos a Santorini de ferry; Santorini a Corfu e Corfu a Atenas de avião, com bagagem de 23 kg."
+    },
+    {
+      "title": "Quatro destinos, hotéis 4 estrelas",
+      "description": "Atenas, Mykonos, Santorini e Corfu, doze noites com café da manhã em hotel 4 estrelas, dois deles escolhidos a dedo pela WallTravel."
+    }
+  ],
+  "editorial": "A Grécia pede tempo. Por isso este roteiro não corre: duas noites em Atenas para ver a Acrópole com calma, três em Mykonos, três em Santorini, três em Corfu e uma última na capital antes de voltar. Entre uma ilha e outra, ferry pelo Egeu ou um voo curto, sempre com traslado privativo esperando.\n\nCorfu é o que quase nenhum grupo faz: a ilha do Jônico de praias de água transparente, falésias verdes e um centro histórico veneziano. E o grupo é de 10 pessoas de verdade, com hotel 4 estrelas em cada ilha, passeios privativos com guia em português e dias livres nos lugares certos.",
+  "routeStops": [
+    {
+      "name": "Atenas",
+      "nights": "2 noites",
+      "hotel": "Polis Grand Hotel (ou similar)",
+      "transportNext": "ferry até Mykonos"
+    },
+    {
+      "name": "Mykonos",
+      "nights": "3 noites",
+      "hotel": "Aeolos Resort (ou similar)",
+      "transportNext": "ferry até Santorini"
+    },
+    {
+      "name": "Santorini",
+      "nights": "3 noites",
+      "hotel": "Aegean Plaza Hotel (ou similar)",
+      "transportNext": "voo até Corfu"
+    },
+    {
+      "name": "Corfu",
+      "nights": "3 noites",
+      "hotel": "Hotel Livadi Nafsika (ou similar)",
+      "transportNext": "voo até Atenas"
+    },
+    {
+      "name": "Atenas",
+      "nights": "1 noite",
+      "hotel": "Polis Grand Hotel (ou similar)",
+      "transportNext": null
+    }
+  ],
+  "investmentOptions": [
+    {
+      "key": "duplo",
+      "title": "Quarto duplo",
+      "description": "por pessoa, dividindo com outro viajante do grupo",
+      "price": "31480.00",
+      "priceNote": "à vista, ou entrada + até 10x no cartão, com juros"
+    },
+    {
+      "key": "individual",
+      "title": "Quarto individual",
+      "description": "por pessoa, com quarto só seu em toda a viagem",
+      "price": null,
+      "priceNote": "Valor por pessoa no WhatsApp. Cotação fechada para o grupo, com parcelamento."
+    }
+  ],
+  "paymentMethods": [
+    {
+      "title": "Pix",
+      "description": "À vista, com confirmação na hora."
+    },
+    {
+      "title": "Cartão de crédito",
+      "description": "Entrada + saldo em até 10x, com juros."
+    },
+    {
+      "title": "Cartão de débito",
+      "description": "À vista."
+    }
+  ],
+  "optionals": [
+    {
+      "title": "Barco rápido entre as ilhas",
+      "description": "Troca do ferry por barco rápido nos trechos Pireu–Mykonos e Mykonos–Santorini, por trecho."
+    },
+    {
+      "title": "Catamarã em Santorini",
+      "description": "Passeio pela caldeira com refeição a bordo e traslado, no dia livre."
+    }
+  ],
+  "includes": [
+    "12 noites em hotéis 4 estrelas com café da manhã: 3 em Atenas, 3 em Mykonos, 3 em Santorini e 3 em Corfu",
+    "Recepção no aeroporto de Atenas e todos os traslados privativos entre aeroportos, portos e hotéis",
+    "Passeios panorâmicos privativos em Atenas (com a Acrópole), Mykonos, Santorini e Corfu",
+    "Ferry Pireu–Mykonos e Mykonos–Santorini",
+    "Voos internos Santorini–Atenas–Corfu e Corfu–Atenas, com bagagem de 23 kg",
+    "Guia em português em todo o roteiro",
+    "Líder da expedição WallTravel acompanhando a viagem"
+  ],
+  "excludes": [
+    "Voos internacionais Brasil–Atenas–Brasil",
+    "Almoços, jantares e bebidas",
+    "Imposto hoteleiro e taxas locais, pagos diretamente nos hotéis",
+    "Seguro viagem (obrigatório)",
+    "Entradas não mencionadas, gorjetas e despesas pessoais"
+  ],
+  "bomSaber": [
+    {
+      "title": "01",
+      "text": "Grupo fechado com 10 viajantes. A saída é confirmada quando as 10 vagas estiverem preenchidas."
+    },
+    {
+      "title": "02",
+      "text": "Brasileiros não precisam de visto para a Grécia. Passaporte com validade mínima de seis meses; se a autorização eletrônica europeia (ETIAS) estiver em vigor, a WallTravel orienta o passo a passo."
+    },
+    {
+      "title": "03",
+      "text": "Nos traslados, cabe uma mala de 23 kg e uma bagagem de mão por pessoa. Nos portos, há uma caminhada de cerca de 200 m com a mala até o ponto de encontro."
+    },
+    {
+      "title": "04",
+      "text": "Ferries dependem do mar e de possíveis greves; se um trecho for cancelado, a alternativa disponível é oferecida na hora."
+    },
+    {
+      "title": "05",
+      "text": "Tipo de cama (casal ou duas de solteiro) sujeito à disponibilidade no check-in. Check-in a partir das 15h."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Onde o grupo se encontra?",
+      "answer": "No Aeroporto Internacional de Atenas (ATH), no dia 12 de setembro. Cada pessoa chega no voo que preferir; a recepção e o traslado ao hotel estão inclusos. A programação começa no dia 13."
+    },
+    {
+      "question": "Posso ir sozinho?",
+      "answer": "Sim, e é comum. Você pode escolher quarto individual ou dividir um duplo com outra pessoa do grupo, que a gente apresenta antes da viagem."
+    },
+    {
+      "question": "O voo do Brasil está incluso?",
+      "answer": "Não. O pacote cobre tudo em terra na Grécia, mais os voos internos e os ferries. A WallTravel cota o voo internacional para o grupo e ajuda você a escolher."
+    },
+    {
+      "question": "Como funciona a alimentação?",
+      "answer": "Café da manhã incluso todos os dias. Almoços e jantares ficam livres, o que na Grécia é parte da experiência: tavernas à beira-mar, souvlaki na rua, jantar com vista em Oia."
+    },
+    {
+      "question": "Quanto tempo de ferry e de voo entre as ilhas?",
+      "answer": "Pireu a Mykonos e Mykonos a Santorini são travessias de ferry pelo Egeu, em classe econômica com assento marcado. Santorini a Corfu e Corfu a Atenas são voos curtos, com bagagem de 23 kg inclusa."
+    },
+    {
+      "question": "Quanta bagagem posso levar?",
+      "answer": "Uma mala de até 23 kg e uma bagagem de mão por pessoa. Nos portos, você carrega a própria mala por cerca de 200 m até o ponto de encontro do traslado."
+    },
+    {
+      "question": "Preciso de visto?",
+      "answer": "Brasileiros não precisam de visto para até 90 dias na Grécia. Leve o passaporte com validade mínima de seis meses e o seguro viagem, que é obrigatório."
+    },
+    {
+      "question": "Qual o tamanho do grupo?",
+      "answer": "São 10 viajantes, mais o líder da expedição WallTravel e o guia local. Esse é o tamanho certo para andar junto sem virar excursão."
+    }
+  ],
+  "leader": {
+    "name": "Wallace Maia",
+    "title": "Líder da expedição WallTravel",
+    "bio": "Sou fundador e sócio da WallTravel, apaixonado por viagens e por criar experiências que realmente façam sentido para cada pessoa. Ao longo dos anos conheci diferentes destinos pelo mundo e morei por mais de um ano na Europa, experiências que ampliaram meu olhar sobre culturas, roteiros e formas de viajar.\n\nTransformei essa paixão em profissão e hoje me dedico a planejar e acompanhar viagens especiais para os nossos clientes. A Grécia é um destino que já conheci pessoalmente e que me marcou pela história, pela cultura e pela beleza.\n\nNesta viagem, estarei com vocês como líder da expedição WallTravel, acompanhando cada etapa de perto para que todos aproveitem a experiência com tranquilidade, segurança e, principalmente, criem boas memórias.",
+    "photoUrl": "https://viagens.walltravel.com.br/grupos/images/grecia/lider.webp",
+    "note": "Os passeios são conduzidos por guias locais em português. O líder coordena tudo com eles e fica com o grupo do desembarque em Atenas ao voo de volta."
+  },
+  "ctaLabel": "Quero falar sobre a Grécia",
+  "ctaWhatsappMessage": "Olá! Quero saber mais sobre o Grupo Grécia 2027 da WallTravel.",
+  "formFields": [
+    {
+      "key": "name",
+      "label": "Nome",
+      "required": true
+    },
+    {
+      "key": "whatsapp",
+      "label": "WhatsApp",
+      "required": true
+    },
+    {
+      "key": "notes",
+      "label": "Mensagem",
+      "required": false
+    }
+  ],
+  "seoTitle": "Grupo Grécia 2027 | WallTravel",
+  "seoDescription": "Atenas, Mykonos, Santorini e Corfu em 13 dias. Grupo de 10 pessoas, tudo privativo, guia em português.",
+  "featured": true,
+  "sortOrder": 10,
+  "comingSoon": false,
+  "gallery": [
+    "https://viagens.walltravel.com.br/grupos/images/grecia/hero-santorini.webp",
+    "https://viagens.walltravel.com.br/grupos/images/grecia/atenas-acropole.webp",
+    "https://viagens.walltravel.com.br/grupos/images/grecia/mykonos-little-venice.webp",
+    "https://viagens.walltravel.com.br/grupos/images/grecia/santorini-oia.webp",
+    "https://viagens.walltravel.com.br/grupos/images/grecia/santorini-domes.webp",
+    "https://viagens.walltravel.com.br/grupos/images/grecia/corfu.webp",
+    "https://viagens.walltravel.com.br/grupos/images/grecia/mykonos-chora.webp"
+  ],
+  "itinerary": [
+    {
+      "day": 1,
+      "dateLabel": "12 set",
+      "title": "Bem-vindos à Grécia",
+      "location": "Atenas",
+      "description": "Recepção no aeroporto com assistência local e traslado privativo ao hotel. Check-in a partir das 15h e o resto do dia livre para descansar ou dar a primeira volta pelo centro.",
+      "highlights": [],
+      "overnight": "Noite em Atenas"
+    },
+    {
+      "day": 2,
+      "dateLabel": "13 set",
+      "title": "Atenas e a Acrópole",
+      "location": "Atenas",
+      "description": "Passeio panorâmico privativo pelos marcos da capital: Parlamento, Universidade, Biblioteca Nacional, Academia, Palácio Ilion, Templo de Zeus Olímpico, Arco de Adriano e Estádio Panatenaico. Depois, a Acrópole, um dos sítios arqueológicos mais importantes do mundo.",
+      "highlights": [
+        "Acrópole",
+        "Templo de Zeus",
+        "Estádio Panatenaico"
+      ],
+      "overnight": "Noite em Atenas"
+    },
+    {
+      "day": 3,
+      "dateLabel": "14 set",
+      "title": "Ferry para Mykonos",
+      "location": "Atenas → Mykonos",
+      "description": "Traslado privativo ao porto de Pireu e travessia de ferry pelo Egeu até Mykonos. Chegada, traslado ao hotel e tempo livre.",
+      "highlights": [
+        "Porto de Pireu",
+        "Travessia pelo Egeu"
+      ],
+      "overnight": "Noite em Mykonos"
+    },
+    {
+      "day": 4,
+      "dateLabel": "15 set",
+      "title": "A volta em Mykonos",
+      "location": "Mykonos",
+      "description": "Passeio privativo pelas praias e pelo interior da ilha, com a vila de Ano Mera e a Praia de Kalafatis. De volta à cidade, caminhada pelas ruas estreitas até os Moinhos de Vento e o bairro de Little Venice, com tentativa de encontrar Petros, o pelicano.",
+      "highlights": [
+        "Ano Mera",
+        "Kalafatis",
+        "Moinhos de Vento",
+        "Little Venice"
+      ],
+      "overnight": "Noite em Mykonos"
+    },
+    {
+      "day": 5,
+      "dateLabel": "16 set",
+      "title": "Mykonos no seu ritmo",
+      "location": "Mykonos",
+      "description": "Dia livre. Praia, beach club, passeio de barco a Delos ou só andar sem plano pelas ruas brancas.",
+      "highlights": [],
+      "overnight": "Noite em Mykonos"
+    },
+    {
+      "day": 6,
+      "dateLabel": "17 set",
+      "title": "Ferry para Santorini",
+      "location": "Mykonos → Santorini",
+      "description": "Traslado ao porto e ferry até Santorini, o cartão-postal mais famoso da Grécia. Chegada, traslado ao hotel e tempo livre para o primeiro pôr do sol.",
+      "highlights": [],
+      "overnight": "Noite em Santorini"
+    },
+    {
+      "day": 7,
+      "dateLabel": "18 set",
+      "title": "Profeta Elias, Perissa e Oia",
+      "location": "Santorini",
+      "description": "Passeio privativo começando pelo Monte Profeta Elias, o ponto mais alto da ilha, com a caldeira inteira aos pés. Depois a praia de areia preta de Perissa e, para fechar, a vila de Oia: ruas estreitas, casas caiadas, galerias e o pôr do sol mais fotografado do Mediterrâneo.",
+      "highlights": [
+        "Monte Profeta Elias",
+        "Praia de Perissa",
+        "Oia"
+      ],
+      "overnight": "Noite em Santorini"
+    },
+    {
+      "day": 8,
+      "dateLabel": "19 set",
+      "title": "Santorini no seu ritmo",
+      "location": "Santorini",
+      "description": "Dia livre. Sugestão da WallTravel: passeio de catamarã pela caldeira com refeição a bordo (opcional).",
+      "highlights": [],
+      "overnight": "Noite em Santorini"
+    },
+    {
+      "day": 9,
+      "dateLabel": "20 set",
+      "title": "Voo para Corfu",
+      "location": "Santorini → Corfu",
+      "description": "Traslado ao aeroporto e voo para Corfu, com conexão em Atenas. Recepção, traslado ao hotel e tempo livre na ilha do Mar Jônico.",
+      "highlights": [],
+      "overnight": "Noite em Corfu"
+    },
+    {
+      "day": 10,
+      "dateLabel": "21 set",
+      "title": "Achilleion e a Corfu veneziana",
+      "location": "Corfu",
+      "description": "Visita aos jardins do Palácio de Achilleion, construído para a imperatriz Sissi, com vista para o Jônico. Parada para fotos no Mosteiro de Vlacherna e na Ilha do Rato, e passeio guiado pelo centro histórico, patrimônio da UNESCO: Fortaleza Velha, Praça Liston e Igreja de São Spyridon.",
+      "highlights": [
+        "Achilleion",
+        "Ilha do Rato",
+        "Praça Liston"
+      ],
+      "overnight": "Noite em Corfu"
+    },
+    {
+      "day": 11,
+      "dateLabel": "22 set",
+      "title": "Corfu no seu ritmo",
+      "location": "Corfu",
+      "description": "Dia livre para as praias que fazem a fama da ilha: a baía de Paleokastritsa, o Canal d'Amour em Sidari ou a praia dupla de Porto Timoni. Ou um almoço longo no centro veneziano.",
+      "highlights": [
+        "Paleokastritsa",
+        "Canal d'Amour",
+        "Porto Timoni"
+      ],
+      "overnight": "Noite em Corfu"
+    },
+    {
+      "day": 12,
+      "dateLabel": "23 set",
+      "title": "De volta a Atenas",
+      "location": "Corfu → Atenas",
+      "description": "Voo para Atenas, recepção e traslado ao hotel. Tarde livre para as últimas compras, um café em Plaka ou um museu que ficou faltando.",
+      "highlights": [],
+      "overnight": "Noite em Atenas"
+    },
+    {
+      "day": 13,
+      "dateLabel": "24 set",
+      "title": "Até a próxima",
+      "location": "Atenas",
+      "description": "Café da manhã e traslado privativo ao aeroporto para o voo de volta. Fim dos serviços em terra.",
+      "highlights": [],
+      "overnight": null
+    }
+  ]
+}

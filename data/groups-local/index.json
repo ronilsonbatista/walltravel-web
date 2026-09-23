@@ -1,0 +1,61 @@
+[
+  {
+    "slug": "grecia",
+    "name": "Grécia 2027",
+    "shortDescription": "Atenas, Mykonos, Santorini e Corfu em treze dias, num grupo de apenas 10 pessoas, com tudo privativo, guia em português e o líder da expedição junto do início ao fim.",
+    "destinationLabel": "Atenas · Mykonos · Santorini · Corfu",
+    "durationLabel": "13 dias · 12 noites",
+    "departureDate": "2027-09-12",
+    "returnDate": "2027-09-24",
+    "daysCount": 13,
+    "nightsCount": 12,
+    "groupSize": 10,
+    "priceFrom": "31480.00",
+    "priceUnit": "PER_PERSON",
+    "currency": "BRL",
+    "priceNote": "por pessoa · à vista, ou entrada + até 10x no cartão, com juros. Cotação do euro em 19 set 2026: R$ 5,9040. O valor acompanha a cotação do dia.",
+    "coverImageUrl": "https://viagens.walltravel.com.br/grupos/images/grecia/hero-santorini.webp",
+    "featured": true,
+    "comingSoon": false,
+    "ctaLabel": "Quero falar sobre a Grécia",
+    "highlights": [
+      {
+        "label": "10",
+        "value": "viajantes, mais o líder e o guia local"
+      },
+      {
+        "label": "4",
+        "value": "destinos, Corfu incluída"
+      },
+      {
+        "label": "12",
+        "value": "noites em hotel 4 estrelas, com café"
+      },
+      {
+        "label": "100%",
+        "value": "privativo, com guia em português"
+      }
+    ]
+  },
+  {
+    "slug": "turquia",
+    "name": "Turquia",
+    "shortDescription": "Capadócia e Istambul em uma viagem em grupo WallTravel. Em breve — deixe seu WhatsApp para ser avisado.",
+    "destinationLabel": "Capadócia · Istambul",
+    "durationLabel": null,
+    "departureDate": null,
+    "returnDate": null,
+    "daysCount": null,
+    "nightsCount": null,
+    "groupSize": null,
+    "priceFrom": null,
+    "priceUnit": "PER_PERSON",
+    "currency": "BRL",
+    "priceNote": null,
+    "coverImageUrl": "https://viagens.walltravel.com.br/grupos/images/turquia/turquia-cappadocia.jpg",
+    "featured": true,
+    "comingSoon": true,
+    "ctaLabel": "Quero ser avisado",
+    "highlights": []
+  }
+]

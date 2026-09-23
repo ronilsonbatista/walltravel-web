@@ -3,12 +3,26 @@ import {
   getCategories, 
   getCategoryBySlug, 
   getPackagesByCategory, 
-  getHoneymoonSection,
   hydrateStorefront,
   getStorefrontSource,
   getStorefrontHydrateError,
   resolvePackageBySlug,
 } from './data/helpers.js';
+import {
+  hydrateGroups,
+  getGroups,
+  resolveGroupBySlug,
+} from './data/groups-helpers.js';
+import {
+  renderDestinoCard,
+  renderVitrineCategoryCard,
+  renderCategoryHeroImage,
+} from './data/storefront-render.js';
+import {
+  renderGroupsCatalog,
+  renderGroupDetailPage,
+  bindGroupForms,
+} from './data/group-render.js';
 import {
   trackStorefrontEvent,
   bindWhatsappTracking,
@@ -25,8 +39,44 @@ document.addEventListener('DOMContentLoaded', async () => {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
 
-  await hydrateStorefront();
+  await Promise.all([hydrateStorefront(), hydrateGroups()]);
   bindWhatsappTracking(document);
+
+  const renderHomeDestinosGrid = () => {
+    const grid = document.getElementById('destinos-grid');
+    if (!grid) return;
+    const categories = getCategories();
+    if (!categories.length) {
+      grid.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);grid-column:1/-1;">Novas categorias em breve. Enquanto isso, explore a <a href="/vitrine">vitrine completa</a>.</p>`;
+      return;
+    }
+    grid.innerHTML = categories
+      .map((cat) =>
+        renderDestinoCard(cat, esc, { href: `/vitrine/${cat.slug}` }),
+      )
+      .join('');
+  };
+
+  const updateFooterDestinosLinks = () => {
+    const list = document.getElementById('footer-destinos-links');
+    if (!list) return;
+    const categories = getCategories();
+    const dynamic = categories
+      .slice(0, 5)
+      .map(
+        (cat) =>
+          `<li><a href="/vitrine/${esc(cat.slug)}">${esc(cat.name)}</a></li>`,
+      )
+      .join('');
+    list.innerHTML = `
+      ${dynamic}
+      <li><a href="/vitrine">Vitrine completa</a></li>
+      <li><a href="/grupos">Viagens em grupo</a></li>
+    `;
+  };
+
+  renderHomeDestinosGrid();
+  updateFooterDestinosLinks();
 
   if (getStorefrontSource() === "local" && getStorefrontHydrateError()) {
     const banner = document.createElement("div");
@@ -325,12 +375,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const vitrineView = document.getElementById('vitrine-view');
   const categoryView = document.getElementById('category-view');
   const packageView = document.getElementById('package-view');
+  const groupsView = document.getElementById('groups-view');
 
   const hideAllViews = () => {
     homeView.style.display = 'none';
     vitrineView.style.display = 'none';
     categoryView.style.display = 'none';
     packageView.style.display = 'none';
+    if (groupsView) groupsView.style.display = 'none';
     
     // Clean up any sticky bottom bar that might be active
     const oldSticky = document.querySelector('.sticky-bottom-bar');
@@ -368,6 +420,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         let packageSlug = path.substring(prefix.length);
         if (packageSlug.endsWith('/')) packageSlug = packageSlug.slice(0, -1);
         await renderPackage(packageSlug);
+      } else if (path === '/grupos' || path === '/grupos/') {
+        groupsView.style.display = 'block';
+        renderGroupsList();
+      } else if (path.startsWith('/grupos/')) {
+        groupsView.style.display = 'block';
+        let groupSlug = path.substring('/grupos/'.length);
+        if (groupSlug.endsWith('/')) groupSlug = groupSlug.slice(0, -1);
+        await renderGroupPage(groupSlug);
       } else {
         // Fallback
         homeView.style.display = 'block';
@@ -407,7 +467,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
         }
         
-        if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens')) {
+        if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens') || path.startsWith('/grupos')) {
           e.preventDefault();
           window.history.pushState(null, '', path + hash);
           handleRouting();
@@ -461,21 +521,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
       
       <div class="vitrine-grid">
-        ${categories.map(cat => `
-          <a href="/vitrine/${esc(cat.slug)}" class="category-card">
-            <div class="category-card-img-wrapper">
-              <img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="category-card-img" loading="lazy" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
-            </div>
-            <div class="category-card-content">
-              <div>
-                <span class="category-card-meta">${cat.packageCount || 0} ${cat.packageCount === 1 ? 'experiência' : 'experiências'}</span>
-                <h3 class="category-card-title">${esc(cat.name)}</h3>
-                <p class="category-card-desc">${esc(cat.description)}</p>
-              </div>
-              <span class="category-card-cta">Ver experiências <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21 12l-8.15-8.15-1.42 1.42 5.43 5.43H5v2z"/></svg></span>
-            </div>
-          </a>
-        `).join('')}
+        ${categories.map((cat) => renderVitrineCategoryCard(cat, esc)).join('')}
       </div>
     `;
   };
@@ -519,7 +565,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </a>
           </div>
           <div class="category-hero-right">
-            <img src="${esc(category.image)}" alt="${esc(category.name)}" class="category-hero-img" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
+            ${renderCategoryHeroImage(category, esc)}
           </div>
         </div>
       </section>
@@ -863,6 +909,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     adjustSidebarVisibility();
     window.addEventListener('resize', adjustSidebarVisibility);
+  };
+
+  const renderGroupsList = () => {
+    const groups = getGroups();
+    updateSEO(
+      "Viagens em grupo",
+      "Expedições em grupo pequeno com curadoria WallTravel — Grécia, Turquia e próximos destinos.",
+    );
+    groupsView.innerHTML = renderGroupsCatalog(groups, esc);
+    bindGroupForms(groupsView, WA);
+  };
+
+  const renderGroupPage = async (slug) => {
+    const group = await resolveGroupBySlug(slug);
+    if (!group) {
+      renderEmptyState(
+        groupsView,
+        "Grupo não encontrado",
+        "Este grupo não está disponível no momento.",
+      );
+      return;
+    }
+
+    const seoTitle = group.seoTitle || group.name;
+    const seoDesc =
+      group.seoDescription ||
+      group.shortDescription ||
+      `Viagem em grupo WallTravel — ${group.name}.`;
+    updateSEO(seoTitle, seoDesc, group.coverImageUrl);
+
+    groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);
+    bindGroupForms(groupsView, WA);
   };
 
   // Helper to render beautiful error/empty views
