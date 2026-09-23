@@ -518,6 +518,61 @@ export function bindGroupExperience(root) {
     initScrollProgress(root),
     initSubnavSpy(root),
   ];
+
+  // Analytics hooks (Phase 14) — soft dependency
+  root.addEventListener(
+    "click",
+    (e) => {
+      const dayBtn = e.target.closest?.("[data-itinerary-day-btn]");
+      if (dayBtn) {
+        try {
+          import("./storefront-events.js").then((m) =>
+            m.trackGroupInteraction?.("itinerary", {
+              day: dayBtn.getAttribute("data-itinerary-day-btn"),
+            }),
+          );
+        } catch {
+          /* ignore */
+        }
+      }
+      const journey = e.target.closest?.("[data-journey-node]");
+      if (journey) {
+        try {
+          import("./storefront-events.js").then((m) =>
+            m.trackGroupInteraction?.("journey", {
+              stop: journey.getAttribute("data-journey-node"),
+            }),
+          );
+        } catch {
+          /* ignore */
+        }
+      }
+      const gallery = e.target.closest?.("[data-lightbox-src]");
+      if (gallery) {
+        try {
+          import("./storefront-events.js").then((m) =>
+            m.trackGroupInteraction?.("gallery", {}),
+          );
+        } catch {
+          /* ignore */
+        }
+      }
+      const specialist = e.target.closest?.(".group-specialist-link, [data-specialist-cta]");
+      if (specialist) {
+        try {
+          import("./storefront-events.js").then((m) =>
+            m.trackStorefrontEvent?.("specialist_cta", {
+              path: window.location.pathname,
+            }),
+          );
+        } catch {
+          /* ignore */
+        }
+      }
+    },
+    true,
+  );
+
   return () => cleanups.forEach((fn) => fn && fn());
 }
 

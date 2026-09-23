@@ -27,6 +27,7 @@ import { bindGroupExperience } from './data/group-motion.js';
 import {
   trackStorefrontEvent,
   bindWhatsappTracking,
+  bindAnalyticsPageHooks,
 } from './data/storefront-events.js';
 import { getWhatsappNumber } from './data/platform-api.js';
 
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await Promise.all([hydrateStorefront(), hydrateGroups()]);
   bindWhatsappTracking(document);
+  bindAnalyticsPageHooks(document);
 
   const renderHomeDestinosGrid = () => {
     const grid = document.getElementById('destinos-grid');
@@ -980,6 +982,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);
     bindGroupForms(groupsView, WA);
     groupExperienceCleanup = bindGroupExperience(groupsView);
+    trackStorefrontEvent("group_view", { groupSlug: group.slug, slug: group.slug });
+    trackStorefrontEvent("viagem_view", { slug: group.slug });
     handleHeaderScroll();
   };
 
