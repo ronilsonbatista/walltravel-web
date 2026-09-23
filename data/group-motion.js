@@ -4,7 +4,8 @@
  */
 
 const REVEAL_MS = 450;
-const CAROUSEL_MS = 7000;
+/** Match Home hero autoplay cadence (progress-bar fill duration). */
+const CAROUSEL_MS = 6000;
 
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -30,40 +31,46 @@ export function initGroupHeroCarousel(root) {
 
   let index = 0;
   let timer = null;
-  let progressRaf = null;
-  let startedAt = 0;
   let paused = false;
+  let resumeTimer = null;
   const reduced = prefersReducedMotion();
   const counter = track.querySelector("[data-hero-counter]");
-  const progress = track.querySelector("[data-hero-progress] span");
-  const thumbs = track.querySelectorAll("[data-hero-dot]");
+  const progressTracks = Array.from(track.querySelectorAll("[data-hero-dot]"));
   const total = slides.length;
+
+  const activeFill = () =>
+    track.querySelector(".group-hero-progress-track.is-active .group-hero-progress-fill");
 
   const syncChrome = () => {
     if (counter) counter.textContent = `${pad2(index + 1)} / ${pad2(total)}`;
-    thumbs.forEach((t, i) => t.classList.toggle("is-active", i === index));
+    progressTracks.forEach((t, i) => {
+      const on = i === index;
+      t.classList.toggle("is-active", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+    });
   };
 
-  const stopProgress = () => {
-    if (progressRaf) cancelAnimationFrame(progressRaf);
-    progressRaf = null;
-  };
-
-  const tickProgress = () => {
-    if (!progress || paused || reduced) return;
-    const elapsed = performance.now() - startedAt;
-    const pct = Math.min(1, elapsed / CAROUSEL_MS);
-    progress.style.transform = `scaleX(${pct})`;
-    if (pct < 1) progressRaf = requestAnimationFrame(tickProgress);
+  /** Restart CSS width transition on the active progress fill (Home primitive). */
+  const restartProgressFill = () => {
+    const fill = activeFill();
+    if (!fill) return;
+    fill.style.transition = "none";
+    fill.style.width = "0%";
+    // Force reflow so the next transition always starts from 0.
+    void fill.offsetWidth;
+    if (reduced || paused) {
+      fill.style.width = "0%";
+      return;
+    }
+    fill.style.transition = `width ${CAROUSEL_MS}ms linear`;
+    fill.style.width = "100%";
   };
 
   const armTimer = () => {
     if (timer) clearInterval(timer);
-    stopProgress();
+    timer = null;
     if (reduced || paused) return;
-    startedAt = performance.now();
-    if (progress) progress.style.transform = "scaleX(0)";
-    progressRaf = requestAnimationFrame(tickProgress);
+    restartProgressFill();
     timer = window.setInterval(() => show(index + 1), CAROUSEL_MS);
   };
 
@@ -83,7 +90,14 @@ export function initGroupHeroCarousel(root) {
     paused = true;
     if (timer) clearInterval(timer);
     timer = null;
-    stopProgress();
+    const fill = activeFill();
+    if (fill) fill.style.animationPlayState = "paused";
+    // Freeze width mid-transition
+    if (fill) {
+      const computed = getComputedStyle(fill).width;
+      fill.style.transition = "none";
+      fill.style.width = computed;
+    }
   };
 
   const resume = () => {
@@ -93,16 +107,17 @@ export function initGroupHeroCarousel(root) {
   };
 
   const onInteract = (next) => {
+    if (resumeTimer) clearTimeout(resumeTimer);
     pause();
     show(next);
-    // Brief pause then resume autoplay
-    window.setTimeout(resume, 1200);
+    // Reset progress + brief pause, then resume autoplay
+    resumeTimer = window.setTimeout(resume, 1200);
   };
 
   track.querySelector("[data-hero-prev]")?.addEventListener("click", () => onInteract(index - 1));
   track.querySelector("[data-hero-next]")?.addEventListener("click", () => onInteract(index + 1));
 
-  thumbs.forEach((dot) => {
+  progressTracks.forEach((dot) => {
     dot.addEventListener("click", () => {
       const i = Number(dot.getAttribute("data-hero-dot"));
       if (!Number.isFinite(i)) return;
@@ -149,7 +164,7 @@ export function initGroupHeroCarousel(root) {
 
   return () => {
     if (timer) clearInterval(timer);
-    stopProgress();
+    if (resumeTimer) clearTimeout(resumeTimer);
     document.removeEventListener("keydown", onKey);
     track.removeEventListener("touchstart", onTouchStart);
     track.removeEventListener("touchend", onTouchEnd);

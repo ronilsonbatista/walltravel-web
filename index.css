@@ -2524,6 +2524,13 @@ a {
    Campaign rhythm: full-bleed hero · dark/light bands · map · cinematic gallery
    Motion: reveal ~450ms · hover ~220ms · slow carousel · discreet parallax
    ========================================================================== */
+
+/* Full-bleed under shared header: kill .page-view off-white padding gap */
+#groups-view.page-view:has([data-group-over-hero]) {
+  padding-top: 0;
+  background-color: #16170f;
+}
+
 .groups-page {
   padding: 0 0 4rem;
   max-width: none;
@@ -2742,7 +2749,7 @@ a {
 .group-hero-content {
   position: relative;
   z-index: 3;
-  padding: 7rem 1.5rem 4.5rem;
+  padding: 7rem 1.5rem 5.75rem;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -2775,104 +2782,119 @@ a {
   padding: 0.25rem 0.65rem;
 }
 
-.group-hero-chrome {
+/* Home-matching progress bars + discreet desktop arrows */
+.group-hero-nav-arrows {
   position: absolute;
+  top: 50%;
   left: 0;
   right: 0;
-  bottom: 0;
-  z-index: 4;
-  padding: 0 1.5rem 1.25rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1.5rem;
   pointer-events: none;
+}
+
+.group-hero-arrow-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(22, 23, 15, 0.3);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: var(--transition-smooth);
+  pointer-events: auto;
+  padding: 0;
+}
+
+.group-hero:hover .group-hero-arrow-btn {
+  opacity: 0.6;
+  transform: scale(1);
+}
+
+.group-hero-arrow-btn:hover,
+.group-hero-arrow-btn:focus-visible {
+  opacity: 1 !important;
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  color: var(--color-accent);
+}
+
+.group-hero-arrow-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.group-hero-chrome {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.25rem));
+  z-index: 5;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1.5rem;
+  pointer-events: none;
+  box-sizing: border-box;
 }
 
 .group-hero-chrome > * {
   pointer-events: auto;
 }
 
-.group-hero-progress {
-  height: 2px;
-  background: rgba(255, 255, 255, 0.2);
-  margin-bottom: 0.85rem;
-  overflow: hidden;
-}
-
-.group-hero-progress span {
-  display: block;
-  height: 100%;
-  width: 100%;
-  background: #f0e6c8;
-  transform-origin: left center;
-  transform: scaleX(0);
-  will-change: transform;
-}
-
-.group-hero-controls {
+.group-hero-progress-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.group-hero-nav {
-  width: 2.25rem;
-  height: 2.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(22, 23, 15, 0.35);
-  color: #fff;
-  font-size: 1.35rem;
-  line-height: 1;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 220ms ease, background 220ms ease;
-}
-
-.group-hero:hover .group-hero-nav,
-.group-hero-nav:focus-visible {
-  opacity: 1;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .group-hero-counter {
   font-family: var(--font-body);
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  flex-shrink: 0;
 }
 
-.group-hero-thumbs {
+.group-hero-progress-nav {
   display: flex;
-  gap: 0.4rem;
-  overflow-x: auto;
-  scrollbar-width: none;
+  gap: 6px;
+  flex: 1;
+  max-width: 320px;
 }
 
-.group-hero-thumbs::-webkit-scrollbar { display: none; }
-
-.group-hero-thumb {
-  flex: 0 0 auto;
-  width: 52px;
-  height: 36px;
-  padding: 0;
-  border: 1px solid transparent;
-  background: transparent;
+.group-hero-progress-track {
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.3);
+  flex: 1;
   cursor: pointer;
-  opacity: 0.55;
+  position: relative;
   overflow: hidden;
-  transition: opacity 220ms ease, border-color 220ms ease;
+  padding: 0;
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.group-hero-thumb.is-active,
-.group-hero-thumb:hover {
-  opacity: 1;
-  border-color: rgba(240, 230, 200, 0.7);
-}
-
-.group-hero-thumb img {
-  width: 100%;
+.group-hero-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
-  object-fit: cover;
-  display: block;
+  width: 0;
+  background-color: var(--color-primary-light);
+  pointer-events: none;
 }
 
 .group-highlights {
@@ -3929,15 +3951,29 @@ a {
   }
 
   .group-hero-content {
-    padding: 5.5rem 1.25rem 5.5rem;
+    padding: 5.5rem 1.25rem 6.5rem;
   }
 
-  .group-hero-nav {
-    opacity: 1;
+  .group-hero-nav-arrows {
+    display: none; /* swipe + progress bars on mobile, like Home */
   }
 
-  .group-hero-thumbs {
-    display: none;
+  .group-hero-chrome {
+    left: 1.25rem;
+    right: 1.25rem;
+    transform: none;
+    width: auto;
+    max-width: none;
+    padding: 0;
+    bottom: max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem));
+  }
+
+  .group-hero-progress-wrapper {
+    gap: 1rem;
+  }
+
+  .group-hero-progress-nav {
+    max-width: none;
   }
 
   .group-why-card--visual {
@@ -4045,7 +4081,7 @@ a {
 }
 
 @media (hover: none) {
-  .group-hero-nav { opacity: 1; }
+  .group-hero-arrow-btn { opacity: 0.55; transform: scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {

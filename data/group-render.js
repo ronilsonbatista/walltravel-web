@@ -682,9 +682,6 @@ function renderHeroCarouselV2(group, esc, slides) {
     return `<div class="group-hero-fallback"></div>`;
   }
   const total = slides.length;
-  const endLabel = padIndex(total - 1, total);
-  // Show total as count of slides: 01 / 06 style (1-indexed total)
-  const totalLabel = padIndex(total - 1, total);
   const totalDisplay = String(total).padStart(2, "0");
 
   return `
@@ -700,22 +697,27 @@ function renderHeroCarouselV2(group, esc, slides) {
       ${
         total > 1
           ? `
+        <div class="group-hero-nav-arrows" aria-hidden="false">
+          <button type="button" class="group-hero-arrow-btn" data-hero-prev aria-label="Foto anterior">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.58L10.83 12l4.58-4.58L14 6l-6 6 6 6 1.41-1.42z"/></svg>
+          </button>
+          <button type="button" class="group-hero-arrow-btn" data-hero-next aria-label="Próxima foto">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+          </button>
+        </div>
         <div class="group-hero-chrome">
-          <div class="group-hero-progress" data-hero-progress aria-hidden="true"><span></span></div>
-          <div class="group-hero-controls">
-            <button type="button" class="group-hero-nav group-hero-nav--prev" data-hero-prev aria-label="Foto anterior">‹</button>
+          <div class="group-hero-progress-wrapper">
             <span class="group-hero-counter" data-hero-counter>01 / ${totalDisplay}</span>
-            <button type="button" class="group-hero-nav group-hero-nav--next" data-hero-next aria-label="Próxima foto">›</button>
-          </div>
-          <div class="group-hero-thumbs" data-hero-thumbs role="tablist" aria-label="Prévia das fotos">
-            ${slides
-              .map(
-                (src, i) => `
-              <button type="button" class="group-hero-thumb ${i === 0 ? "is-active" : ""}" data-hero-dot="${i}" aria-label="Foto ${i + 1}">
-                <img src="${esc(src)}" alt="" loading="lazy">
-              </button>`,
-              )
-              .join("")}
+            <div class="group-hero-progress-nav" data-hero-progress-nav role="tablist" aria-label="Fotos do hero">
+              ${slides
+                .map(
+                  (_src, i) => `
+                <button type="button" class="group-hero-progress-track ${i === 0 ? "is-active" : ""}" data-hero-dot="${i}" role="tab" aria-label="Foto ${i + 1}" aria-selected="${i === 0 ? "true" : "false"}">
+                  <span class="group-hero-progress-fill"></span>
+                </button>`,
+                )
+                .join("")}
+            </div>
           </div>
         </div>`
           : ""
