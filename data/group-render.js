@@ -530,6 +530,25 @@ export function renderIncludesExcludes(group, esc) {
   </section>`;
 }
 
+/** Shared hero carousel — used by Groups and Experience (/viagens) landings. */
+export function renderTravelHeroCarousel(slides, esc) {
+  return renderHeroCarouselV2({ name: "" }, esc, slides);
+}
+
+export function renderTravelHighlights(highlights, esc) {
+  return renderHighlights({ highlights }, esc);
+}
+
+export function renderTravelSubnav(sections) {
+  return renderSubnav(sections);
+}
+
+export function renderTravelGallery(gallery, name, esc) {
+  return renderGalleryCinematic({ gallery, name }, esc);
+}
+
+export { formatMoney, waLink, renderHeroCarouselV2 };
+
 export function renderBomSaber(group, esc) {
   if (!group.bomSaber?.length) return "";
   return `<section class="group-section" data-reveal>
@@ -854,4 +873,3 @@ export function bindGroupForms(root, WA) {
   });
 }
 
-export { formatMoney, waLink };
