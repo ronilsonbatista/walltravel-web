@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
   <title>WallTravel — Experiências Incríveis</title>
   <meta name="description" content="WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem.">
@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="/index.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Ir para o conteúdo</a>
 
   <!-- ==========================================================================
        HEADER / NAVIGATION
@@ -36,13 +37,13 @@
         <img src="/assets/01_logos/01_vetor/02_logotipo/Verde escuro.svg" alt="WallTravel Logo" class="logo-svg">
       </a>
       
-      <button class="menu-btn" id="menu-toggle" aria-label="Abrir Menu">
+      <button class="menu-btn" id="menu-toggle" type="button" aria-label="Abrir menu" aria-controls="nav-menu" aria-expanded="false">
         <span class="menu-btn-bar"></span>
         <span class="menu-btn-bar"></span>
         <span class="menu-btn-bar"></span>
       </button>
 
-      <nav class="nav-menu" id="nav-menu">
+      <nav class="nav-menu" id="nav-menu" aria-label="Principal">
         <ul class="nav-menu" style="position: static; background: none; border: none; height: auto; padding: 0; width: auto; flex-direction: row;">
           <li><a href="/#destinos-experiencias" class="nav-link">Destinos</a></li>
           <li><a href="/grupos" class="nav-link">Viagens em grupo</a></li>
@@ -54,6 +55,7 @@
     </div>
   </header>
 
+  <div id="main-content" tabindex="-1">
   <div id="home-view">
 
   <!-- ==========================================================================
@@ -522,6 +524,7 @@
   <div id="category-view" class="page-view" style="display: none;"></div>
   <div id="package-view" class="page-view" style="display: none;"></div>
   <div id="groups-view" class="page-view" style="display: none;"></div>
+  </div> <!-- Fim de #main-content -->
 
   <!-- ==========================================================================
        FOOTER

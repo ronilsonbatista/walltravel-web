@@ -1,6 +1,26 @@
 /* Custom Web Font Imports */
 @import url('https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Rubik:ital,wght@0,300..700;1,300..700&display=swap');
 
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: 10000;
+  padding: 0.65rem 1rem;
+  background: #191909;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transform: translateY(-160%);
+  transition: transform 160ms ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #B8A66A;
+  outline-offset: 2px;
+}
+
 /* Local Fallback Fonts */
 @font-face {
   font-family: 'Faculty Glyphic Local';
@@ -272,8 +292,15 @@ a {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.4rem;
+  padding: 0;
   z-index: 1100;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .menu-btn-bar {
@@ -1333,7 +1360,7 @@ a {
 /* Small Tablet & Mobile Screens (max-width: 768px) */
 @media (max-width: 768px) {
   .menu-btn {
-    display: block;
+    display: inline-flex;
   }
 
   .nav-menu {
@@ -2312,6 +2339,7 @@ a {
   border: 1px solid var(--border-color);
   color: var(--color-text-muted);
   padding: 0.45rem 1.15rem;
+  min-height: 44px;
   border-radius: 30px;
   cursor: pointer;
   transition: var(--transition-smooth);
@@ -2448,12 +2476,14 @@ a {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 78px;
+    min-height: 78px;
+    height: auto;
     background-color: rgba(255, 253, 247, 0.96);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-top: 1px solid var(--border-color);
     padding: 0.8rem 1.25rem;
+    padding-bottom: max(0.8rem, env(safe-area-inset-bottom, 0px));
     align-items: center;
     justify-content: space-between;
     z-index: 999;
@@ -2481,6 +2511,7 @@ a {
   
   .sticky-bottom-btn {
     padding: 0.7rem 1.3rem;
+    min-height: 44px;
     font-size: 0.8rem;
     font-weight: 600;
     background-color: #25d366;
@@ -2490,6 +2521,7 @@ a {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.4rem;
     transition: var(--transition-smooth);
   }
@@ -2501,7 +2533,7 @@ a {
   }
 
   .package-detail {
-    padding-bottom: 95px;
+    padding-bottom: calc(95px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -2515,7 +2547,7 @@ a {
 /* Adjust WhatsApp float position if mobile sticky bottom bar is present */
 @media (max-width: 768px) {
   body:has(.sticky-bottom-bar) .whatsapp-float {
-    bottom: 95px;
+    bottom: calc(95px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -3539,14 +3571,19 @@ a {
 }
 
 .group-itinerary-nav-btn {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border: 1px solid var(--border-color);
   background: transparent;
   cursor: pointer;
   font-size: 1.35rem;
   line-height: 1;
   color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .group-itinerary-stage-meter {
@@ -4087,6 +4124,7 @@ a {
   .group-itinerary-day-btn {
     grid-template-columns: 1fr;
     min-width: 4.5rem;
+    min-height: 44px;
     border-left: 0;
     border-bottom: 2px solid transparent;
     text-align: center;
@@ -4120,7 +4158,7 @@ a {
   }
 
   .group-detail:has(.group-sticky-bar) {
-    padding-bottom: 95px;
+    padding-bottom: calc(95px + env(safe-area-inset-bottom, 0px));
   }
 
   .group-sticky-bar .sticky-bottom-price-box {

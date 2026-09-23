@@ -207,10 +207,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const navMenu = document.querySelector('.nav-menu');
   const navLinks = navMenu ? navMenu.querySelectorAll('a') : [];
 
+  const setMobileMenuOpen = (open) => {
+    if (!menuBtn || !navMenu) return;
+    menuBtn.classList.toggle('active', open);
+    navMenu.classList.toggle('active', open);
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+
   const toggleMobileMenu = () => {
-    menuBtn.classList.toggle('active');
-    navMenu.classList.toggle('active');
-    document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+    setMobileMenuOpen(!navMenu.classList.contains('active'));
   };
 
   if (menuBtn && navMenu) {
@@ -244,7 +251,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         if (navMenu.classList.contains('active')) {
-          toggleMobileMenu();
+          setMobileMenuOpen(false);
         }
       });
     });
@@ -253,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('click', (e) => {
       if (navMenu.classList.contains('active')) {
         if (!navMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-          toggleMobileMenu();
+          setMobileMenuOpen(false);
         }
       }
     });
@@ -261,7 +268,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Close mobile menu on ESC key press
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-        toggleMobileMenu();
+        setMobileMenuOpen(false);
+        menuBtn.focus();
       }
     });
   }
