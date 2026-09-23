@@ -269,59 +269,120 @@ export function initGroupLightbox(root) {
   };
 }
 
-export function initItineraryProgress(root) {
-  const rail = root.querySelector("[data-itinerary-progress]");
-  const items = root.querySelectorAll("[data-itinerary-step]");
-  const railItems = root.querySelectorAll("[data-itinerary-rail-item]");
-  if (!items.length) return () => {};
+export function initItineraryExplorer(root) {
+  const section = root.querySelector("[data-itinerary-explorer]");
+  if (!section) return () => {};
 
-  if (prefersReducedMotion()) {
-    items.forEach((el) => el.classList.add("is-active"));
-    return () => {};
-  }
+  const panels = Array.from(section.querySelectorAll("[data-itinerary-panel]"));
+  const buttons = Array.from(section.querySelectorAll("[data-itinerary-day-btn]"));
+  const counter = section.querySelector("[data-itinerary-counter]");
+  const meter = section.querySelector("[data-itinerary-meter] span");
+  const total = panels.length;
+  if (!total) return () => {};
 
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-active");
-          const day = entry.target.getAttribute("data-day");
-          railItems.forEach((ri) => {
-            ri.classList.toggle(
-              "is-active",
-              ri.getAttribute("data-itinerary-rail-item") === day,
-            );
-          });
-        }
-      });
-      const active = Array.from(items).filter((el) =>
-        el.classList.contains("is-active"),
-      ).length;
-      const pct = Math.round((active / items.length) * 100);
-      if (rail) {
-        rail.style.setProperty("--itinerary-progress", `${pct}%`);
-        const fill = rail.querySelector("span");
-        if (fill) fill.style.height = `${pct}%`;
-      }
-    },
-    { threshold: 0.35 },
-  );
+  let index = 0;
 
-  items.forEach((el) => io.observe(el));
-  return () => io.disconnect();
+  const sync = () => {
+    panels.forEach((p, i) => {
+      const on = i === index;
+      p.classList.toggle("is-active", on);
+      p.setAttribute("aria-hidden", on ? "false" : "true");
+    });
+    buttons.forEach((b) => {
+      const i = Number(b.getAttribute("data-itinerary-index"));
+      const on = i === index;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    if (counter) {
+      counter.textContent = `${pad2(index + 1)} / ${pad2(total)}`;
+    }
+    if (meter) {
+      meter.style.transform = `scaleX(${(index + 1) / total})`;
+    }
+  };
+
+  const go = (next) => {
+    index = ((next % total) + total) % total;
+    sync();
+    const activeBtn = buttons.find(
+      (b) => Number(b.getAttribute("data-itinerary-index")) === index,
+    );
+    activeBtn?.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const i = Number(btn.getAttribute("data-itinerary-index"));
+      if (!Number.isFinite(i)) return;
+      go(i);
+    });
+  });
+
+  section.querySelector("[data-itinerary-prev]")?.addEventListener("click", () => go(index - 1));
+  section.querySelector("[data-itinerary-next]")?.addEventListener("click", () => go(index + 1));
+
+  const stage = section.querySelector("[data-itinerary-stage]");
+  let touchX = null;
+  const onTouchStart = (e) => {
+    touchX = e.changedTouches?.[0]?.clientX ?? null;
+  };
+  const onTouchEnd = (e) => {
+    if (touchX == null) return;
+    const x = e.changedTouches?.[0]?.clientX;
+    if (x == null) return;
+    const dx = x - touchX;
+    touchX = null;
+    if (Math.abs(dx) < 40) return;
+    go(dx < 0 ? index + 1 : index - 1);
+  };
+  stage?.addEventListener("touchstart", onTouchStart, { passive: true });
+  stage?.addEventListener("touchend", onTouchEnd, { passive: true });
+
+  const onKey = (e) => {
+    if (!section.contains(document.activeElement) && document.activeElement !== document.body) {
+      return;
+    }
+    const rect = section.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.2;
+    if (!inView) return;
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      go(index - 1);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      go(index + 1);
+    }
+  };
+  document.addEventListener("keydown", onKey);
+
+  sync();
+
+  return () => {
+    document.removeEventListener("keydown", onKey);
+    stage?.removeEventListener("touchstart", onTouchStart);
+    stage?.removeEventListener("touchend", onTouchEnd);
+  };
 }
 
-export function initRouteMap(root) {
-  const map = root.querySelector("[data-group-route-map]");
-  if (!map) return () => {};
+/** @deprecated scroll-rail progress replaced by explorer */
+export function initItineraryProgress(root) {
+  return initItineraryExplorer(root);
+}
 
-  const panel = map.querySelector("[data-map-panel]");
-  const panelBody = map.querySelector("[data-map-panel-body]");
-  const path = map.querySelector("[data-map-path]");
-  const chips = map.querySelectorAll("[data-map-payload]");
-  const svgStops = map.querySelectorAll(".group-map-stop");
+export function initJourneyLine(root) {
+  const journey = root.querySelector("[data-group-journey]");
+  if (!journey) return () => {};
 
-  const payloads = {};
+  const nodes = Array.from(journey.querySelectorAll("[data-journey-node]"));
+  const stops = Array.from(journey.querySelectorAll("[data-journey-stop]"));
+  const panelBody = journey.querySelector("[data-journey-panel-body]");
+  if (!nodes.length) return () => {};
+
   const escText = (value) =>
     String(value || "")
       .replace(/&/g, "&amp;")
@@ -329,95 +390,66 @@ export function initRouteMap(root) {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
 
-  chips.forEach((chip) => {
-    const i = chip.getAttribute("data-map-stop");
+  const payloads = {};
+  nodes.forEach((node) => {
+    const i = node.getAttribute("data-journey-node");
     try {
-      const raw = chip.getAttribute("data-map-payload") || "";
+      const raw = node.getAttribute("data-journey-payload") || "";
       payloads[i] = JSON.parse(decodeURIComponent(raw) || "{}");
     } catch {
       payloads[i] = {};
     }
   });
 
-  const renderPanel = (data) => {
-    if (!panel || !panelBody || !data?.name) return;
+  const renderPanel = (i, data) => {
+    if (!panelBody || !data?.name) return;
     const photo = data.photo ? escText(data.photo) : "";
+    const total = nodes.length;
     panelBody.innerHTML = `
-      ${photo ? `<img class="group-map-panel-photo" src="${photo}" alt="" loading="lazy">` : ""}
+      ${photo ? `<img class="group-journey-panel-photo" src="${photo}" alt="" loading="lazy">` : ""}
+      <p class="group-journey-panel-idx">${pad2(Number(i) + 1)} / ${pad2(total)}</p>
       <h3>${escText(data.name)}</h3>
-      ${data.nights ? `<p class="group-map-panel-nights">${escText(data.nights)}</p>` : ""}
-      ${data.hotel ? `<p class="group-map-panel-hotel">${escText(data.hotel)}</p>` : ""}
-      ${data.transportNext ? `<p class="group-map-panel-transport">${escText(data.transportNext)}</p>` : ""}
+      ${data.nights ? `<p class="group-journey-panel-nights">${escText(data.nights)}</p>` : ""}
+      ${data.hotel ? `<p class="group-journey-panel-hotel">${escText(data.hotel)}</p>` : ""}
+      ${data.transportNext ? `<p class="group-journey-panel-transport">${escText(data.transportNext)}</p>` : ""}
     `;
-    panel.hidden = false;
   };
 
   const activate = (i) => {
-    svgStops.forEach((s) =>
-      s.classList.toggle("is-active", s.getAttribute("data-map-stop") === String(i)),
+    const key = String(i);
+    stops.forEach((s) =>
+      s.classList.toggle("is-active", s.getAttribute("data-journey-stop") === key),
     );
-    chips.forEach((c) =>
-      c.classList.toggle("is-active", c.getAttribute("data-map-stop") === String(i)),
-    );
-    renderPanel(payloads[i]);
-  };
-
-  const onChip = (e) => {
-    const btn = e.currentTarget;
-    activate(btn.getAttribute("data-map-stop"));
-  };
-  chips.forEach((c) => c.addEventListener("click", onChip));
-
-  const onSvg = (e) => {
-    const g = e.currentTarget;
-    activate(g.getAttribute("data-map-stop"));
-  };
-  svgStops.forEach((s) => {
-    s.addEventListener("click", onSvg);
-    s.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        onSvg(e);
-      }
+    nodes.forEach((n) => {
+      const on = n.getAttribute("data-journey-node") === key;
+      n.classList.toggle("is-active", on);
+      n.setAttribute("aria-pressed", on ? "true" : "false");
     });
-    s.addEventListener("mouseenter", () => {
+    renderPanel(i, payloads[key]);
+    const active = nodes.find((n) => n.getAttribute("data-journey-node") === key);
+    active?.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  };
+
+  nodes.forEach((node) => {
+    node.addEventListener("click", () => activate(node.getAttribute("data-journey-node")));
+    node.addEventListener("mouseenter", () => {
       if (window.matchMedia("(hover: hover)").matches) {
-        activate(s.getAttribute("data-map-stop"));
+        activate(node.getAttribute("data-journey-node"));
       }
     });
   });
 
-  map.querySelector("[data-map-panel-close]")?.addEventListener("click", () => {
-    if (panel) panel.hidden = true;
-  });
-
-  // Draw path on viewport
-  if (path && !prefersReducedMotion()) {
-    const len = path.getTotalLength?.() || 800;
-    path.style.strokeDasharray = String(len);
-    path.style.strokeDashoffset = String(len);
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          path.classList.add("is-drawn");
-          path.style.strokeDashoffset = "0";
-          io.disconnect();
-        });
-      },
-      { threshold: 0.35 },
-    );
-    io.observe(map);
-  } else if (path) {
-    path.classList.add("is-drawn");
-  }
-
-  // Default first stop
   activate("0");
+  return () => {};
+}
 
-  return () => {
-    chips.forEach((c) => c.removeEventListener("click", onChip));
-  };
+/** @deprecated map replaced by journey line */
+export function initRouteMap(root) {
+  return initJourneyLine(root);
 }
 
 export function initScrollProgress(root) {

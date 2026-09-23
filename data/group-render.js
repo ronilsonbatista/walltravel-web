@@ -135,102 +135,55 @@ export function renderWhyGroup(group, esc) {
   </section>`;
 }
 
-/** Stylized Greece route SVG — stop data + transport from CMS only. */
-export function renderInteractiveRouteMap(group, esc) {
+/** Primary destination key from itinerary location (CMS text only). */
+function destinationKeyFromLocation(location) {
+  const raw = String(location || "").split(/→|->|–|—/)[0].trim();
+  return normalizeKey(raw);
+}
+
+function groupItineraryByDestination(itinerary = []) {
+  const groups = [];
+  for (const day of itinerary) {
+    const key = destinationKeyFromLocation(day.location) || `day-${day.day}`;
+    const label =
+      String(day.location || "")
+        .split(/→|->|–|—/)[0]
+        .trim() || `Dia ${day.day}`;
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) {
+      last.days.push(day);
+    } else {
+      groups.push({ key, label, days: [day] });
+    }
+  }
+  return groups;
+}
+
+/**
+ * Didactic journey line (primary). Geographic map removed — confusing and not approved.
+ * Each stop: point · nights · next transport · small CMS-matched image.
+ * Desktop: click panel · Mobile: horizontal carousel.
+ */
+export function renderJourneyLine(group, esc) {
   if (!group.routeStops?.length) return "";
 
-  // Approximate Aegean layout (viewBox coords). Corfu NW, Athens SE mainland, Cyclades east.
-  const coords = {
-    atenas: [
-      [210, 310],
-      [218, 318],
-    ],
-    mykonos: [[278, 268]],
-    santorini: [[268, 348]],
-    corfu: [[72, 168]],
-  };
-
-  const used = { atenas: 0 };
   const stops = group.routeStops.map((s, i) => {
-    const key = normalizeKey(s.name);
-    const pool = coords[key] || [[160 + i * 40, 220 + (i % 2) * 40]];
-    const idx = used[key] || 0;
-    used[key] = idx + 1;
-    const [x, y] = pool[Math.min(idx, pool.length - 1)];
     const photo = photoForStop(s.name, group.gallery || []);
-    return { ...s, i, x, y, photo, key };
-  });
-
-  const pathD = stops
-    .map((s, i) => `${i === 0 ? "M" : "L"} ${s.x} ${s.y}`)
-    .join(" ");
-
-  const legs = stops.slice(0, -1).map((s, i) => {
-    const next = stops[i + 1];
-    const midX = (s.x + next.x) / 2;
-    const midY = (s.y + next.y) / 2;
     const kind = transportKind(s.transportNext);
-    return { midX, midY, kind, label: s.transportNext || "" };
+    return { ...s, i, photo, kind };
   });
 
-  return `<section class="group-section group-route-map-section" id="group-route" data-reveal>
-    <div class="group-route-map-head">
+  return `<section class="group-section group-journey-section" id="group-route" data-reveal>
+    <div class="group-journey-head">
       <span class="section-tag">Roteiro</span>
-      <h2 class="package-section-title">O caminho pelas ilhas</h2>
-      ${group.destinationLabel ? `<p class="group-route-lede">${esc(group.destinationLabel)}</p>` : ""}
+      <h2 class="package-section-title">A jornada, parada a parada</h2>
+      ${group.destinationLabel ? `<p class="group-journey-lede">${esc(group.destinationLabel)}</p>` : ""}
     </div>
-    <div class="group-route-map-layout" data-group-route-map>
-      <div class="group-route-map-stage">
-        <svg class="group-route-svg" viewBox="0 0 360 420" role="img" aria-label="Mapa do roteiro ${esc(group.name)}">
-          <defs>
-            <linearGradient id="groupMapSea" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1a3a4a"/>
-              <stop offset="100%" stop-color="#0d2430"/>
-            </linearGradient>
-            <filter id="groupMapGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="2" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-          <rect width="360" height="420" fill="url(#groupMapSea)" rx="0"/>
-          <!-- Stylized landmasses (decorative geography, not Google) -->
-          <path class="group-map-land" d="M40 40 C90 30 110 80 95 130 C80 190 55 220 70 280 C90 340 140 360 180 390 C150 400 90 380 50 340 C20 300 15 120 40 40Z" opacity="0.35"/>
-          <path class="group-map-land" d="M160 250 C200 240 240 260 255 300 C270 340 250 380 210 395 C175 405 150 370 145 330 C140 290 145 260 160 250Z" opacity="0.45"/>
-          <path class="group-map-land" d="M250 240 C285 230 310 250 305 280 C300 305 275 310 255 295 C240 280 240 250 250 240Z" opacity="0.4"/>
-          <path class="group-map-land" d="M245 320 C275 315 295 340 285 365 C275 385 250 380 240 360 C235 345 240 325 245 320Z" opacity="0.4"/>
-          <path class="group-map-path" data-map-path d="${pathD}" fill="none" stroke="#B8A66A" stroke-width="2" stroke-dasharray="6 8" stroke-linecap="round" filter="url(#groupMapGlow)"/>
-          ${legs
-            .map(
-              (leg) => `
-            <g class="group-map-leg-icon" transform="translate(${leg.midX}, ${leg.midY})" aria-hidden="true">
-              <circle r="11" fill="#16170F" stroke="#B8A66A" stroke-width="1"/>
-              ${
-                leg.kind === "plane"
-                  ? `<path d="M-6 1 L0 -5 L6 1 L2 1 L2 5 L0 4 L-2 5 L-2 1 Z" fill="#F0E6C8"/>`
-                  : `<path d="M-7 2 Q0 -6 7 2 L5 3 Q0 -2 -5 3 Z M-4 3 H4" fill="none" stroke="#F0E6C8" stroke-width="1.2"/>`
-              }
-            </g>`,
-            )
-            .join("")}
-          ${stops
-            .map(
-              (s) => `
-            <g class="group-map-stop" data-map-stop="${s.i}" tabindex="0" role="button" aria-label="${esc(s.name)}${s.nights ? `, ${esc(s.nights)}` : ""}">
-              <circle class="group-map-stop-ring" cx="${s.x}" cy="${s.y}" r="14" fill="none" stroke="#F0E6C8" stroke-width="1.5"/>
-              <circle cx="${s.x}" cy="${s.y}" r="6" fill="#B8A66A"/>
-              <text x="${s.x}" y="${s.y - 20}" text-anchor="middle" class="group-map-label">${esc(s.name)}</text>
-            </g>`,
-            )
-            .join("")}
-        </svg>
-        <div class="group-map-panel" data-map-panel hidden>
-          <button type="button" class="group-map-panel-close" data-map-panel-close aria-label="Fechar">×</button>
-          <div data-map-panel-body></div>
-        </div>
-      </div>
-      <ol class="group-route-stops-rail" data-map-stops-rail>
+    <div class="group-journey" data-group-journey>
+      <ol class="group-journey-line" data-journey-line>
         ${stops
-          .map((s) => {
+          .map((s, i) => {
+            const isLast = i === stops.length - 1;
             const payload = encodeURIComponent(
               JSON.stringify({
                 name: s.name,
@@ -238,22 +191,57 @@ export function renderInteractiveRouteMap(group, esc) {
                 hotel: s.hotel || "",
                 transportNext: s.transportNext || "",
                 photo: s.photo || "",
+                kind: s.kind,
               }),
             );
-            return `<li>
-              <button type="button" class="group-route-stop-chip" data-map-stop="${s.i}" data-map-payload="${payload}">
-                <span class="group-route-stop-idx">${padIndex(s.i, stops.length)}</span>
-                <span class="group-route-stop-meta">
+            return `<li class="group-journey-stop ${i === 0 ? "is-active" : ""}" data-journey-stop="${s.i}">
+              <button type="button" class="group-journey-node" data-journey-node="${s.i}" data-journey-payload="${payload}" aria-pressed="${i === 0 ? "true" : "false"}" aria-label="${esc(s.name)}${s.nights ? `, ${esc(s.nights)}` : ""}">
+                <span class="group-journey-idx" aria-hidden="true">${padIndex(s.i, stops.length)}</span>
+                ${
+                  s.photo
+                    ? `<span class="group-journey-thumb"><img src="${esc(s.photo)}" alt="" loading="lazy" onerror="this.parentElement.remove()"></span>`
+                    : `<span class="group-journey-thumb group-journey-thumb--empty" aria-hidden="true"></span>`
+                }
+                <span class="group-journey-meta">
                   <strong>${esc(s.name)}</strong>
                   ${s.nights ? `<em>${esc(s.nights)}</em>` : ""}
                 </span>
               </button>
+              ${
+                !isLast && s.transportNext
+                  ? `<div class="group-journey-leg" aria-hidden="true">
+                      <span class="group-journey-leg-icon group-journey-leg-icon--${esc(s.kind)}"></span>
+                      <span class="group-journey-leg-label">${esc(s.transportNext)}</span>
+                    </div>`
+                  : !isLast
+                    ? `<div class="group-journey-leg group-journey-leg--empty" aria-hidden="true"></div>`
+                    : ""
+              }
             </li>`;
           })
           .join("")}
       </ol>
+      <aside class="group-journey-panel" data-journey-panel aria-live="polite">
+        <div data-journey-panel-body>
+          ${
+            stops[0]
+              ? `${stops[0].photo ? `<img class="group-journey-panel-photo" src="${esc(stops[0].photo)}" alt="" loading="lazy">` : ""}
+            <p class="group-journey-panel-idx">${padIndex(0, stops.length)} / ${padIndex(stops.length - 1, stops.length)}</p>
+            <h3>${esc(stops[0].name)}</h3>
+            ${stops[0].nights ? `<p class="group-journey-panel-nights">${esc(stops[0].nights)}</p>` : ""}
+            ${stops[0].hotel ? `<p class="group-journey-panel-hotel">${esc(stops[0].hotel)}</p>` : ""}
+            ${stops[0].transportNext ? `<p class="group-journey-panel-transport">${esc(stops[0].transportNext)}</p>` : ""}`
+              : ""
+          }
+        </div>
+      </aside>
     </div>
   </section>`;
+}
+
+/** @deprecated Use renderJourneyLine — kept as alias for callers. */
+export function renderInteractiveRouteMap(group, esc) {
+  return renderJourneyLine(group, esc);
 }
 
 export function renderHotels(group, esc) {
@@ -290,69 +278,99 @@ export function renderRoute(group, esc) {
   return renderInteractiveRouteMap(group, esc) + renderHotels(group, esc);
 }
 
+function renderDayBody(day, esc) {
+  return `
+    ${day.location ? `<p class="group-itinerary-location">${esc(day.location)}</p>` : ""}
+    <p class="group-itinerary-desc">${esc(day.description)}</p>
+    ${
+      day.highlights?.length
+        ? `<ul class="group-itinerary-highlights">${day.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>`
+        : ""
+    }
+    ${day.overnight ? `<p class="group-itinerary-overnight">${esc(day.overnight)}</p>` : ""}
+  `;
+}
+
+/**
+ * Day-nav grouped by destination + large day panel (desktop).
+ * Mobile: horizontal day selector + swipe + NN/TT progress.
+ * Full day content stays in DOM for SEO/a11y (visually panel-switched, not removed).
+ */
 export function renderItineraryAccordion(group, esc) {
   if (!group.itinerary?.length) return "";
-  return `<section class="group-section group-itinerary-section" id="group-itinerary" data-reveal>
-    <span class="section-tag">Dia a dia</span>
-    <h2 class="package-section-title">Itinerário completo</h2>
-    <div class="group-itinerary-layout">
-      <aside class="group-itinerary-rail" data-itinerary-rail aria-hidden="true">
-        <div class="group-itinerary-progress" data-itinerary-progress><span></span></div>
-        <ol>
-          ${group.itinerary
-            .map(
-              (day) =>
-                `<li data-itinerary-rail-item="${esc(day.day)}"><span>Dia ${esc(day.day)}</span></li>`,
-            )
-            .join("")}
-        </ol>
-      </aside>
-      <div class="group-itinerary-scroll">
-        ${group.itinerary
+  const days = group.itinerary;
+  const total = days.length;
+  const totalLabel = String(total).padStart(2, "0");
+  const destGroups = groupItineraryByDestination(days);
+
+  return `<section class="group-section group-itinerary-section" id="group-itinerary" data-reveal data-itinerary-explorer data-itinerary-total="${total}">
+    <div class="group-itinerary-head">
+      <span class="section-tag">Dia a dia</span>
+      <h2 class="package-section-title">Itinerário completo</h2>
+      <p class="group-itinerary-progress-label" data-itinerary-counter aria-live="polite">01 / ${totalLabel}</p>
+    </div>
+    <div class="group-itinerary-explorer">
+      <nav class="group-itinerary-nav" data-itinerary-nav aria-label="Dias do roteiro">
+        ${destGroups
           .map(
-            (day) => `
-          <article class="group-itinerary-step" data-itinerary-step data-day="${esc(day.day)}" data-reveal>
-            <div class="group-itinerary-step-head">
-              <span class="group-itinerary-day-num">Dia ${esc(day.day)}</span>
-              ${day.dateLabel ? `<span class="group-itinerary-date">${esc(day.dateLabel)}</span>` : ""}
-            </div>
-            <h3 class="group-itinerary-day-title">${esc(day.title)}</h3>
-            ${day.location ? `<p class="group-itinerary-location">${esc(day.location)}</p>` : ""}
-            <p>${esc(day.description)}</p>
-            ${
-              day.highlights?.length
-                ? `<ul class="group-itinerary-highlights">${day.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>`
-                : ""
-            }
-            ${day.overnight ? `<p class="group-itinerary-overnight">${esc(day.overnight)}</p>` : ""}
-          </article>`,
+            (g) => `
+          <div class="group-itinerary-nav-group">
+            <p class="group-itinerary-nav-dest">${esc(g.label)}</p>
+            <ol class="group-itinerary-nav-days">
+              ${g.days
+                .map((day) => {
+                  const idx = days.findIndex((d) => d.day === day.day);
+                  const n = String(day.day).padStart(2, "0");
+                  return `<li>
+                    <button type="button" class="group-itinerary-day-btn ${idx === 0 ? "is-active" : ""}" data-itinerary-day-btn="${esc(String(day.day))}" data-itinerary-index="${idx}" aria-pressed="${idx === 0 ? "true" : "false"}">
+                      <span class="group-itinerary-day-btn-num">${n}</span>
+                      <span class="group-itinerary-day-btn-title">${esc(day.title)}</span>
+                    </button>
+                  </li>`;
+                })
+                .join("")}
+            </ol>
+          </div>`,
           )
           .join("")}
+      </nav>
+      <div class="group-itinerary-stage" data-itinerary-stage>
+        <div class="group-itinerary-stage-chrome">
+          <button type="button" class="group-itinerary-nav-btn" data-itinerary-prev aria-label="Dia anterior">‹</button>
+          <div class="group-itinerary-stage-meter" data-itinerary-meter aria-hidden="true"><span></span></div>
+          <button type="button" class="group-itinerary-nav-btn" data-itinerary-next aria-label="Próximo dia">›</button>
+        </div>
+        <div class="group-itinerary-panels" data-itinerary-panels>
+          ${days
+            .map(
+              (day, i) => `
+            <article class="group-itinerary-panel ${i === 0 ? "is-active" : ""}" data-itinerary-panel data-day="${esc(String(day.day))}" data-itinerary-index="${i}" ${i === 0 ? "" : 'aria-hidden="true"'}>
+              <div class="group-itinerary-step-head">
+                <span class="group-itinerary-day-num">Dia ${esc(String(day.day))}</span>
+                ${day.dateLabel ? `<span class="group-itinerary-date">${esc(day.dateLabel)}</span>` : ""}
+              </div>
+              <h3 class="group-itinerary-day-title">${esc(day.title)}</h3>
+              ${renderDayBody(day, esc)}
+            </article>`,
+            )
+            .join("")}
+        </div>
       </div>
     </div>
-    <div class="group-itinerary-accordion">
-      ${group.itinerary
-        .map(
-          (day, i) => `
-        <details class="group-itinerary-day" ${i === 0 ? "open" : ""}>
-          <summary>
-            <span class="group-itinerary-day-num">Dia ${esc(day.day)}</span>
-            <span class="group-itinerary-day-title">${esc(day.title)}</span>
-            ${day.dateLabel ? `<span class="group-itinerary-date">${esc(day.dateLabel)}</span>` : ""}
-          </summary>
-          <div class="group-itinerary-body">
-            ${day.location ? `<p class="group-itinerary-location">${esc(day.location)}</p>` : ""}
-            <p>${esc(day.description)}</p>
-            ${
-              day.highlights?.length
-                ? `<ul class="group-itinerary-highlights">${day.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>`
-                : ""
-            }
-            ${day.overnight ? `<p class="group-itinerary-overnight">${esc(day.overnight)}</p>` : ""}
-          </div>
-        </details>`,
-        )
-        .join("")}
+    <!-- SEO fallback: full content always in document (crawlers); interactive panels are the a11y surface -->
+    <div class="group-itinerary-seo" aria-hidden="true">
+      <h3>Itinerário — lista completa</h3>
+      <ol>
+        ${days
+          .map(
+            (day) => `
+          <li>
+            <h4>Dia ${esc(String(day.day))}${day.title ? ` — ${esc(day.title)}` : ""}</h4>
+            ${renderDayBody(day, esc)}
+          </li>`,
+          )
+          .join("")}
+      </ol>
     </div>
   </section>`;
 }
@@ -779,7 +797,7 @@ export function renderGroupDetailPage(group, esc, WA) {
       ${renderWhyGroup(group, esc)}
       ${renderPhotoMoment(group, esc, 3)}
       <div class="section-container">
-        ${renderInteractiveRouteMap(group, esc)}
+        ${renderJourneyLine(group, esc)}
         ${renderHotels(group, esc)}
       </div>
       ${renderGalleryCinematic(group, esc)}
