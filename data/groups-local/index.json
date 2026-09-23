@@ -14,26 +14,26 @@
     "priceUnit": "PER_PERSON",
     "currency": "BRL",
     "priceNote": "por pessoa · à vista, ou entrada + até 10x no cartão, com juros. Cotação do euro em 19 set 2026: R$ 5,9040. O valor acompanha a cotação do dia.",
-    "coverImageUrl": "https://viagens.walltravel.com.br/grupos/images/grecia/hero-santorini.webp",
+    "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
     "featured": true,
     "comingSoon": false,
     "ctaLabel": "Quero falar sobre a Grécia",
     "highlights": [
       {
-        "label": "10",
-        "value": "viajantes, mais o líder e o guia local"
+        "label": "viajantes, mais o líder e o guia local",
+        "value": "10"
       },
       {
-        "label": "4",
-        "value": "destinos, Corfu incluída"
+        "label": "destinos, Corfu incluída",
+        "value": "4"
       },
       {
-        "label": "12",
-        "value": "noites em hotel 4 estrelas, com café"
+        "label": "noites em hotel 4 estrelas, com café",
+        "value": "12"
       },
       {
-        "label": "100%",
-        "value": "privativo, com guia em português"
+        "label": "privativo, com guia em português",
+        "value": "100%"
       }
     ]
   },
@@ -52,7 +52,28 @@
     "priceUnit": "PER_PERSON",
     "currency": "BRL",
     "priceNote": null,
-    "coverImageUrl": "https://viagens.walltravel.com.br/grupos/images/turquia/turquia-cappadocia.jpg",
+    "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/turquia/cappadocia-balloons.jpg",
+    "featured": true,
+    "comingSoon": true,
+    "ctaLabel": "Quero ser avisado",
+    "highlights": []
+  },
+  {
+    "slug": "italia",
+    "name": "Itália",
+    "shortDescription": "Costa Amalfitana, Toscana e Roma em uma expedição WallTravel. Em breve — deixe seu WhatsApp para ser avisado.",
+    "destinationLabel": "Amalfi · Toscana · Roma",
+    "durationLabel": null,
+    "departureDate": null,
+    "returnDate": null,
+    "daysCount": null,
+    "nightsCount": null,
+    "groupSize": null,
+    "priceFrom": null,
+    "priceUnit": "PER_PERSON",
+    "currency": "BRL",
+    "priceNote": null,
+    "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/amalfi-coast.jpg",
     "featured": true,
     "comingSoon": true,
     "ctaLabel": "Quero ser avisado",

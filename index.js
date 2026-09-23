@@ -23,6 +23,7 @@ import {
   renderGroupDetailPage,
   bindGroupForms,
 } from './data/group-render.js';
+import { bindGroupExperience } from './data/group-motion.js';
 import {
   trackStorefrontEvent,
   bindWhatsappTracking,
@@ -133,21 +134,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ==========================================================================
   // 1. STICKY HEADER SCROLL EFFECT (DYNAMIC TRANSPARENT -> SCROLLED)
+  // Shared Home header: transparent over home + group heroes; solid otherwise.
   // ==========================================================================
   const header = document.querySelector('.header');
-  
+  let groupExperienceCleanup = null;
+
+  const isHomePath = (path) => path === '/' || path === '/index.html';
+  const isGroupDetailPath = (path) =>
+    path.startsWith('/grupos/') && path !== '/grupos/' && path.length > '/grupos/'.length;
+
   const handleHeaderScroll = () => {
     const path = window.location.pathname;
-    if (path === '/' || path === '/index.html') {
+    if (isHomePath(path)) {
       if (window.scrollY > 50) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
-    } else {
-      // Subpages always solid white/scrolled header style
-      header.classList.add('scrolled');
+      return;
     }
+
+    if (isGroupDetailPath(path)) {
+      const hero = document.querySelector('[data-group-over-hero] .group-hero');
+      if (hero) {
+        const threshold = Math.max(80, hero.offsetHeight * 0.55);
+        if (window.scrollY > threshold) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+        return;
+      }
+    }
+
+    // Catalog + other subpages: solid header
+    header.classList.add('scrolled');
   };
 
   window.addEventListener('scroll', handleHeaderScroll, { passive: true });
@@ -403,24 +424,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         "WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem."
       );
     } else {
-      header.classList.add('scrolled');
       clearInterval(autoplayInterval);
       
       if (path === '/vitrine' || path === '/vitrine/') {
+        header.classList.add('scrolled');
         vitrineView.style.display = 'block';
         renderVitrine();
       } else if (path.startsWith('/vitrine/')) {
+        header.classList.add('scrolled');
         categoryView.style.display = 'block';
         let categorySlug = path.substring('/vitrine/'.length);
         if (categorySlug.endsWith('/')) categorySlug = categorySlug.slice(0, -1);
         renderCategory(categorySlug);
       } else if (path.startsWith('/pacote/') || path.startsWith('/viagens/')) {
+        header.classList.add('scrolled');
         packageView.style.display = 'block';
         const prefix = path.startsWith('/viagens/') ? '/viagens/' : '/pacote/';
         let packageSlug = path.substring(prefix.length);
         if (packageSlug.endsWith('/')) packageSlug = packageSlug.slice(0, -1);
         await renderPackage(packageSlug);
       } else if (path === '/grupos' || path === '/grupos/') {
+        header.classList.add('scrolled');
         groupsView.style.display = 'block';
         renderGroupsList();
       } else if (path.startsWith('/grupos/')) {
@@ -432,6 +456,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Fallback
         homeView.style.display = 'block';
         startAutoplay();
+        handleHeaderScroll();
       }
     }
   };
@@ -912,16 +937,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const renderGroupsList = () => {
+    if (groupExperienceCleanup) {
+      groupExperienceCleanup();
+      groupExperienceCleanup = null;
+    }
     const groups = getGroups();
     updateSEO(
       "Viagens em grupo",
-      "Expedições em grupo pequeno com curadoria WallTravel — Grécia, Turquia e próximos destinos.",
+      "Expedições em grupo pequeno com curadoria WallTravel — Grécia, Turquia, Itália e próximos destinos.",
     );
     groupsView.innerHTML = renderGroupsCatalog(groups, esc);
     bindGroupForms(groupsView, WA);
+    groupExperienceCleanup = bindGroupExperience(groupsView);
+    handleHeaderScroll();
   };
 
   const renderGroupPage = async (slug) => {
+    if (groupExperienceCleanup) {
+      groupExperienceCleanup();
+      groupExperienceCleanup = null;
+    }
     const group = await resolveGroupBySlug(slug);
     if (!group) {
       renderEmptyState(
@@ -929,6 +964,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         "Grupo não encontrado",
         "Este grupo não está disponível no momento.",
       );
+      handleHeaderScroll();
       return;
     }
 
@@ -941,6 +977,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);
     bindGroupForms(groupsView, WA);
+    groupExperienceCleanup = bindGroupExperience(groupsView);
+    handleHeaderScroll();
   };
 
   // Helper to render beautiful error/empty views

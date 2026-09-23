@@ -1,6 +1,7 @@
 import localIndex from "./groups-local/index.json";
 import greciaLocal from "./groups-local/grecia.json";
 import turquiaLocal from "./groups-local/turquia.json";
+import italiaLocal from "./groups-local/italia.json";
 import {
   fetchPublicGroups,
   fetchPublicGroupBySlug,
@@ -11,6 +12,7 @@ import {
 const LOCAL_DETAILS = {
   grecia: greciaLocal,
   turquia: turquiaLocal,
+  italia: italiaLocal,
 };
 
 /** @type {"platform" | "local"} */

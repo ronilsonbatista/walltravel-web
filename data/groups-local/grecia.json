@@ -2,8 +2,6 @@
   "slug": "grecia",
   "name": "Grécia 2027",
   "shortDescription": "Atenas, Mykonos, Santorini e Corfu em treze dias, num grupo de apenas 10 pessoas, com tudo privativo, guia em português e o líder da expedição junto do início ao fim.",
-  "description": "12 a 24 de setembro de 2027 · 13 dias · 12 noites · grupo de apenas 10 pessoas.",
-  "publishedAt": "2026-09-23T01:17:02.712Z",
   "destinationLabel": "Atenas · Mykonos · Santorini · Corfu",
   "durationLabel": "13 dias · 12 noites",
   "departureDate": "2027-09-12",
@@ -15,24 +13,38 @@
   "priceUnit": "PER_PERSON",
   "currency": "BRL",
   "priceNote": "por pessoa · à vista, ou entrada + até 10x no cartão, com juros. Cotação do euro em 19 set 2026: R$ 5,9040. O valor acompanha a cotação do dia.",
-  "coverImageUrl": "https://viagens.walltravel.com.br/grupos/images/grecia/hero-santorini.webp",
+  "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
+  "featured": true,
+  "comingSoon": false,
+  "ctaLabel": "Quero falar sobre a Grécia",
   "highlights": [
     {
-      "label": "10",
-      "value": "viajantes, mais o líder e o guia local"
+      "label": "viajantes, mais o líder e o guia local",
+      "value": "10"
     },
     {
-      "label": "4",
-      "value": "destinos, Corfu incluída"
+      "label": "destinos, Corfu incluída",
+      "value": "4"
     },
     {
-      "label": "12",
-      "value": "noites em hotel 4 estrelas, com café"
+      "label": "noites em hotel 4 estrelas, com café",
+      "value": "12"
     },
     {
-      "label": "100%",
-      "value": "privativo, com guia em português"
+      "label": "privativo, com guia em português",
+      "value": "100%"
     }
+  ],
+  "description": "12 a 24 de setembro de 2027 · 13 dias · 12 noites · grupo de apenas 10 pessoas.",
+  "editorial": "A Grécia pede tempo. Por isso este roteiro não corre: duas noites em Atenas para ver a Acrópole com calma, três em Mykonos, três em Santorini, três em Corfu e uma última na capital antes de voltar. Entre uma ilha e outra, ferry pelo Egeu ou um voo curto, sempre com traslado privativo esperando.\n\nCorfu é o que quase nenhum grupo faz: a ilha do Jônico de praias de água transparente, falésias verdes e um centro histórico veneziano. E o grupo é de 10 pessoas de verdade, com hotel 4 estrelas em cada ilha, passeios privativos com guia em português e dias livres nos lugares certos.",
+  "gallery": [
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/atenas-acropole.webp",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/mykonos-little-venice.webp",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/santorini-oia.webp",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/santorini-domes.webp",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/corfu.webp",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/mykonos-chora.webp"
   ],
   "whyGroup": [
     {
@@ -60,7 +72,6 @@
       "description": "Atenas, Mykonos, Santorini e Corfu, doze noites com café da manhã em hotel 4 estrelas, dois deles escolhidos a dedo pela WallTravel."
     }
   ],
-  "editorial": "A Grécia pede tempo. Por isso este roteiro não corre: duas noites em Atenas para ver a Acrópole com calma, três em Mykonos, três em Santorini, três em Corfu e uma última na capital antes de voltar. Entre uma ilha e outra, ferry pelo Egeu ou um voo curto, sempre com traslado privativo esperando.\n\nCorfu é o que quase nenhum grupo faz: a ilha do Jônico de praias de água transparente, falésias verdes e um centro histórico veneziano. E o grupo é de 10 pessoas de verdade, com hotel 4 estrelas em cada ilha, passeios privativos com guia em português e dias livres nos lugares certos.",
   "routeStops": [
     {
       "name": "Atenas",
@@ -92,158 +103,6 @@
       "hotel": "Polis Grand Hotel (ou similar)",
       "transportNext": null
     }
-  ],
-  "investmentOptions": [
-    {
-      "key": "duplo",
-      "title": "Quarto duplo",
-      "description": "por pessoa, dividindo com outro viajante do grupo",
-      "price": "31480.00",
-      "priceNote": "à vista, ou entrada + até 10x no cartão, com juros"
-    },
-    {
-      "key": "individual",
-      "title": "Quarto individual",
-      "description": "por pessoa, com quarto só seu em toda a viagem",
-      "price": null,
-      "priceNote": "Valor por pessoa no WhatsApp. Cotação fechada para o grupo, com parcelamento."
-    }
-  ],
-  "paymentMethods": [
-    {
-      "title": "Pix",
-      "description": "À vista, com confirmação na hora."
-    },
-    {
-      "title": "Cartão de crédito",
-      "description": "Entrada + saldo em até 10x, com juros."
-    },
-    {
-      "title": "Cartão de débito",
-      "description": "À vista."
-    }
-  ],
-  "optionals": [
-    {
-      "title": "Barco rápido entre as ilhas",
-      "description": "Troca do ferry por barco rápido nos trechos Pireu–Mykonos e Mykonos–Santorini, por trecho."
-    },
-    {
-      "title": "Catamarã em Santorini",
-      "description": "Passeio pela caldeira com refeição a bordo e traslado, no dia livre."
-    }
-  ],
-  "includes": [
-    "12 noites em hotéis 4 estrelas com café da manhã: 3 em Atenas, 3 em Mykonos, 3 em Santorini e 3 em Corfu",
-    "Recepção no aeroporto de Atenas e todos os traslados privativos entre aeroportos, portos e hotéis",
-    "Passeios panorâmicos privativos em Atenas (com a Acrópole), Mykonos, Santorini e Corfu",
-    "Ferry Pireu–Mykonos e Mykonos–Santorini",
-    "Voos internos Santorini–Atenas–Corfu e Corfu–Atenas, com bagagem de 23 kg",
-    "Guia em português em todo o roteiro",
-    "Líder da expedição WallTravel acompanhando a viagem"
-  ],
-  "excludes": [
-    "Voos internacionais Brasil–Atenas–Brasil",
-    "Almoços, jantares e bebidas",
-    "Imposto hoteleiro e taxas locais, pagos diretamente nos hotéis",
-    "Seguro viagem (obrigatório)",
-    "Entradas não mencionadas, gorjetas e despesas pessoais"
-  ],
-  "bomSaber": [
-    {
-      "title": "01",
-      "text": "Grupo fechado com 10 viajantes. A saída é confirmada quando as 10 vagas estiverem preenchidas."
-    },
-    {
-      "title": "02",
-      "text": "Brasileiros não precisam de visto para a Grécia. Passaporte com validade mínima de seis meses; se a autorização eletrônica europeia (ETIAS) estiver em vigor, a WallTravel orienta o passo a passo."
-    },
-    {
-      "title": "03",
-      "text": "Nos traslados, cabe uma mala de 23 kg e uma bagagem de mão por pessoa. Nos portos, há uma caminhada de cerca de 200 m com a mala até o ponto de encontro."
-    },
-    {
-      "title": "04",
-      "text": "Ferries dependem do mar e de possíveis greves; se um trecho for cancelado, a alternativa disponível é oferecida na hora."
-    },
-    {
-      "title": "05",
-      "text": "Tipo de cama (casal ou duas de solteiro) sujeito à disponibilidade no check-in. Check-in a partir das 15h."
-    }
-  ],
-  "faq": [
-    {
-      "question": "Onde o grupo se encontra?",
-      "answer": "No Aeroporto Internacional de Atenas (ATH), no dia 12 de setembro. Cada pessoa chega no voo que preferir; a recepção e o traslado ao hotel estão inclusos. A programação começa no dia 13."
-    },
-    {
-      "question": "Posso ir sozinho?",
-      "answer": "Sim, e é comum. Você pode escolher quarto individual ou dividir um duplo com outra pessoa do grupo, que a gente apresenta antes da viagem."
-    },
-    {
-      "question": "O voo do Brasil está incluso?",
-      "answer": "Não. O pacote cobre tudo em terra na Grécia, mais os voos internos e os ferries. A WallTravel cota o voo internacional para o grupo e ajuda você a escolher."
-    },
-    {
-      "question": "Como funciona a alimentação?",
-      "answer": "Café da manhã incluso todos os dias. Almoços e jantares ficam livres, o que na Grécia é parte da experiência: tavernas à beira-mar, souvlaki na rua, jantar com vista em Oia."
-    },
-    {
-      "question": "Quanto tempo de ferry e de voo entre as ilhas?",
-      "answer": "Pireu a Mykonos e Mykonos a Santorini são travessias de ferry pelo Egeu, em classe econômica com assento marcado. Santorini a Corfu e Corfu a Atenas são voos curtos, com bagagem de 23 kg inclusa."
-    },
-    {
-      "question": "Quanta bagagem posso levar?",
-      "answer": "Uma mala de até 23 kg e uma bagagem de mão por pessoa. Nos portos, você carrega a própria mala por cerca de 200 m até o ponto de encontro do traslado."
-    },
-    {
-      "question": "Preciso de visto?",
-      "answer": "Brasileiros não precisam de visto para até 90 dias na Grécia. Leve o passaporte com validade mínima de seis meses e o seguro viagem, que é obrigatório."
-    },
-    {
-      "question": "Qual o tamanho do grupo?",
-      "answer": "São 10 viajantes, mais o líder da expedição WallTravel e o guia local. Esse é o tamanho certo para andar junto sem virar excursão."
-    }
-  ],
-  "leader": {
-    "name": "Wallace Maia",
-    "title": "Líder da expedição WallTravel",
-    "bio": "Sou fundador e sócio da WallTravel, apaixonado por viagens e por criar experiências que realmente façam sentido para cada pessoa. Ao longo dos anos conheci diferentes destinos pelo mundo e morei por mais de um ano na Europa, experiências que ampliaram meu olhar sobre culturas, roteiros e formas de viajar.\n\nTransformei essa paixão em profissão e hoje me dedico a planejar e acompanhar viagens especiais para os nossos clientes. A Grécia é um destino que já conheci pessoalmente e que me marcou pela história, pela cultura e pela beleza.\n\nNesta viagem, estarei com vocês como líder da expedição WallTravel, acompanhando cada etapa de perto para que todos aproveitem a experiência com tranquilidade, segurança e, principalmente, criem boas memórias.",
-    "photoUrl": "https://viagens.walltravel.com.br/grupos/images/grecia/lider.webp",
-    "note": "Os passeios são conduzidos por guias locais em português. O líder coordena tudo com eles e fica com o grupo do desembarque em Atenas ao voo de volta."
-  },
-  "ctaLabel": "Quero falar sobre a Grécia",
-  "ctaWhatsappMessage": "Olá! Quero saber mais sobre o Grupo Grécia 2027 da WallTravel.",
-  "formFields": [
-    {
-      "key": "name",
-      "label": "Nome",
-      "required": true
-    },
-    {
-      "key": "whatsapp",
-      "label": "WhatsApp",
-      "required": true
-    },
-    {
-      "key": "notes",
-      "label": "Mensagem",
-      "required": false
-    }
-  ],
-  "seoTitle": "Grupo Grécia 2027 | WallTravel",
-  "seoDescription": "Atenas, Mykonos, Santorini e Corfu em 13 dias. Grupo de 10 pessoas, tudo privativo, guia em português.",
-  "featured": true,
-  "sortOrder": 10,
-  "comingSoon": false,
-  "gallery": [
-    "https://viagens.walltravel.com.br/grupos/images/grecia/hero-santorini.webp",
-    "https://viagens.walltravel.com.br/grupos/images/grecia/atenas-acropole.webp",
-    "https://viagens.walltravel.com.br/grupos/images/grecia/mykonos-little-venice.webp",
-    "https://viagens.walltravel.com.br/grupos/images/grecia/santorini-oia.webp",
-    "https://viagens.walltravel.com.br/grupos/images/grecia/santorini-domes.webp",
-    "https://viagens.walltravel.com.br/grupos/images/grecia/corfu.webp",
-    "https://viagens.walltravel.com.br/grupos/images/grecia/mykonos-chora.webp"
   ],
   "itinerary": [
     {
@@ -387,5 +246,145 @@
       "highlights": [],
       "overnight": null
     }
-  ]
+  ],
+  "investmentOptions": [
+    {
+      "key": "duplo",
+      "title": "Quarto duplo",
+      "description": "por pessoa, dividindo com outro viajante do grupo",
+      "price": "31480.00",
+      "priceNote": "à vista, ou entrada + até 10x no cartão, com juros"
+    },
+    {
+      "key": "individual",
+      "title": "Quarto individual",
+      "description": "por pessoa, com quarto só seu em toda a viagem",
+      "price": null,
+      "priceNote": "Valor por pessoa no WhatsApp. Cotação fechada para o grupo, com parcelamento."
+    }
+  ],
+  "paymentMethods": [
+    {
+      "title": "Pix",
+      "description": "À vista, com confirmação na hora."
+    },
+    {
+      "title": "Cartão de crédito",
+      "description": "Entrada + saldo em até 10x, com juros."
+    },
+    {
+      "title": "Cartão de débito",
+      "description": "À vista."
+    }
+  ],
+  "optionals": [
+    {
+      "title": "Barco rápido entre as ilhas",
+      "description": "Troca do ferry por barco rápido nos trechos Pireu–Mykonos e Mykonos–Santorini, por trecho."
+    },
+    {
+      "title": "Catamarã em Santorini",
+      "description": "Passeio pela caldeira com refeição a bordo e traslado, no dia livre."
+    }
+  ],
+  "includes": [
+    "12 noites em hotéis 4 estrelas com café da manhã: 3 em Atenas, 3 em Mykonos, 3 em Santorini e 3 em Corfu",
+    "Recepção no aeroporto de Atenas e todos os traslados privativos entre aeroportos, portos e hotéis",
+    "Passeios panorâmicos privativos em Atenas (com a Acrópole), Mykonos, Santorini e Corfu",
+    "Ferry Pireu–Mykonos e Mykonos–Santorini",
+    "Voos internos Santorini–Atenas–Corfu e Corfu–Atenas, com bagagem de 23 kg",
+    "Guia em português em todo o roteiro",
+    "Líder da expedição WallTravel acompanhando a viagem"
+  ],
+  "excludes": [
+    "Voos internacionais Brasil–Atenas–Brasil",
+    "Almoços, jantares e bebidas",
+    "Imposto hoteleiro e taxas locais, pagos diretamente nos hotéis",
+    "Seguro viagem (obrigatório)",
+    "Entradas não mencionadas, gorjetas e despesas pessoais"
+  ],
+  "bomSaber": [
+    {
+      "title": "01",
+      "text": "Grupo fechado com 10 viajantes. A saída é confirmada quando as 10 vagas estiverem preenchidas."
+    },
+    {
+      "title": "02",
+      "text": "Brasileiros não precisam de visto para a Grécia. Passaporte com validade mínima de seis meses; se a autorização eletrônica europeia (ETIAS) estiver em vigor, a WallTravel orienta o passo a passo."
+    },
+    {
+      "title": "03",
+      "text": "Nos traslados, cabe uma mala de 23 kg e uma bagagem de mão por pessoa. Nos portos, há uma caminhada de cerca de 200 m com a mala até o ponto de encontro."
+    },
+    {
+      "title": "04",
+      "text": "Ferries dependem do mar e de possíveis greves; se um trecho for cancelado, a alternativa disponível é oferecida na hora."
+    },
+    {
+      "title": "05",
+      "text": "Tipo de cama (casal ou duas de solteiro) sujeito à disponibilidade no check-in. Check-in a partir das 15h."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Onde o grupo se encontra?",
+      "answer": "No Aeroporto Internacional de Atenas (ATH), no dia 12 de setembro. Cada pessoa chega no voo que preferir; a recepção e o traslado ao hotel estão inclusos. A programação começa no dia 13."
+    },
+    {
+      "question": "Posso ir sozinho?",
+      "answer": "Sim, e é comum. Você pode escolher quarto individual ou dividir um duplo com outra pessoa do grupo, que a gente apresenta antes da viagem."
+    },
+    {
+      "question": "O voo do Brasil está incluso?",
+      "answer": "Não. O pacote cobre tudo em terra na Grécia, mais os voos internos e os ferries. A WallTravel cota o voo internacional para o grupo e ajuda você a escolher."
+    },
+    {
+      "question": "Como funciona a alimentação?",
+      "answer": "Café da manhã incluso todos os dias. Almoços e jantares ficam livres, o que na Grécia é parte da experiência: tavernas à beira-mar, souvlaki na rua, jantar com vista em Oia."
+    },
+    {
+      "question": "Quanto tempo de ferry e de voo entre as ilhas?",
+      "answer": "Pireu a Mykonos e Mykonos a Santorini são travessias de ferry pelo Egeu, em classe econômica com assento marcado. Santorini a Corfu e Corfu a Atenas são voos curtos, com bagagem de 23 kg inclusa."
+    },
+    {
+      "question": "Quanta bagagem posso levar?",
+      "answer": "Uma mala de até 23 kg e uma bagagem de mão por pessoa. Nos portos, você carrega a própria mala por cerca de 200 m até o ponto de encontro do traslado."
+    },
+    {
+      "question": "Preciso de visto?",
+      "answer": "Brasileiros não precisam de visto para até 90 dias na Grécia. Leve o passaporte com validade mínima de seis meses e o seguro viagem, que é obrigatório."
+    },
+    {
+      "question": "Qual o tamanho do grupo?",
+      "answer": "São 10 viajantes, mais o líder da expedição WallTravel e o guia local. Esse é o tamanho certo para andar junto sem virar excursão."
+    }
+  ],
+  "leader": {
+    "name": "Wallace Maia",
+    "title": "Líder da expedição WallTravel",
+    "bio": "Sou fundador e sócio da WallTravel, apaixonado por viagens e por criar experiências que realmente façam sentido para cada pessoa. Ao longo dos anos conheci diferentes destinos pelo mundo e morei por mais de um ano na Europa, experiências que ampliaram meu olhar sobre culturas, roteiros e formas de viajar.\n\nTransformei essa paixão em profissão e hoje me dedico a planejar e acompanhar viagens especiais para os nossos clientes. A Grécia é um destino que já conheci pessoalmente e que me marcou pela história, pela cultura e pela beleza.\n\nNesta viagem, estarei com vocês como líder da expedição WallTravel, acompanhando cada etapa de perto para que todos aproveitem a experiência com tranquilidade, segurança e, principalmente, criem boas memórias.",
+    "photoUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/grecia/lider.webp",
+    "note": "Os passeios são conduzidos por guias locais em português. O líder coordena tudo com eles e fica com o grupo do desembarque em Atenas ao voo de volta."
+  },
+  "formFields": [
+    {
+      "key": "name",
+      "label": "Nome",
+      "required": true
+    },
+    {
+      "key": "whatsapp",
+      "label": "WhatsApp",
+      "required": true
+    },
+    {
+      "key": "notes",
+      "label": "Mensagem",
+      "required": false
+    }
+  ],
+  "seoTitle": "Grupo Grécia 2027 | WallTravel",
+  "seoDescription": "Atenas, Mykonos, Santorini e Corfu em 13 dias. Grupo de 10 pessoas, tudo privativo, guia em português.",
+  "ctaWhatsappMessage": "Olá! Quero saber mais sobre o Grupo Grécia 2027 da WallTravel.",
+  "publishedAt": "2026-09-23T01:49:00.406+00:00"
 }

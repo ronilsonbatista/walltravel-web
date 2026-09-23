@@ -1,0 +1,67 @@
+{
+  "slug": "italia",
+  "name": "Itália",
+  "shortDescription": "Costa Amalfitana, Toscana e Roma em uma expedição WallTravel. Em breve — deixe seu WhatsApp para ser avisado.",
+  "destinationLabel": "Amalfi · Toscana · Roma",
+  "durationLabel": null,
+  "departureDate": null,
+  "returnDate": null,
+  "daysCount": null,
+  "nightsCount": null,
+  "groupSize": null,
+  "priceFrom": null,
+  "priceUnit": "PER_PERSON",
+  "currency": "BRL",
+  "priceNote": null,
+  "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/amalfi-coast.jpg",
+  "featured": true,
+  "comingSoon": true,
+  "ctaLabel": "Quero ser avisado",
+  "highlights": [],
+  "description": "Estamos preparando a próxima expedição pela Itália. Sem datas, preços ou roteiro inventados: quando o grupo abrir, você recebe o aviso em primeira mão.",
+  "editorial": "Uma viagem em grupo WallTravel pela Itália está a caminho. Atmosfera, luz e ritmo italianos — o conteúdo completo, as datas e o investimento serão publicados quando o grupo abrir, sem inventar o que ainda não está fechado.",
+  "gallery": [
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/amalfi-coast.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/venice.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/rome-colosseum.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/tuscany.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/florence.jpg"
+  ],
+  "whyGroup": [],
+  "routeStops": [],
+  "itinerary": [],
+  "investmentOptions": [],
+  "paymentMethods": [],
+  "optionals": [],
+  "includes": [],
+  "excludes": [],
+  "bomSaber": [],
+  "faq": [],
+  "leader": null,
+  "formFields": [
+    {
+      "key": "name",
+      "label": "Nome",
+      "required": true
+    },
+    {
+      "key": "whatsapp",
+      "label": "WhatsApp",
+      "required": true
+    },
+    {
+      "key": "travelers",
+      "label": "Quantidade de viajantes",
+      "required": false
+    },
+    {
+      "key": "notes",
+      "label": "Contexto / interesse no grupo",
+      "required": false
+    }
+  ],
+  "seoTitle": "Grupo Itália (em breve) | WallTravel",
+  "seoDescription": "Viagem em grupo WallTravel pela Itália — Amalfi, Toscana e Roma. Em breve.",
+  "ctaWhatsappMessage": "Olá! Quero ser avisado quando o Grupo Itália da WallTravel abrir.",
+  "publishedAt": "2026-09-23T01:49:01.996+00:00"
+}

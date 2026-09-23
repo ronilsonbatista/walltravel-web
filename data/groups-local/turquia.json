@@ -13,7 +13,7 @@
   "priceUnit": "PER_PERSON",
   "currency": "BRL",
   "priceNote": null,
-  "coverImageUrl": "https://viagens.walltravel.com.br/grupos/images/turquia/turquia-cappadocia.jpg",
+  "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/turquia/cappadocia-balloons.jpg",
   "featured": true,
   "comingSoon": true,
   "ctaLabel": "Quero ser avisado",
@@ -21,7 +21,11 @@
   "description": "Estamos preparando a próxima expedição pela Turquia. Sem datas, preços ou roteiro inventados: quando o grupo abrir, você recebe o aviso em primeira mão.",
   "editorial": "Uma viagem em grupo WallTravel pela Turquia está a caminho. Conteúdo completo, datas e investimento serão publicados quando o grupo abrir — sem inventar o que ainda não está fechado.",
   "gallery": [
-    "https://viagens.walltravel.com.br/grupos/images/turquia/turquia-cappadocia.jpg"
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/turquia/cappadocia-balloons.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/turquia/istanbul-skyline.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/turquia/hagia-sophia.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/turquia/cappadocia-valley.jpg",
+    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/turquia/bosphorus.jpg"
   ],
   "whyGroup": [],
   "routeStops": [],
@@ -44,10 +48,20 @@
       "key": "whatsapp",
       "label": "WhatsApp",
       "required": true
+    },
+    {
+      "key": "travelers",
+      "label": "Quantidade de viajantes",
+      "required": false
+    },
+    {
+      "key": "notes",
+      "label": "Contexto / interesse no grupo",
+      "required": false
     }
   ],
   "seoTitle": "Grupo Turquia (em breve) | WallTravel",
   "seoDescription": "Viagem em grupo WallTravel pela Turquia — Capadócia e Istambul. Em breve.",
   "ctaWhatsappMessage": "Olá! Quero ser avisado quando o Grupo Turquia da WallTravel abrir.",
-  "publishedAt": null
+  "publishedAt": "2026-09-23T01:49:01.075+00:00"
 }
