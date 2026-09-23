@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Staging / preview hosts should set X-Robots-Tag: noindex via host headers
+# (see docs/STAGING.md). Production walltravel.com may allow indexing.

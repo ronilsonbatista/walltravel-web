@@ -201,7 +201,7 @@ export function trackStorefrontEvent(name, payload = {}) {
       ...payload,
       // strip likely PII if form fields leaked
     },
-    consent_analytics: true,
+    consent_analytics: getAnalyticsConsent(),
   };
 
   // Remove PII-ish keys from props client-side too

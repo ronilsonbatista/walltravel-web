@@ -134,6 +134,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (twImg) twImg.content = ogImage || '/images/vitrine/noronha.jpg';
   };
 
+  /** Staging / preview: noindex. Production host stays indexable unless VITE_NOINDEX=true. */
+  const applyStagingNoindex = () => {
+    const host = window.location.hostname || "";
+    const envFlag =
+      import.meta.env.VITE_NOINDEX === "true" || import.meta.env.VITE_NOINDEX === "1";
+    const stagingHost =
+      /\bstaging\b/i.test(host) ||
+      /\.vercel\.app$/i.test(host) ||
+      /\.up\.railway\.app$/i.test(host);
+    if (!envFlag && !stagingHost) return;
+    let robots = document.querySelector('meta[name="robots"]');
+    if (!robots) {
+      robots = document.createElement("meta");
+      robots.name = "robots";
+      document.head.appendChild(robots);
+    }
+    robots.content = "noindex, nofollow";
+  };
+  applyStagingNoindex();
+
   // ==========================================================================
   // 1. STICKY HEADER SCROLL EFFECT (DYNAMIC TRANSPARENT -> SCROLLED)
   // Shared Home header: transparent over home + group heroes; solid otherwise.
@@ -797,11 +817,13 @@ document.addEventListener('DOMContentLoaded', async () => {
               <div class="package-section">
                 <h2 class="package-section-title">Galeria de Experiências</h2>
                 <div class="package-detail-gallery-carousel">
-                  ${pkg.gallery.map(img => `
-                    <div class="gallery-item" onclick="window.open('${esc(img)}', '_blank')">
-                      <img src="${esc(img)}" alt="Imagem da Galeria" loading="lazy" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
-                    </div>
-                  `).join('')}
+                  ${pkg.gallery.map(img => {
+                    const safeUrl = esc(img);
+                    return `
+                    <div class="gallery-item" data-gallery-src="${safeUrl}" role="button" tabindex="0" aria-label="Abrir foto em tamanho real">
+                      <img src="${safeUrl}" alt="Imagem da Galeria" loading="lazy" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
+                    </div>`;
+                  }).join('')}
                 </div>
                 <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.5rem; text-align: center;" class="whatsapp-float-text">
                   * Clique em qualquer foto para ver em tamanho real. Deslize para navegar.
@@ -938,6 +960,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     adjustSidebarVisibility();
     window.addEventListener('resize', adjustSidebarVisibility);
+
+    packageView.querySelectorAll('[data-gallery-src]').forEach((el) => {
+      const open = () => {
+        const src = el.getAttribute('data-gallery-src');
+        if (!src || !/^https?:\/\//i.test(src)) return;
+        window.open(src, '_blank', 'noopener,noreferrer');
+      };
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
+    });
   };
 
   const renderGroupsList = () => {
