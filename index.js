@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const isHomePath = (path) => path === '/' || path === '/index.html';
   const isGroupDetailPath = (path) =>
     path.startsWith('/grupos/') && path !== '/grupos/' && path.length > '/grupos/'.length;
+  const isGroupsCatalogPath = (path) => path === '/grupos' || path === '/grupos/';
 
   const handleHeaderScroll = () => {
     const path = window.location.pathname;
@@ -154,8 +155,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    if (isGroupDetailPath(path)) {
-      const hero = document.querySelector('[data-group-over-hero] .group-hero');
+    if (isGroupDetailPath(path) || isGroupsCatalogPath(path)) {
+      const hero =
+        document.querySelector('[data-group-over-hero] .group-hero') ||
+        document.querySelector('[data-group-over-hero] .groups-intro-hero');
       if (hero) {
         const threshold = Math.max(80, hero.offsetHeight * 0.55);
         if (window.scrollY > threshold) {
@@ -167,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
-    // Catalog + other subpages: solid header
+    // Other subpages: solid header
     header.classList.add('scrolled');
   };
 
@@ -444,7 +447,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (packageSlug.endsWith('/')) packageSlug = packageSlug.slice(0, -1);
         await renderPackage(packageSlug);
       } else if (path === '/grupos' || path === '/grupos/') {
-        header.classList.add('scrolled');
         groupsView.style.display = 'block';
         renderGroupsList();
       } else if (path.startsWith('/grupos/')) {
