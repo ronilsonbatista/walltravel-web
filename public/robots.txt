@@ -1,5 +1,4 @@
+# Temporary: walltravel-web.vercel.app only until public DNS cutover 2026-10-02.
+# On cutover day, restore Allow and remove X-Robots-Tag from vercel.json.
 User-agent: *
-Allow: /
-
-# Staging / preview hosts should set X-Robots-Tag: noindex via host headers
-# (see docs/STAGING.md). Production walltravel.com may allow indexing.
+Disallow: /
