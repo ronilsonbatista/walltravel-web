@@ -1,6 +1,7 @@
 import { 
   getOrderedHeroSlides, 
-  getCategories, 
+  getCategories,
+  getFeaturedCategories,
   getCategoryBySlug, 
   getPackagesByCategory, 
   hydrateStorefront,
@@ -14,7 +15,6 @@ import {
   resolveGroupBySlug,
 } from './data/groups-helpers.js';
 import {
-  renderDestinoCard,
   renderVitrineCategoryCard,
   renderCategoryHeroImage,
 } from './data/storefront-render.js';
@@ -30,6 +30,13 @@ import {
 } from './data/storefront-events.js';
 import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
+import {
+  renderHomeOpeningIntro,
+  renderVitrineIntro,
+  renderDestinationExplorer,
+  playPageIntro,
+  initDestinationExplorer,
+} from './data/immersive/primitives.js';
 
 /** Lazy-load motion/experience modules — not needed for first paint on Home. */
 async function loadGroupExperienceBinder() {
@@ -56,19 +63,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindWhatsappTracking(document);
   bindAnalyticsPageHooks(document);
 
-  const renderHomeDestinosGrid = () => {
-    const grid = document.getElementById('destinos-grid');
-    if (!grid) return;
-    const categories = getCategories();
-    if (!categories.length) {
-      grid.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);grid-column:1/-1;">Novas categorias em breve. Enquanto isso, explore a <a href="/vitrine">vitrine completa</a>.</p>`;
-      return;
-    }
-    grid.innerHTML = categories
-      .map((cat) =>
-        renderDestinoCard(cat, esc, { href: `/vitrine/${cat.slug}` }),
-      )
-      .join('');
+  const renderHomeDestinosExplorer = () => {
+    const mount = document.getElementById('destinos-explorer');
+    if (!mount) return;
+    const featured = getFeaturedCategories();
+    const pool = featured.length ? featured : getCategories();
+    const destinations = pool.slice(0, 4).map((cat) => {
+      const count = cat.packageCount || 0;
+      return {
+        name: cat.name,
+        description: cat.description || "",
+        image: cat.image || "",
+        href: `/vitrine/${cat.slug}`,
+        meta: count ? `${count} ${count === 1 ? "experiência" : "experiências"}` : "Curadoria WallTravel",
+      };
+    });
+    mount.innerHTML = renderDestinationExplorer(destinations, esc);
+    initDestinationExplorer(mount);
   };
 
   const updateFooterDestinosLinks = () => {
@@ -89,14 +100,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
   };
 
-  renderHomeDestinosGrid();
+  renderHomeDestinosExplorer();
   updateFooterDestinosLinks();
+
+  // Home opening intro — once per session
+  const homeIntroMount = document.getElementById("wt-home-intro-mount");
+  if (homeIntroMount) {
+    homeIntroMount.innerHTML = renderHomeOpeningIntro();
+  }
 
   if (getStorefrontSource() === "local" && getStorefrontHydrateError()) {
     const banner = document.createElement("div");
     banner.setAttribute("role", "status");
-    banner.style.cssText =
-      "position:sticky;top:0;z-index:1000;background:#1c2430;color:#f5f1ea;padding:0.65rem 1rem;text-align:center;font-size:0.85rem;";
+      banner.style.cssText =
+      "position:sticky;top:0;z-index:1000;background:var(--surface-olive,#3F4328);color:var(--text-inverse,#F6F1E8);padding:0.65rem 1rem;text-align:center;font-size:0.85rem;";
     banner.textContent =
       "Catálogo temporariamente em modo local — tente novamente em instantes.";
     document.body.prepend(banner);
@@ -541,7 +558,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       injectHeroPreload('/images/vitrine/africa-do-sul.webp');
       hydrateHeroImage(slides[0]);
       prefetchHeroSlide(1);
-      startAutoplay();
+      // Opening plays once/session; hero autoplay starts after intro (or immediately if skipped)
+      playPageIntro(homeView).finally(() => startAutoplay());
       updateSEO(
         "WallTravel — Experiências Incríveis",
         "WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem."
@@ -660,21 +678,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     vitrineView.innerHTML = `
-      <div class="vitrine-header">
+      ${renderVitrineIntro()}
+      <div class="vitrine-header wt-vitrine-header" data-reveal>
         <div class="breadcrumb">
           <a href="/">Início</a>
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-active">Vitrine</span>
         </div>
-        <span class="category-meta-info">Selecione uma categoria</span>
+        <span class="category-meta-info">Curadoria WallTravel</span>
         <h1 class="section-title" style="margin-bottom: 1rem;">Vitrine de Viagens</h1>
         <p style="color: var(--color-text-muted);">Explore experiências exclusivas sob medida, divididas por estilos de viagem curados.</p>
       </div>
       
-      <div class="vitrine-grid">
+      <div class="vitrine-grid wt-vitrine-grid">
         ${categories.map((cat) => renderVitrineCategoryCard(cat, esc)).join('')}
       </div>
     `;
+    playPageIntro(vitrineView);
+    vitrineView.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-revealed"));
   };
 
   // B. Render dynamic Category page (/vitrine/[categorySlug])
@@ -866,6 +887,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const bindGroupExperience = await loadGroupExperienceBinder();
     packageView.innerHTML = renderExperienceDetailPage(pkg, category, esc, WA);
     groupExperienceCleanup = bindGroupExperience(packageView);
+    playPageIntro(packageView);
     handleHeaderScroll();
   };
 
@@ -877,12 +899,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const groups = getGroups();
     updateSEO(
       "Viagens em grupo",
-      "Expedições em grupo pequeno com curadoria WallTravel — Grécia, Turquia, Itália e próximos destinos.",
+      "Expedições em grupo pequeno com curadoria WallTravel — destinos com intenção e logística completa.",
     );
     groupsView.innerHTML = renderGroupsCatalog(groups, esc);
     bindGroupForms(groupsView, WA);
     const bindGroupExperience = await loadGroupExperienceBinder();
     groupExperienceCleanup = bindGroupExperience(groupsView);
+    playPageIntro(groupsView);
     handleHeaderScroll();
   };
 
@@ -913,6 +936,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     bindGroupForms(groupsView, WA);
     const bindGroupExperience = await loadGroupExperienceBinder();
     groupExperienceCleanup = bindGroupExperience(groupsView);
+    playPageIntro(groupsView);
     trackStorefrontEvent("group_view", { groupSlug: group.slug, slug: group.slug });
     trackStorefrontEvent("viagem_view", { slug: group.slug });
     handleHeaderScroll();

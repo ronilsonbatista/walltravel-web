@@ -1,4 +1,12 @@
 import { buildWhatsAppCTA } from "./whatsapp-cta.js";
+import {
+  HeroCarousel,
+  StickyConversionCTA,
+  GroupDetailTemplate,
+  ImmersiveHero,
+  renderDetailPersonalityIntro,
+  ImmersivePageIntro,
+} from "./immersive/primitives.js";
 
 function formatMoney(priceFrom, currency = "BRL") {
   if (priceFrom == null || priceFrom === "") return null;
@@ -65,19 +73,21 @@ function normalizeKey(value) {
     .replace(/[^a-z0-9]+/g, "");
 }
 
-/** Match a CMS gallery URL to a route stop by filename tokens — no invented imagery. */
+/**
+ * Match a CMS gallery URL to a route stop by filename tokens — no invented imagery.
+ * Generic token match from the stop name; never invents a photo.
+ */
 function photoForStop(stopName, gallery = []) {
   const key = normalizeKey(stopName);
-  if (!key) return null;
-  const aliases = {
-    atenas: ["atenas", "athens", "acropole"],
-    mykonos: ["mykonos"],
-    santorini: ["santorini", "oia"],
-    corfu: ["corfu", "kerkyra"],
-  };
-  const tokens = aliases[key] || [key];
+  if (!key || key.length < 3) return null;
+  const parts = String(stopName || "")
+    .split(/[·|,/\-–—→>]/)
+    .map((p) => normalizeKey(p))
+    .filter((p) => p.length >= 3);
+  const tokens = [...new Set([key, ...parts])];
   for (const url of gallery) {
     const file = normalizeKey(String(url).split("/").pop() || "");
+    if (!file) continue;
     if (tokens.some((t) => file.includes(t))) return url;
   }
   return null;
@@ -615,7 +625,12 @@ export function renderIncludesExcludes(group, esc) {
 
 /** Shared hero carousel — used by Groups and Experience (/viagens) landings. */
 export function renderTravelHeroCarousel(slides, esc) {
-  return renderHeroCarouselV2({ name: "" }, esc, slides);
+  return HeroCarousel({ slides, name: "", esc });
+}
+
+/** JourneyTimeline — system alias for the day-by-day itinerary explorer. */
+export function JourneyTimeline(group, esc) {
+  return renderItineraryAccordion(group, esc);
 }
 
 export function renderTravelHighlights(highlights, esc) {
@@ -630,7 +645,7 @@ export function renderTravelGallery(gallery, name, esc) {
   return renderGalleryCinematic({ gallery, name }, esc);
 }
 
-export { formatMoney, waLink, renderHeroCarouselV2 };
+export { formatMoney, waLink, renderHeroCarouselV2, HeroCarousel };
 
 export function renderBomSaber(group, esc) {
   if (!group.bomSaber?.length) return "";
@@ -779,8 +794,14 @@ export function renderGroupsCatalog(groups, esc) {
     .join("");
 
   return `<div class="groups-page group-landing-ds groups-page--chapters" data-group-over-hero>
+    ${ImmersivePageIntro({
+      brand: "WallTravel",
+      line: "Viagens em grupo",
+      variant: "short",
+      sessionKey: "wt_page_intro_grupos",
+    })}
     <div class="group-hero group-hero--fullbleed groups-catalog-hero">
-      ${renderHeroCarouselV2({ name: "Viagens em grupo" }, esc, heroSlides)}
+      ${HeroCarousel({ slides: heroSlides, name: "Viagens em grupo", esc })}
       <div class="group-hero-overlay group-hero-overlay--strong"></div>
       <div class="group-hero-content section-container">
         <div class="breadcrumb breadcrumb--light">
@@ -810,56 +831,9 @@ export function renderGroupsCatalog(groups, esc) {
   </div>`;
 }
 
+/** @deprecated Prefer HeroCarousel — kept for call-site compatibility. */
 function renderHeroCarouselV2(group, esc, slides) {
-  if (!slides.length) {
-    return `<div class="group-hero-fallback"></div>`;
-  }
-  const total = slides.length;
-  const totalDisplay = String(total).padStart(2, "0");
-
-  return `
-    <div class="group-hero-carousel" data-group-hero-carousel data-parallax="0.05" data-hero-total="${total}">
-      ${slides
-        .map(
-          (src, i) => `
-        <div class="group-hero-slide ${i === 0 ? "is-active" : ""}" data-hero-slide="${i}">
-          ${
-            i === 0
-              ? `<img src="${esc(src)}" alt="" class="group-hero-img" width="1600" height="900" decoding="async" fetchpriority="high" onerror="this.closest('.group-hero-slide')?.remove()">`
-              : `<img data-src="${esc(src)}" alt="" class="group-hero-img" width="1600" height="900" decoding="async" onerror="this.closest('.group-hero-slide')?.remove()">`
-          }
-        </div>`,
-        )
-        .join("")}
-      ${
-        total > 1
-          ? `
-        <div class="group-hero-nav-arrows" aria-hidden="false">
-          <button type="button" class="group-hero-arrow-btn" data-hero-prev aria-label="Foto anterior">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 16.58L10.83 12l4.58-4.58L14 6l-6 6 6 6 1.41-1.42z"/></svg>
-          </button>
-          <button type="button" class="group-hero-arrow-btn" data-hero-next aria-label="Próxima foto">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
-          </button>
-        </div>
-        <div class="group-hero-chrome">
-          <div class="group-hero-progress-wrapper">
-            <span class="group-hero-counter" data-hero-counter>01 / ${totalDisplay}</span>
-            <div class="group-hero-progress-nav" data-hero-progress-nav role="tablist" aria-label="Fotos do hero">
-              ${slides
-                .map(
-                  (_src, i) => `
-                <button type="button" class="group-hero-progress-track ${i === 0 ? "is-active" : ""}" data-hero-dot="${i}" role="tab" aria-label="Foto ${i + 1}" aria-selected="${i === 0 ? "true" : "false"}">
-                  <span class="group-hero-progress-fill"></span>
-                </button>`,
-                )
-                .join("")}
-            </div>
-          </div>
-        </div>`
-          : ""
-      }
-    </div>`;
+  return HeroCarousel({ slides, name: group?.name || "", esc });
 }
 
 export function renderGroupDetailPage(group, esc, WA) {
@@ -867,26 +841,27 @@ export function renderGroupDetailPage(group, esc, WA) {
   const slides = heroGallery(group);
   const waSticky = groupWaHref(group, WA, "sticky");
   const waSpecialist = groupWaHref(group, WA, "specialist");
+  const introHtml = renderDetailPersonalityIntro(group, esc);
 
   if (group.comingSoon) {
     const teaserGallery = (group.gallery || []).slice(0, 4);
-    return `<div class="group-detail group-detail--teaser group-landing-ds" data-group-over-hero>
-      <div class="group-hero group-hero--teaser group-hero--fullbleed">
-        ${renderHeroCarouselV2(group, esc, slides.slice(0, 5))}
-        <div class="group-hero-overlay group-hero-overlay--strong"></div>
-        <div class="group-hero-content section-container">
-          <div class="breadcrumb breadcrumb--light">
-            <a href="/">Início</a><span class="breadcrumb-separator">/</span>
-            <a href="/grupos">Viagens em grupo</a><span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-active">${esc(group.name)}</span>
-          </div>
-          <span class="group-card-badge">Em breve</span>
-          <h1 data-reveal>${esc(group.name)}</h1>
-          ${group.shortDescription ? `<p data-reveal>${esc(group.shortDescription)}</p>` : ""}
-          ${group.destinationLabel ? `<p class="group-hero-dest" data-reveal>${esc(group.destinationLabel)}</p>` : ""}
+    const heroHtml = ImmersiveHero({
+      carouselHtml: HeroCarousel({ slides: slides.slice(0, 5), name: group.name, esc }),
+      overlay: "strong",
+      className: "group-hero--teaser",
+      contentHtml: `
+        <div class="breadcrumb breadcrumb--light">
+          <a href="/">Início</a><span class="breadcrumb-separator">/</span>
+          <a href="/grupos">Viagens em grupo</a><span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-active">${esc(group.name)}</span>
         </div>
-      </div>
-      <div class="group-detail-body">
+        <span class="group-card-badge">Em breve</span>
+        <h1 data-reveal>${esc(group.name)}</h1>
+        ${group.shortDescription ? `<p data-reveal>${esc(group.shortDescription)}</p>` : ""}
+        ${group.destinationLabel ? `<p class="group-hero-dest" data-reveal>${esc(group.destinationLabel)}</p>` : ""}
+      `,
+    });
+    const bodyHtml = `
         ${
           group.editorial
             ? `<section class="group-manifesto group-manifesto--teaser" data-reveal>
@@ -923,22 +898,26 @@ export function renderGroupDetailPage(group, esc, WA) {
           </section>
           ${renderGroupForm(group, esc, WA)}
           <a href="${waSpecialist}" target="_blank" rel="noopener" class="btn-outline group-specialist-link" data-storefront-cta="whatsapp">Falar com especialista</a>
-        </div>
-      </div>
-      <div class="sticky-bottom-bar group-sticky-bar">
-        <div class="sticky-bottom-price-box">
-          <span class="sticky-bottom-price">Em breve</span>
-        </div>
-        <a href="#group-form" class="sticky-bottom-btn">${esc(group.ctaLabel || "Quero ser avisado")}</a>
-      </div>
-    </div>`;
+        </div>`;
+    const stickyHtml = StickyConversionCTA({
+      priceHtml: `<span class="sticky-bottom-price">Em breve</span>`,
+      ctaHref: "#group-form",
+      ctaLabel: group.ctaLabel || "Quero ser avisado",
+      external: false,
+    });
+    return GroupDetailTemplate({
+      introHtml,
+      heroHtml,
+      bodyHtml,
+      stickyHtml,
+      comingSoon: true,
+    });
   }
 
-  return `<div class="group-detail group-landing-ds" data-group-over-hero>
-    <div class="group-hero group-hero--fullbleed">
-      ${renderHeroCarouselV2(group, esc, slides)}
-      <div class="group-hero-overlay group-hero-overlay--strong"></div>
-      <div class="group-hero-content section-container">
+  const heroHtml = ImmersiveHero({
+    carouselHtml: HeroCarousel({ slides, name: group.name, esc }),
+    overlay: "strong",
+    contentHtml: `
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a><span class="breadcrumb-separator">/</span>
           <a href="/grupos">Viagens em grupo</a><span class="breadcrumb-separator">/</span>
@@ -947,15 +926,15 @@ export function renderGroupDetailPage(group, esc, WA) {
         <h1 data-reveal>${esc(group.name)}</h1>
         ${group.description || group.shortDescription ? `<p class="group-hero-sub" data-reveal>${esc(group.description || group.shortDescription)}</p>` : ""}
         ${renderHighlights(group, esc)}
-      </div>
-    </div>
-    ${renderSubnav(group)}
-    <div class="group-detail-body">
+      `,
+  });
+
+  const bodyHtml = `
       ${renderManifesto(group, esc)}
       ${renderWhyGroup(group, esc)}
       ${renderPhotoMoment(group, esc, 3)}
       <div class="section-container">
-        ${renderItineraryAccordion(group, esc)}
+        ${JourneyTimeline(group, esc)}
       </div>
       ${renderGalleryCinematic(group, esc)}
       <div class="section-container">
@@ -971,15 +950,23 @@ export function renderGroupDetailPage(group, esc, WA) {
       </div>
       <div class="section-container">
         ${renderGroupForm(group, esc, WA)}
-      </div>
-    </div>
-    <div class="sticky-bottom-bar group-sticky-bar">
-      <div class="sticky-bottom-price-box">
-        ${price ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>` : `<span class="sticky-bottom-price">Fale conosco</span>`}
-      </div>
-      <a href="${waSticky}" target="_blank" rel="noopener" class="sticky-bottom-btn" data-storefront-cta="whatsapp">${esc(group.ctaLabel || "WhatsApp")}</a>
-    </div>
-  </div>`;
+      </div>`;
+
+  const stickyHtml = StickyConversionCTA({
+    priceHtml: price
+      ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>`
+      : `<span class="sticky-bottom-price">Fale conosco</span>`,
+    ctaHref: waSticky,
+    ctaLabel: group.ctaLabel || "WhatsApp",
+  });
+
+  return GroupDetailTemplate({
+    introHtml,
+    heroHtml,
+    subnavHtml: renderSubnav(group),
+    bodyHtml,
+    stickyHtml,
+  });
 }
 
 export function bindGroupForms(root, WA) {

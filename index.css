@@ -34,8 +34,8 @@
   top: 0.75rem;
   z-index: 10000;
   padding: 0.65rem 1rem;
-  background: #191909;
-  color: #fff;
+  background: var(--surface-olive, #3F4328);
+  color: var(--text-inverse, #F6F1E8);
   text-decoration: none;
   border-radius: 4px;
   transform: translateY(-160%);
@@ -82,26 +82,42 @@ textarea:focus-visible,
   --bg-card: #FFFDF7;           /* Fundo dos cards branco quente */
   --color-text: #16170F;        /* Texto principal grafite escuro */
   --color-text-muted: #5C5E54;  /* Texto secundário */
-  --color-accent: #191909;      /* Verde escuro da marca para impacto e botões */
+  --color-accent: #3F4328;      /* Oliva WallTravel — impacto (não near-black) */
   --color-primary: #5C5E2E;     /* Oliva escuro — AA ≥4.5:1 on cream */
   --color-primary-light: #B8A66A; /* Dourado discreto — accent/border only, not body text on cream */
   --border-color: rgba(22, 23, 15, 0.08); /* Borda fina */
   --border-color-active: rgba(184, 166, 106, 0.3); /* Borda ativa dourada */
 
-  /* Semantic contrast surfaces (WCAG AA where applicable) */
+  /* Semantic immersive surfaces — NO near-black fills (#111 / #151515 / #16170F) */
+  --surface-base: var(--bg-color);
+  --surface-soft: var(--bg-card);
+  --surface-sand: var(--bg-color-alt);
+  --surface-green: #5C5E2E;
+  --surface-green-soft: #8A8C5A;
+  --surface-olive: #3F4328;
   --text-primary: var(--color-text);
   --text-secondary: var(--color-text-muted);
   --text-inverse: #F6F1E8;
   --text-inverse-muted: rgba(246, 241, 232, 0.86);
-  --surface-dark: #16170F;
+  --accent-primary: var(--color-primary);
+  --accent-gold: var(--color-primary-light);
+  --surface-dark: var(--surface-olive); /* legacy alias → olive, never black */
   --surface-cream: var(--bg-color);
   --surface-card: var(--bg-card);
   --overlay-hero: linear-gradient(
     to top,
-    rgba(22, 23, 15, 0.94) 0%,
-    rgba(22, 23, 15, 0.55) 42%,
-    rgba(22, 23, 15, 0.28) 100%
+    rgba(63, 67, 40, 0.92) 0%,
+    rgba(63, 67, 40, 0.52) 42%,
+    rgba(63, 67, 40, 0.28) 100%
   );
+
+  /* Motion tokens */
+  --duration-fast: 220ms;
+  --duration-medium: 450ms;
+  --duration-slow: 900ms;
+  --easing-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
   
   /* Fonts */
   --font-title: 'Faculty Glyphic', 'Faculty Glyphic Local', Georgia, serif;
@@ -2694,7 +2710,7 @@ a {
   align-items: flex-end;
   color: #fff;
   overflow: hidden;
-  background: #16170f;
+  background: var(--surface-olive);
 }
 
 .groups-intro-hero-media,
@@ -2711,9 +2727,9 @@ a {
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(22, 23, 15, 0.92) 0%,
-    rgba(22, 23, 15, 0.45) 48%,
-    rgba(22, 23, 15, 0.25) 100%
+    rgba(63, 67, 40, 0.92) 0%,
+    rgba(63, 67, 40, 0.45) 48%,
+    rgba(63, 67, 40, 0.25) 100%
   );
   z-index: 1;
 }
@@ -2790,7 +2806,7 @@ a {
 }
 
 .group-chapter-media--empty {
-  background: #222018;
+  background: var(--surface-green);
 }
 
 .group-chapter-media-hero {
@@ -2834,7 +2850,7 @@ a {
   justify-content: flex-end;
   padding: clamp(2rem, 5vw, 3.75rem);
   background:
-    linear-gradient(160deg, rgba(22, 23, 15, 0.92) 0%, rgba(22, 23, 15, 0.98) 100%);
+    linear-gradient(160deg, rgba(63, 67, 40, 0.92) 0%, rgba(63, 67, 40, 0.96) 100%);
 }
 
 .group-chapter-badge {
@@ -3019,7 +3035,7 @@ a {
   align-items: flex-end;
   color: #fff;
   overflow: hidden;
-  background: #16170f;
+  background: var(--surface-olive);
 }
 
 .group-hero--fullbleed {
@@ -3078,12 +3094,12 @@ a {
   background:
     linear-gradient(
       to right,
-      rgba(22, 23, 15, 0.88) 12%,
-      rgba(22, 23, 15, 0.52) 48%,
-      rgba(22, 23, 15, 0.22) 78%,
-      rgba(22, 23, 15, 0.12) 100%
+      rgba(63, 67, 40, 0.88) 12%,
+      rgba(63, 67, 40, 0.52) 48%,
+      rgba(63, 67, 40, 0.22) 78%,
+      rgba(63, 67, 40, 0.12) 100%
     ),
-    linear-gradient(to top, rgba(22, 23, 15, 0.72) 0%, rgba(22, 23, 15, 0.28) 42%, transparent 68%);
+    linear-gradient(to top, rgba(63, 67, 40, 0.72) 0%, rgba(63, 67, 40, 0.28) 42%, transparent 68%);
 }
 
 .groups-catalog-hero .groups-header-desc {
@@ -4431,7 +4447,7 @@ a {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(22, 23, 15, 0.92);
+  background: color-mix(in srgb, var(--surface-olive) 92%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4694,5 +4710,357 @@ a {
   .group-itinerary-panel.is-active {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   WallTravel Immersive Experience System
+   ========================================================================== */
+
+html.wt-intro-active,
+html.wt-intro-active body {
+  overflow: hidden;
+}
+
+.wt-page-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: grid;
+  place-items: center;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  transition: opacity var(--duration-fast) var(--easing-exit);
+}
+
+.wt-page-intro[hidden] {
+  display: none !important;
+}
+
+.wt-page-intro.is-exiting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wt-page-intro-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, color-mix(in srgb, var(--surface-sand) 70%, transparent), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, color-mix(in srgb, var(--surface-green-soft) 22%, transparent), transparent 50%),
+    var(--surface-base);
+}
+
+.wt-page-intro-stage {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: min(36rem, 90vw);
+  padding: 2rem 1.25rem;
+}
+
+.wt-page-intro-eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: 0.85rem;
+  opacity: 0;
+  animation: wtIntroIn var(--duration-medium) var(--easing-enter) 80ms forwards;
+}
+
+.wt-page-intro-brand {
+  font-family: var(--font-title);
+  font-size: clamp(2.4rem, 7vw, 3.75rem);
+  line-height: 1.05;
+  color: var(--surface-olive);
+  margin: 0;
+  opacity: 0;
+  animation: wtIntroIn var(--duration-medium) var(--easing-enter) 160ms forwards;
+}
+
+.wt-page-intro-title {
+  font-family: var(--font-title);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  margin: 0.85rem 0 0;
+  color: var(--text-primary);
+  opacity: 0;
+  animation: wtIntroIn var(--duration-medium) var(--easing-enter) 280ms forwards;
+}
+
+.wt-page-intro-line {
+  margin: 1rem auto 0;
+  max-width: 28rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  line-height: 1.55;
+  opacity: 0;
+  animation: wtIntroIn var(--duration-medium) var(--easing-enter) 360ms forwards;
+}
+
+.wt-page-intro-media {
+  margin: 1.5rem auto 0;
+  width: min(420px, 78vw);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 4px;
+  opacity: 0;
+  clip-path: inset(12% 12% 12% 12%);
+  animation: wtIntroMedia var(--duration-slow) var(--easing-enter) 420ms forwards;
+}
+
+.wt-page-intro-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wt-page-intro--short .wt-page-intro-brand {
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+}
+
+.wt-page-intro--short .wt-page-intro-media {
+  display: none;
+}
+
+@keyframes wtIntroIn {
+  from { opacity: 0; transform: translate3d(0, 12px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes wtIntroMedia {
+  from { opacity: 0; clip-path: inset(12% 12% 12% 12%); transform: scale(1.04); }
+  to { opacity: 1; clip-path: inset(0); transform: none; }
+}
+
+.wt-dest-explorer {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.wt-dest-explorer-stage {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr;
+  gap: 0;
+  min-height: min(62vh, 560px);
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.wt-dest-explorer-image {
+  position: relative;
+  min-height: 320px;
+  background: var(--surface-sand);
+}
+
+.wt-dest-explorer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity var(--duration-fast) var(--easing-standard);
+}
+
+.wt-dest-explorer-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  background: color-mix(in srgb, var(--surface-olive) 92%, var(--surface-green) 8%);
+  color: var(--text-inverse);
+}
+
+.wt-dest-explorer-meta {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 0.75rem;
+}
+
+.wt-dest-explorer-title {
+  font-family: var(--font-title);
+  font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+  color: var(--text-inverse);
+}
+
+.wt-dest-explorer-desc {
+  color: var(--text-inverse-muted);
+  line-height: 1.65;
+  margin: 0 0 1.35rem;
+  max-width: 28rem;
+}
+
+.wt-dest-explorer-link {
+  color: var(--accent-gold);
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  width: fit-content;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-gold) 55%, transparent);
+  padding-bottom: 0.15rem;
+}
+
+.wt-dest-explorer-link:hover {
+  color: var(--text-inverse);
+  border-bottom-color: var(--text-inverse);
+}
+
+.wt-dest-explorer-rail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.wt-dest-preview {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface-soft);
+  border: 1px solid transparent;
+  transition:
+    border-color var(--duration-fast) var(--easing-standard),
+    transform var(--duration-fast) var(--easing-standard);
+}
+
+.wt-dest-preview.is-active {
+  border-color: color-mix(in srgb, var(--accent-gold) 55%, transparent);
+}
+
+.wt-dest-preview-media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--surface-sand);
+}
+
+.wt-dest-preview-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--duration-medium) var(--easing-standard);
+}
+
+.wt-dest-preview.is-active .wt-dest-preview-media img,
+.wt-dest-preview:hover .wt-dest-preview-media img {
+  transform: scale(1.04);
+}
+
+.wt-dest-preview-copy {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 0.9rem 1rem;
+}
+
+.wt-dest-preview-meta {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.wt-dest-preview-title {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.wt-dest-preview-desc {
+  display: none;
+}
+
+.wt-dest-explorer-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.wt-dest-explorer-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem 1rem;
+}
+
+.wt-vitrine-grid .category-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.wt-vitrine-grid .category-card-img-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.wt-vitrine-grid .category-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wt-media-reveal img {
+  width: 100%;
+  display: block;
+  clip-path: inset(0 0 8% 0);
+  transition: clip-path var(--duration-slow) var(--easing-enter);
+}
+
+.wt-media-reveal.is-revealed img,
+[data-reveal].is-revealed .wt-media-reveal img {
+  clip-path: inset(0);
+}
+
+@media (max-width: 900px) {
+  .wt-dest-explorer-stage {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .wt-dest-explorer-image {
+    aspect-ratio: 16 / 11;
+    min-height: 0;
+  }
+
+  .wt-dest-explorer-rail {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem;
+    padding-bottom: 0.35rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .wt-dest-preview {
+    flex: 0 0 min(72vw, 260px);
+    scroll-snap-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-page-intro-eyebrow,
+  .wt-page-intro-brand,
+  .wt-page-intro-title,
+  .wt-page-intro-line,
+  .wt-page-intro-media,
+  .wt-dest-explorer-image img,
+  .wt-dest-preview-media img,
+  .wt-media-reveal img {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  html.wt-intro-active,
+  html.wt-intro-active body {
+    overflow: auto;
   }
 }

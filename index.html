@@ -57,6 +57,8 @@
 
   <div id="main-content" tabindex="-1">
   <div id="home-view">
+  <!-- Immersive home opening (once per session) — mounted by immersive system -->
+  <div id="wt-home-intro-mount"></div>
 
   <!-- ==========================================================================
        HERO / SLIDESHOW SECTION (CINEMATOGRAPHIC FULLSCREEN)
@@ -173,22 +175,17 @@
   </section>
 
   <!-- ==========================================================================
-       SECTION 1: DESTINOS & EXPERIÊNCIAS (PREVIA VITRINE)
+       SECTION 1: DESTINATION EXPLORER (3–4 featured — not full catalog)
        ========================================================================== -->
   <section class="section section-alt fade-in-section" id="destinos-experiencias">
     <div class="section-container">
       <div class="section-header">
         <span class="section-tag">Curadoria WallTravel</span>
-        <h2 class="section-title">Destinos & Experiências</h2>
-        <p class="section-lede">Destinos com intenção, experiências sob medida e viagens em grupo — desenhadas por especialistas.</p>
+        <h2 class="section-title">Destinos em destaque</h2>
+        <p class="section-lede">Uma seleção editorial — sinta o destino antes de explorar a vitrine completa.</p>
       </div>
 
-      <div class="destinos-grid" id="destinos-grid" aria-live="polite"></div>
-
-      <div class="home-destinos-ctas">
-        <a href="/vitrine" class="btn-primary">Ver vitrine completa</a>
-        <a href="/grupos" class="btn-outline">Viagens em grupo</a>
-      </div>
+      <div id="destinos-explorer" aria-live="polite"></div>
     </div>
   </section>
 
