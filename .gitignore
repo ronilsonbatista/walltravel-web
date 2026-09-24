@@ -6,3 +6,4 @@ dist/
 .tempmediaStorage/
 *.log
 .vercel
+test-results/

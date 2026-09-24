@@ -13,7 +13,7 @@
   "priceUnit": "PER_PERSON",
   "currency": "BRL",
   "priceNote": null,
-  "coverImageUrl": "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/amalfi-coast.jpg",
+  "coverImageUrl": "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/italia/amalfi-coast.jpg",
   "featured": true,
   "comingSoon": true,
   "ctaLabel": "Quero ser avisado",
@@ -21,11 +21,11 @@
   "description": "Estamos preparando a próxima expedição pela Itália. Sem datas, preços ou roteiro inventados: quando o grupo abrir, você recebe o aviso em primeira mão.",
   "editorial": "Uma viagem em grupo WallTravel pela Itália está a caminho. Atmosfera, luz e ritmo italianos — o conteúdo completo, as datas e o investimento serão publicados quando o grupo abrir, sem inventar o que ainda não está fechado.",
   "gallery": [
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/amalfi-coast.jpg",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/venice.jpg",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/rome-colosseum.jpg",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/tuscany.jpg",
-    "http://127.0.0.1:54321/storage/v1/object/public/storefront/groups/italia/florence.jpg"
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/italia/amalfi-coast.jpg",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/italia/venice.jpg",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/italia/rome-colosseum.jpg",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/italia/tuscany.jpg",
+    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/italia/florence.jpg"
   ],
   "whyGroup": [],
   "routeStops": [],

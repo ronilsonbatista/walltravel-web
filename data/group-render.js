@@ -1,3 +1,5 @@
+import { buildWhatsAppCTA } from "./whatsapp-cta.js";
+
 function formatMoney(priceFrom, currency = "BRL") {
   if (priceFrom == null || priceFrom === "") return null;
   const n = Number(String(priceFrom).replace(",", "."));
@@ -6,8 +8,32 @@ function formatMoney(priceFrom, currency = "BRL") {
   return `${sym} ${n.toLocaleString("pt-BR")}`;
 }
 
-function waLink(WA, message) {
-  return `https://wa.me/${WA}?text=${encodeURIComponent(message)}`;
+/** Thin wrapper — prefer buildWhatsAppCTA with pageType/entity when possible. */
+function waLink(WA, message, opts = {}) {
+  return buildWhatsAppCTA({
+    number: WA,
+    customMessage: message,
+    pageType: opts.pageType || "GENERIC",
+    entity: opts.entity,
+    placement: opts.placement,
+    source: opts.source,
+    path: opts.path,
+  }).href;
+}
+
+function groupWaHref(group, WA, placement = "cta") {
+  return buildWhatsAppCTA({
+    number: WA,
+    pageType: group.comingSoon ? "COMING_SOON" : "GROUP",
+    entity: {
+      name: group.name,
+      slug: group.slug,
+      comingSoon: Boolean(group.comingSoon),
+    },
+    customMessage: group.ctaWhatsappMessage || undefined,
+    placement,
+    source: "group",
+  }).href;
 }
 
 export function buildGroupWhatsappMessage(group, formData = {}) {
@@ -86,10 +112,13 @@ function renderHighlights(group, esc) {
 
 function renderSubnav(group) {
   const links = [];
-  if (group.routeStops?.length) links.push(["#group-route", "Roteiro"]);
-  if (group.routeStops?.some((s) => s.hotel)) links.push(["#group-hotels", "Hotéis"]);
+  if (group.whyGroup?.length) links.push(["#group-why", "Por quê"]);
+  if (group.routeStops?.length || group.itinerary?.length) {
+    links.push(["#group-itinerary", "Roteiro"]);
+  }
   if (group.gallery?.length) links.push(["#group-gallery", "Galeria"]);
-  if (group.itinerary?.length) links.push(["#group-itinerary", "Dia a dia"]);
+  if (group.routeStops?.some((s) => s.hotel)) links.push(["#group-hotels", "Hotéis"]);
+  if (group.leader?.name) links.push(["#group-leader", "Líder"]);
   if (group.investmentOptions?.length || group.priceFrom) links.push(["#group-investment", "Investimento"]);
   links.push(["#group-form", "Contato"]);
   if (links.length < 3) return "";
@@ -104,10 +133,10 @@ function renderSubnav(group) {
 export function renderWhyGroup(group, esc) {
   if (!group.whyGroup?.length) return "";
   const gallery = group.gallery || [];
-  return `<section class="group-band group-band--dark group-why-band" id="group-why" data-reveal>
+  return `<section class="group-band group-band--light group-why-band" id="group-why" data-reveal>
     <div class="section-container group-band-inner">
       <div class="group-why-head">
-        <span class="section-tag section-tag--on-dark">Por que em grupo</span>
+        <span class="section-tag">Por que em grupo</span>
         <h2 class="group-band-title">Por que viajar com a WallTravel</h2>
       </div>
       <div class="group-why-visual">
@@ -291,10 +320,29 @@ function renderDayBody(day, esc) {
   `;
 }
 
+function routeStopLookup(group) {
+  const map = new Map();
+  for (const s of group.routeStops || []) {
+    const key = normalizeKey(s.name);
+    if (key) map.set(key, s);
+  }
+  return map;
+}
+
+function transportCueMarkup(transportNext, esc) {
+  if (!transportNext) return "";
+  const kind = transportKind(transportNext);
+  const label = kind === "plane" ? "Voo" : kind === "ferry" ? "Ferry" : "Trajeto";
+  return `<p class="group-itinerary-transport group-itinerary-transport--${esc(kind)}" data-transport-kind="${esc(kind)}">
+    <span class="group-itinerary-transport-label">${label}</span>
+    <span class="group-itinerary-transport-text">${esc(transportNext)}</span>
+  </p>`;
+}
+
 /**
- * Day-nav grouped by destination + large day panel (desktop).
- * Mobile: horizontal day selector + swipe + NN/TT progress.
- * Full day content stays in DOM for SEO/a11y (visually panel-switched, not removed).
+ * Unified journey section — ROTEIRO + DIA A DIA in one place.
+ * Desktop: destination rail + day panel · Mobile: horizontal day selector.
+ * Ferry/flight cues from CMS routeStops.transportNext matched to destination groups.
  */
 export function renderItineraryAccordion(group, esc) {
   if (!group.itinerary?.length) return "";
@@ -302,18 +350,28 @@ export function renderItineraryAccordion(group, esc) {
   const total = days.length;
   const totalLabel = String(total).padStart(2, "0");
   const destGroups = groupItineraryByDestination(days);
+  const stopsByKey = routeStopLookup(group);
+  const gallery = group.gallery || [];
+
+  const lastDayOfDest = new Set();
+  for (const g of destGroups) {
+    const last = g.days[g.days.length - 1];
+    if (last) lastDayOfDest.add(last.day);
+  }
 
   return `<section class="group-section group-itinerary-section" id="group-itinerary" data-reveal data-itinerary-explorer data-itinerary-total="${total}">
     <div class="group-itinerary-head">
-      <span class="section-tag">Dia a dia</span>
-      <h2 class="package-section-title">Itinerário completo</h2>
+      <span class="section-tag">Roteiro dia a dia</span>
+      <h2 class="package-section-title">Sua jornada</h2>
       <p class="group-itinerary-progress-label" data-itinerary-counter aria-live="polite">01 / ${totalLabel}</p>
     </div>
     <div class="group-itinerary-explorer">
       <nav class="group-itinerary-nav" data-itinerary-nav aria-label="Dias do roteiro">
         ${destGroups
-          .map(
-            (g) => `
+          .map((g) => {
+            const stop = stopsByKey.get(g.key);
+            const cue = stop?.transportNext ? transportCueMarkup(stop.transportNext, esc) : "";
+            return `
           <div class="group-itinerary-nav-group">
             <p class="group-itinerary-nav-dest">${esc(g.label)}</p>
             <ol class="group-itinerary-nav-days">
@@ -330,8 +388,9 @@ export function renderItineraryAccordion(group, esc) {
                 })
                 .join("")}
             </ol>
-          </div>`,
-          )
+            ${cue}
+          </div>`;
+          })
           .join("")}
       </nav>
       <div class="group-itinerary-stage" data-itinerary-stage>
@@ -342,17 +401,29 @@ export function renderItineraryAccordion(group, esc) {
         </div>
         <div class="group-itinerary-panels" data-itinerary-panels>
           ${days
-            .map(
-              (day, i) => `
+            .map((day, i) => {
+              const destKey = destinationKeyFromLocation(day.location);
+              const stop = stopsByKey.get(destKey);
+              const photo =
+                photoForStop(stop?.name || day.location, gallery) ||
+                photoForStop(destKey, gallery);
+              const showTransport = lastDayOfDest.has(day.day) && stop?.transportNext;
+              return `
             <article class="group-itinerary-panel ${i === 0 ? "is-active" : ""}" data-itinerary-panel data-day="${esc(String(day.day))}" data-itinerary-index="${i}" ${i === 0 ? "" : 'aria-hidden="true"'}>
+              ${
+                photo
+                  ? `<div class="group-itinerary-panel-photo"><img src="${esc(photo)}" alt="" loading="lazy" onerror="this.parentElement.remove()"></div>`
+                  : ""
+              }
               <div class="group-itinerary-step-head">
                 <span class="group-itinerary-day-num">Dia ${esc(String(day.day))}</span>
                 ${day.dateLabel ? `<span class="group-itinerary-date">${esc(day.dateLabel)}</span>` : ""}
               </div>
               <h3 class="group-itinerary-day-title">${esc(day.title)}</h3>
               ${renderDayBody(day, esc)}
-            </article>`,
-            )
+              ${showTransport ? transportCueMarkup(stop.transportNext, esc) : ""}
+            </article>`;
+            })
             .join("")}
         </div>
       </div>
@@ -391,19 +462,31 @@ export function renderInvestment(group, esc) {
 
   const capacity =
     group.groupSize != null
-      ? `<p class="group-investment-capacity">Grupo de ${esc(String(group.groupSize))} viajantes — sem urgência artificial.</p>`
+      ? `<p class="group-investment-capacity">Grupo de ${esc(String(group.groupSize))} viajantes — vagas reais, sem urgência artificial.</p>`
       : "";
 
-  return `<section class="group-band group-band--dark group-investment-band" id="group-investment" data-reveal>
+  const heroPrice = formatMoney(group.priceFrom, group.currency);
+
+  return `<section class="group-band group-band--light group-investment-band" id="group-investment" data-reveal>
     <div class="section-container group-band-inner">
-      <span class="section-tag section-tag--on-dark">Investimento</span>
+      <span class="section-tag">Investimento</span>
       <h2 class="group-band-title">Valores e formas de pagamento</h2>
       ${capacity}
+      ${
+        heroPrice
+          ? `<div class="group-investment-hero-price" data-reveal>
+              <span class="group-investment-hero-label">A partir de</span>
+              <p class="group-investment-hero-value">${esc(heroPrice)}</p>
+              <span class="group-investment-hero-unit">por pessoa</span>
+            </div>`
+          : ""
+      }
       <div class="group-investment-grid">
         ${options
-          .map((opt) => {
+          .map((opt, i) => {
             const price = formatMoney(opt.price, group.currency);
-            return `<div class="group-investment-card" data-reveal>
+            const featured = i === 0 && price;
+            return `<div class="group-investment-card ${featured ? "group-investment-card--featured" : ""}" data-reveal>
               <h3>${esc(opt.title)}</h3>
               ${opt.description ? `<p>${esc(opt.description)}</p>` : ""}
               <div class="group-investment-price">${price ? esc(price) : "Sob consulta"}</div>
@@ -415,7 +498,7 @@ export function renderInvestment(group, esc) {
       ${
         group.paymentMethods?.length
           ? `<div class="group-payment-methods" data-reveal>
-          <h3 class="group-subheading group-subheading--on-dark">Formas de pagamento</h3>
+          <h3 class="group-subheading">Formas de pagamento</h3>
           <ul>${group.paymentMethods.map((p) => `<li><strong>${esc(p.title)}</strong>${p.description ? ` — ${esc(p.description)}` : ""}</li>`).join("")}</ul>
         </div>`
           : ""
@@ -447,7 +530,7 @@ export function renderFaq(group, esc) {
 export function renderLeader(group, esc) {
   const leader = group.leader;
   if (!leader?.name) return "";
-  return `<section class="group-band group-band--photo group-leader-band" data-reveal>
+  return `<section class="group-band group-band--photo group-leader-band" id="group-leader" data-reveal>
     ${
       leader.photoUrl
         ? `<div class="group-leader-bg" aria-hidden="true"><img src="${esc(leader.photoUrl)}" alt="" loading="lazy"></div>`
@@ -529,6 +612,25 @@ export function renderIncludesExcludes(group, esc) {
     </div>
   </section>`;
 }
+
+/** Shared hero carousel — used by Groups and Experience (/viagens) landings. */
+export function renderTravelHeroCarousel(slides, esc) {
+  return renderHeroCarouselV2({ name: "" }, esc, slides);
+}
+
+export function renderTravelHighlights(highlights, esc) {
+  return renderHighlights({ highlights }, esc);
+}
+
+export function renderTravelSubnav(sections) {
+  return renderSubnav(sections);
+}
+
+export function renderTravelGallery(gallery, name, esc) {
+  return renderGalleryCinematic({ gallery, name }, esc);
+}
+
+export { formatMoney, waLink, renderHeroCarouselV2 };
 
 export function renderBomSaber(group, esc) {
   if (!group.bomSaber?.length) return "";
@@ -613,66 +715,97 @@ function renderGalleryCinematic(group, esc) {
 }
 
 export function renderGroupsCatalog(groups, esc) {
-  const heroImg =
-    groups.find((g) => g.coverImageUrl && !g.comingSoon)?.coverImageUrl ||
-    groups.find((g) => g.coverImageUrl)?.coverImageUrl ||
-    null;
+  const heroSlides = [
+    ...new Set(groups.map((g) => g.coverImageUrl).filter(Boolean)),
+  ].slice(0, 8);
 
-  return `<div class="groups-page group-landing-ds" data-group-over-hero>
-    <section class="groups-intro-hero">
-      ${
-        heroImg
-          ? `<div class="groups-intro-hero-media" aria-hidden="true"><img src="${esc(heroImg)}" alt="" fetchpriority="high"></div>`
-          : ""
-      }
-      <div class="groups-intro-hero-veil"></div>
-      <div class="groups-intro-copy" data-reveal>
+  const chapters = groups
+    .map((g, i) => {
+      const price = formatMoney(g.priceFrom, g.currency);
+      const side = i % 2 === 0 ? "left" : "right";
+      const status = g.comingSoon
+        ? '<span class="group-chapter-badge">Em breve</span>'
+        : g.durationLabel
+          ? `<span class="group-chapter-badge group-chapter-badge--live">${esc(g.durationLabel)}</span>`
+          : "";
+      const imgs = [g.coverImageUrl, ...(g.gallery || [])].filter(Boolean);
+      const unique = [...new Set(imgs)].slice(0, 3);
+      const media =
+        unique.length > 0
+          ? `<div class="group-chapter-media" aria-hidden="true">
+              <img class="group-chapter-media-hero" src="${esc(unique[0])}" alt="" loading="${i === 0 ? "eager" : "lazy"}" ${i === 0 ? 'fetchpriority="high"' : ""} onerror="this.closest('.group-chapter-media')?.remove()">
+              ${
+                unique.length > 1
+                  ? `<div class="group-chapter-media-stack">
+                      ${unique
+                        .slice(1)
+                        .map(
+                          (src) =>
+                            `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">`,
+                        )
+                        .join("")}
+                    </div>`
+                  : ""
+              }
+            </div>`
+          : `<div class="group-chapter-media group-chapter-media--empty" aria-hidden="true"></div>`;
+
+      return `<a href="/grupos/${esc(g.slug)}" class="group-chapter group-chapter--${side}" data-reveal data-reveal-delay="${i * 80}">
+        ${media}
+        <div class="group-chapter-veil"></div>
+        <div class="group-chapter-copy">
+          ${status}
+          <p class="group-chapter-kicker">${esc(g.destinationLabel || "Expedição WallTravel")}</p>
+          <h2 class="group-chapter-title">${esc(g.name)}</h2>
+          ${
+            !g.comingSoon && g.shortDescription
+              ? `<p class="group-chapter-desc">${esc(g.shortDescription)}</p>`
+              : ""
+          }
+          <div class="group-chapter-meta">
+            ${
+              price && !g.comingSoon
+                ? `<p class="group-chapter-price"><span>A partir de</span><strong>${esc(price)}</strong></p>`
+                : g.comingSoon
+                  ? `<p class="group-chapter-price group-chapter-price--soon">Datas e investimento em breve</p>`
+                  : ""
+            }
+            ${g.groupSize && !g.comingSoon ? `<p class="group-chapter-scarcity">Grupo de ${esc(String(g.groupSize))}</p>` : ""}
+          </div>
+          <span class="group-chapter-cta">${g.comingSoon ? "Quero ser avisado" : "Explorar a jornada"}</span>
+        </div>
+      </a>`;
+    })
+    .join("");
+
+  return `<div class="groups-page group-landing-ds groups-page--chapters" data-group-over-hero>
+    <div class="group-hero group-hero--fullbleed groups-catalog-hero">
+      ${renderHeroCarouselV2({ name: "Viagens em grupo" }, esc, heroSlides)}
+      <div class="group-hero-overlay group-hero-overlay--strong"></div>
+      <div class="group-hero-content section-container">
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a>
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-active">Viagens em grupo</span>
         </div>
-        <span class="category-meta-info">Expedições WallTravel</span>
-        <h1 class="groups-intro-title">Viagens em grupo</h1>
-        <p class="groups-header-desc">Roteiros em grupo pequeno, com curadoria, logística completa e líder WallTravel quando indicado.</p>
+        <span class="category-meta-info">WallTravel</span>
+        <h1 class="groups-intro-title" data-reveal>Viagens em grupo</h1>
+        <p class="groups-header-desc" data-reveal>Expedições em grupo pequeno, com curadoria, logística completa e presença WallTravel — destinos com intenção, não pacotes genéricos.</p>
       </div>
-    </section>
+    </div>
 
     <section class="group-manifesto groups-catalog-manifesto" data-reveal>
       <div class="section-container group-manifesto-layout">
         <h2 class="group-manifesto-sticky" data-manifesto-sticky>Viajar junto muda o ritmo.</h2>
         <div class="group-manifesto-body">
           <p class="group-editorial group-editorial--lead">Grupos pequenos, destinos com intenção e a WallTravel cuidando do que precisa estar resolvido — para sobrar presença no caminho.</p>
-          <p class="group-editorial">Cada expedição tem sua própria página: abertas para reserva ou em breve, sempre com o que já está fechado no CMS — sem inventar o restante.</p>
+          <p class="group-editorial">Cada jornada abaixo é própria: aberta para reserva ou em breve. Só o que já está fechado no CMS — sem inventar o restante.</p>
         </div>
       </div>
     </section>
 
-    <div class="groups-catalog-grid">
-      ${groups
-        .map((g, i) => {
-          const price = formatMoney(g.priceFrom, g.currency);
-          const badge = g.comingSoon
-            ? '<span class="group-card-badge">Em breve</span>'
-            : g.durationLabel
-              ? `<span class="group-card-badge group-card-badge--live">${esc(g.durationLabel)}</span>`
-              : "";
-          const imgBlock = g.coverImageUrl
-            ? `<div class="group-card-img-wrap"><img src="${esc(g.coverImageUrl)}" alt="${esc(g.name)}" loading="${i === 0 ? "eager" : "lazy"}" ${i === 0 ? 'fetchpriority="high"' : ""} onerror="this.parentElement.remove()"></div>`
-            : "";
-          return `<a href="/grupos/${esc(g.slug)}" class="group-card" data-reveal data-reveal-delay="${i * 100}">
-            ${imgBlock}
-            <div class="group-card-body">
-              ${badge}
-              <h2>${esc(g.name)}</h2>
-              ${g.shortDescription || g.destinationLabel ? `<p>${esc(g.shortDescription || g.destinationLabel)}</p>` : ""}
-              ${g.destinationLabel && g.shortDescription ? `<p class="group-card-meta">${esc(g.destinationLabel)}</p>` : ""}
-              ${price && !g.comingSoon ? `<p class="group-card-price">A partir de ${esc(price)}</p>` : ""}
-              <span class="category-card-cta">${g.comingSoon ? "Quero ser avisado" : "Ver detalhes"}</span>
-            </div>
-          </a>`;
-        })
-        .join("")}
+    <div class="groups-chapters" aria-label="Viagens em grupo">
+      ${chapters}
     </div>
   </div>`;
 }
@@ -728,13 +861,15 @@ function renderHeroCarouselV2(group, esc, slides) {
 export function renderGroupDetailPage(group, esc, WA) {
   const price = formatMoney(group.priceFrom, group.currency);
   const slides = heroGallery(group);
-  const waMsg = group.ctaWhatsappMessage || `Olá! Quero saber mais sobre ${group.name}.`;
+  const waSticky = groupWaHref(group, WA, "sticky");
+  const waSpecialist = groupWaHref(group, WA, "specialist");
 
   if (group.comingSoon) {
+    const teaserGallery = (group.gallery || []).slice(0, 4);
     return `<div class="group-detail group-detail--teaser group-landing-ds" data-group-over-hero>
       <div class="group-hero group-hero--teaser group-hero--fullbleed">
         ${renderHeroCarouselV2(group, esc, slides.slice(0, 5))}
-        <div class="group-hero-overlay"></div>
+        <div class="group-hero-overlay group-hero-overlay--strong"></div>
         <div class="group-hero-content section-container">
           <div class="breadcrumb breadcrumb--light">
             <a href="/">Início</a><span class="breadcrumb-separator">/</span>
@@ -758,15 +893,32 @@ export function renderGroupDetailPage(group, esc, WA) {
           </section>`
             : ""
         }
+        ${
+          teaserGallery.length
+            ? `<section class="group-teaser-gallery section-container" data-reveal>
+            <span class="section-tag">Atmosfera</span>
+            <h2 class="package-section-title">Um olhar sobre o destino</h2>
+            <div class="group-teaser-gallery-grid">
+              ${teaserGallery
+                .map(
+                  (img, i) => `
+                <figure class="group-teaser-gallery-item" data-reveal data-reveal-delay="${i * 60}">
+                  <img src="${esc(img)}" alt="" loading="lazy" onerror="this.parentElement.remove()">
+                </figure>`,
+                )
+                .join("")}
+            </div>
+          </section>`
+            : ""
+        }
         <div class="section-container">
-          ${renderGalleryCinematic({ ...group, gallery: (group.gallery || []).slice(0, 5) }, esc)}
           <section class="group-section group-coming-banner" data-reveal>
             <span class="section-tag">Em breve</span>
             <h2 class="package-section-title">Estamos preparando esta expedição</h2>
             <p>Datas, investimento e roteiro serão publicados quando o grupo abrir — sem inventar o que ainda não está fechado.</p>
           </section>
           ${renderGroupForm(group, esc, WA)}
-          <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="btn-outline group-specialist-link">Falar com especialista</a>
+          <a href="${waSpecialist}" target="_blank" rel="noopener" class="btn-outline group-specialist-link" data-storefront-cta="whatsapp">Falar com especialista</a>
         </div>
       </div>
       <div class="sticky-bottom-bar group-sticky-bar">
@@ -781,7 +933,7 @@ export function renderGroupDetailPage(group, esc, WA) {
   return `<div class="group-detail group-landing-ds" data-group-over-hero>
     <div class="group-hero group-hero--fullbleed">
       ${renderHeroCarouselV2(group, esc, slides)}
-      <div class="group-hero-overlay"></div>
+      <div class="group-hero-overlay group-hero-overlay--strong"></div>
       <div class="group-hero-content section-container">
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a><span class="breadcrumb-separator">/</span>
@@ -799,13 +951,13 @@ export function renderGroupDetailPage(group, esc, WA) {
       ${renderWhyGroup(group, esc)}
       ${renderPhotoMoment(group, esc, 3)}
       <div class="section-container">
-        ${renderJourneyLine(group, esc)}
-        ${renderHotels(group, esc)}
+        ${renderItineraryAccordion(group, esc)}
       </div>
       ${renderGalleryCinematic(group, esc)}
       <div class="section-container">
-        ${renderItineraryAccordion(group, esc)}
+        ${renderHotels(group, esc)}
       </div>
+      ${renderLeader(group, esc)}
       ${renderInvestment(group, esc)}
       <div class="section-container">
         ${renderIncludesExcludes(group, esc)}
@@ -813,7 +965,6 @@ export function renderGroupDetailPage(group, esc, WA) {
         ${renderBomSaber(group, esc)}
         ${renderFaq(group, esc)}
       </div>
-      ${renderLeader(group, esc)}
       <div class="section-container">
         ${renderGroupForm(group, esc, WA)}
       </div>
@@ -822,7 +973,7 @@ export function renderGroupDetailPage(group, esc, WA) {
       <div class="sticky-bottom-price-box">
         ${price ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>` : `<span class="sticky-bottom-price">Fale conosco</span>`}
       </div>
-      <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="sticky-bottom-btn">${esc(group.ctaLabel || "WhatsApp")}</a>
+      <a href="${waSticky}" target="_blank" rel="noopener" class="sticky-bottom-btn" data-storefront-cta="whatsapp">${esc(group.ctaLabel || "WhatsApp")}</a>
     </div>
   </div>`;
 }
@@ -836,22 +987,29 @@ export function bindGroupForms(root, WA) {
       new FormData(form).forEach((val, key) => {
         data[key] = String(val).trim();
       });
-      const group = { slug, name: slug, ctaWhatsappMessage: null };
       const msgField = form.closest(".group-detail, .groups-page");
       const title = msgField?.querySelector("h1")?.textContent || slug;
-      group.name = title;
+      const comingSoon = Boolean(msgField?.querySelector(".group-card-badge, .group-coming-banner"));
       const message = buildGroupWhatsappMessage(
         {
-          ...group,
+          slug,
+          name: title,
           ctaWhatsappMessage:
             form.getAttribute("data-wa-message") ||
             `Olá! Gostaria de informações sobre o grupo ${title} da WallTravel.`,
         },
         data,
       );
-      window.open(waLink(WA, message), "_blank", "noopener");
+      const href = buildWhatsAppCTA({
+        number: WA,
+        pageType: comingSoon ? "COMING_SOON" : "GROUP",
+        entity: { name: title, slug, comingSoon },
+        customMessage: message,
+        placement: "form",
+        source: "group-form",
+      }).href;
+      window.open(href, "_blank", "noopener");
     });
   });
 }
 
-export { formatMoney, waLink };
