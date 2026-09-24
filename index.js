@@ -31,6 +31,7 @@ import {
   bindAnalyticsPageHooks,
 } from './data/storefront-events.js';
 import { getWhatsappNumber } from './data/platform-api.js';
+import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const WA = getWhatsappNumber();
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       .replace(/'/g, "&#39;");
 
   await Promise.all([hydrateStorefront(), hydrateGroups()]);
+  hydrateWhatsAppCTAs(document);
   bindWhatsappTracking(document);
   bindAnalyticsPageHooks(document);
 
@@ -282,6 +284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ==========================================================================
   const heroSlidesData = getOrderedHeroSlides();
   let currentIndex = 0;
+  const heroRoot = document.querySelector('.hero');
   const slides = document.querySelectorAll('.hero-slide');
   const progressTracks = document.querySelectorAll('.progress-bar-track');
   const cardTitleEl = document.getElementById('slide-card-title');
@@ -292,38 +295,71 @@ document.addEventListener('DOMContentLoaded', async () => {
   let autoplayInterval;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobileViewport = () => window.matchMedia('(max-width: 768px)').matches;
+  const padSlide = (n) => String(n).padStart(2, '0');
+
+  const applySlideVisuals = (slideInfo) => {
+    if (!slideInfo || !heroRoot) return;
+    heroRoot.setAttribute('data-hero-overlay', slideInfo.overlay || 'balanced');
+    const activeSlide = slides[currentIndex];
+    const img = activeSlide?.querySelector('.hero-slide-img');
+    if (img) {
+      const pos = isMobileViewport()
+        ? slideInfo.objectPositionMobile || 'center center'
+        : slideInfo.objectPositionDesktop || 'center center';
+      img.style.objectPosition = pos;
+    }
+  };
 
   const changeSlide = (index) => {
     if (slides.length === 0 || heroSlidesData.length === 0) return;
     
     // Remove active state from current slide and track
     slides[currentIndex].classList.remove('active');
-    progressTracks[currentIndex].classList.remove('active');
+    progressTracks[currentIndex]?.classList.remove('active');
 
     currentIndex = index;
 
     // Add active state to new slide and track
     slides[currentIndex].classList.add('active');
-    progressTracks[currentIndex].classList.add('active');
+    progressTracks[currentIndex]?.classList.add('active');
+
+    const slideInfo = heroSlidesData[currentIndex];
+    applySlideVisuals(slideInfo);
 
     // Fade and transition the destination card on the right
-    if (slideCard && heroSlidesData[currentIndex]) {
+    if (slideCard && slideInfo) {
       slideCard.style.opacity = 0;
       slideCard.style.transform = 'translateY(8px)';
       setTimeout(() => {
-        const slideInfo = heroSlidesData[currentIndex];
         if (cardTitleEl) cardTitleEl.textContent = slideInfo.title;
         if (cardDescEl) cardDescEl.textContent = slideInfo.subtitle;
         if (cardCtaEl) {
-          cardCtaEl.textContent = slideInfo.ctaLabel || "Planejar minha viagem";
-          cardCtaEl.href = `https://wa.me/5521997138461?text=${encodeURIComponent(slideInfo.ctaWhatsappMessage)}`;
+          const label = slideInfo.ctaLabel || "Planejar minha viagem";
+          const svg = cardCtaEl.querySelector("svg");
+          cardCtaEl.textContent = label;
+          if (svg) {
+            cardCtaEl.appendChild(document.createTextNode(" "));
+            cardCtaEl.appendChild(svg);
+          }
+          const cta = buildWhatsAppCTA({
+            pageType: 'HOME',
+            placement: 'hero-slide',
+            entity: { name: slideInfo.title, slug: slideInfo.id },
+            customMessage: slideInfo.ctaWhatsappMessage,
+            source: 'home-hero-slide',
+          });
+          cardCtaEl.href = cta.href;
+          cardCtaEl.setAttribute('data-wa-analytics', JSON.stringify(cta.analytics));
         }
         if (numberIndicatorEl) {
-          numberIndicatorEl.textContent = `0${currentIndex + 1} / 0${slides.length}`;
+          numberIndicatorEl.textContent = `${padSlide(currentIndex + 1)} / ${padSlide(slides.length)}`;
         }
         slideCard.style.opacity = 1;
         slideCard.style.transform = 'translateY(0)';
       }, 300);
+    } else if (numberIndicatorEl) {
+      numberIndicatorEl.textContent = `${padSlide(currentIndex + 1)} / ${padSlide(slides.length)}`;
     }
 
     if (!prefersReducedMotion) {
@@ -625,7 +661,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <h1 class="section-title" style="margin-bottom: 1.2rem; text-align: left;">${esc(category.title || category.name)}</h1>
             <p style="color: var(--color-text-muted); margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.6;">${esc(category.description)}</p>
-            <a href="https://wa.me/${WA}?text=${encodeURIComponent(`Olá! Gostaria de conhecer as experiências da categoria ${category.name} da WallTravel.`)}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">
+            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category', entity: { name: category.name, slug: category.slug }, source: 'category-hero' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">
               Falar com especialista
             </a>
           </div>
@@ -659,7 +695,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="empty-state-view">
             <h2 class="empty-state-title" style="font-size: 1.5rem; color: var(--color-text);">Nenhuma experiência disponível</h2>
             <p class="empty-state-desc">Estamos desenhando novos roteiros para esta categoria. Fale com um especialista para solicitar um planejamento personalizado.</p>
-            <a href="https://wa.me/${WA}?text=Olá!%20Gostaria%20de%20solicitar%20um%20roteiro%20personalizado%20para%20a%20categoria%20${encodeURIComponent(category.name)}." target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
+            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category-empty', entity: { name: category.name, slug: category.slug }, customMessage: `Olá! Gostaria de solicitar um roteiro personalizado para a categoria ${category.name}.`, source: 'category-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
           </div>
         ` : `
           <div class="packages-grid">
@@ -696,7 +732,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="package-card-ctas">
                       <a href="/viagens/${esc(pkg.slug)}" class="btn-outline">Ver detalhes</a>
-                      <a href="https://wa.me/${WA}?text=${encodeURIComponent(pkg.ctaWhatsappMessage || `Olá! Gostaria de planejar a experiência ${pkg.name} com a WallTravel.`)}" target="_blank" rel="noopener" class="btn-primary" style="background-color: #25d366; border-color: #25d366; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                      <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'product', entity: { name: pkg.name, slug: pkg.slug }, customMessage: pkg.ctaWhatsappMessage, source: 'category-card' }).href}" target="_blank" rel="noopener" class="btn-primary" style="background-color: #25d366; border-color: #25d366; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
                         <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.88 14c-.24.69-1.23 1.26-1.7 1.32-.47.06-.94.24-3.04-.6-2.52-1.01-4.14-3.57-4.26-3.73-.12-.17-.99-1.31-.99-2.5 0-1.19.62-1.77.84-2.01.22-.24.47-.3.63-.3.16 0 .32.01.46.01.15 0 .35-.06.55.42.2.49.69 1.68.75 1.8.06.12.1.26.02.42-.08.17-.12.27-.24.41-.12.14-.26.32-.37.43-.13.13-.26.27-.11.53.15.26.67 1.1 1.43 1.78.98.88 1.81 1.15 2.07 1.28.26.13.41.11.56-.06.15-.17.65-.75.82-1.01.17-.26.34-.22.57-.14.24.08 1.5.71 1.76.84.26.13.43.2.49.31.06.12.06.69-.18 1.38z"/></svg>
                         WhatsApp
                       </a>
