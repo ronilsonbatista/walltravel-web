@@ -143,5 +143,6 @@ test("coming soon pages show atmosphere gallery without invented price", async (
   await page.waitForLoadState("networkidle");
   await expect(page.locator(".group-teaser-gallery-item")).toHaveCount(4);
   await expect(page.locator(".group-investment-hero-value")).toHaveCount(0);
-  await expect(page.getByText(/em breve/i).first()).toBeVisible();
+  await expect(page.locator(".group-hero .group-card-badge")).toHaveText(/em breve/i);
+  await expect(page.locator(".group-coming-banner")).toBeVisible();
 });
