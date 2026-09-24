@@ -5,7 +5,7 @@
 
 const REVEAL_MS = 450;
 /** Match Home hero autoplay cadence (progress-bar fill duration). */
-const CAROUSEL_MS = 6000;
+const CAROUSEL_MS = 5000;
 
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -4,12 +4,12 @@
  */
 import {
   formatMoney,
-  waLink,
   renderItineraryAccordion,
   renderIncludesExcludes,
   renderTravelHeroCarousel,
   renderTravelGallery,
 } from "./group-render.js";
+import { buildWhatsAppCTA } from "./whatsapp-cta.js";
 
 function heroSlidesFromPackage(pkg) {
   const imgs = [];
@@ -49,7 +49,7 @@ function experienceSubnav(pkg) {
   const links = [];
   if (pkg.description) links.push(["#exp-about", "Sobre"]);
   if (pkg.gallery?.length) links.push(["#group-gallery", "Galeria"]);
-  if (pkg.itinerary?.length) links.push(["#group-itinerary", "Dia a dia"]);
+  if (pkg.itinerary?.length) links.push(["#group-itinerary", "Roteiro"]);
   if (pkg.included?.length || pkg.notIncluded?.length) links.push(["#exp-includes", "Incluso"]);
   if (pkg.priceFrom != null || pkg.importantNotes?.length) links.push(["#exp-investment", "Investimento"]);
   links.push(["#exp-cta", "Contato"]);
@@ -95,7 +95,25 @@ function renderExperiencePricing(pkg, esc, priceUnitLabel) {
   </section>`;
 }
 
-function renderExperienceCta(pkg, esc, WA, waMsg) {
+function packageWaHref(pkg, WA, placement, customMessage) {
+  return buildWhatsAppCTA({
+    number: WA,
+    pageType: "VITRINE",
+    entity: { name: pkg.name, slug: pkg.slug },
+    customMessage: customMessage || pkg.ctaWhatsappMessage || undefined,
+    placement,
+    source: "experience",
+  }).href;
+}
+
+function renderExperienceCta(pkg, esc, WA) {
+  const primary = packageWaHref(pkg, WA, "product");
+  const specialist = packageWaHref(
+    pkg,
+    WA,
+    "specialist",
+    `Olá! Gostaria de falar com um especialista sobre ${pkg.name} da WallTravel.`,
+  );
   return `<section class="group-section group-form-section group-final-cta" id="exp-cta" data-reveal>
     <div class="group-final-cta-copy">
       <span class="section-tag">Contato</span>
@@ -103,10 +121,10 @@ function renderExperienceCta(pkg, esc, WA, waMsg) {
       <p class="group-final-cta-lede">Fale com a equipe WallTravel pelo WhatsApp — roteiro sob medida a partir desta experiência.</p>
     </div>
     <div class="sidebar-ctas experience-cta-row">
-      <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="btn-primary" style="background-color:#25d366;border-color:#25d366;color:#fff;" data-storefront-cta="whatsapp">
+      <a href="${primary}" target="_blank" rel="noopener" class="btn-primary" style="background-color:#25d366;border-color:#25d366;color:#fff;" data-storefront-cta="whatsapp">
         ${esc(pkg.ctaLabel || "Planejar minha viagem")}
       </a>
-      <a href="${waLink(WA, `Olá! Gostaria de falar com um especialista sobre ${pkg.name} da WallTravel.`)}" target="_blank" rel="noopener" class="btn-outline" data-storefront-cta="specialist">
+      <a href="${specialist}" target="_blank" rel="noopener" class="btn-outline" data-storefront-cta="specialist">
         Falar com especialista
       </a>
     </div>
@@ -126,9 +144,7 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
       : pkg.priceUnit === "TOTAL"
         ? "Valor total"
         : "Por pessoa em acomodação dupla";
-  const waMsg =
-    pkg.ctaWhatsappMessage ||
-    `Olá! Gostaria de planejar a experiência ${pkg.name} com a WallTravel.`;
+  const waSticky = packageWaHref(pkg, WA, "sticky");
 
   const itineraryGroup = {
     itinerary: (pkg.itinerary || []).map((d) => ({
@@ -150,7 +166,7 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
   return `<div class="group-detail experience-detail group-landing-ds" data-group-over-hero data-experience-landing>
     <div class="group-hero group-hero--fullbleed">
       ${renderTravelHeroCarousel(slides, esc)}
-      <div class="group-hero-overlay"></div>
+      <div class="group-hero-overlay group-hero-overlay--strong"></div>
       <div class="group-hero-content section-container">
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a><span class="breadcrumb-separator">/</span>
@@ -177,14 +193,14 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
           ${renderIncludesExcludes(includesGroup, esc)}
         </div>
         ${renderExperiencePricing(pkg, esc, priceUnitLabel)}
-        ${renderExperienceCta(pkg, esc, WA, waMsg)}
+        ${renderExperienceCta(pkg, esc, WA)}
       </div>
     </div>
     <div class="sticky-bottom-bar group-sticky-bar">
       <div class="sticky-bottom-price-box">
         ${price ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>` : `<span class="sticky-bottom-price">Fale conosco</span>`}
       </div>
-      <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="sticky-bottom-btn" data-storefront-cta="whatsapp">${esc(pkg.ctaLabel || "WhatsApp")}</a>
+      <a href="${waSticky}" target="_blank" rel="noopener" class="sticky-bottom-btn" data-storefront-cta="whatsapp">${esc(pkg.ctaLabel || "WhatsApp")}</a>
     </div>
   </div>`;
 }

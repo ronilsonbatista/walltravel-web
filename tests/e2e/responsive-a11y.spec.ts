@@ -88,7 +88,7 @@ test("grupos catalog uses journey chapters not package card grid", async ({ page
   await page.waitForLoadState("networkidle");
   await expect(page.locator(".groups-chapters .group-chapter")).toHaveCount(3);
   await expect(page.locator(".groups-catalog-grid .group-card")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: /coleções de jornadas/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /viagens em grupo/i })).toBeVisible();
 });
 
 test("greece conversion journey order and investment price", async ({ page }) => {
@@ -96,7 +96,8 @@ test("greece conversion journey order and investment price", async ({ page }) =>
   await page.waitForLoadState("networkidle");
   await expect(page.locator("[data-group-over-hero]")).toBeVisible();
   await expect(page.locator("#group-why")).toBeVisible();
-  await expect(page.locator("#group-route")).toBeVisible();
+  await expect(page.locator("#group-route")).toHaveCount(0);
+  await expect(page.locator("#group-itinerary")).toHaveCount(1);
   await expect(page.locator("#group-itinerary")).toBeVisible();
   await expect(page.locator("#group-gallery")).toBeVisible();
   await expect(page.locator("#group-hotels")).toBeVisible();
@@ -104,10 +105,14 @@ test("greece conversion journey order and investment price", async ({ page }) =>
   await expect(page.locator("#group-investment")).toBeVisible();
   await expect(page.locator("#group-form")).toBeVisible();
 
+  const journeyHeading = page.locator("#group-itinerary").getByRole("heading", {
+    name: /sua jornada|roteiro dia a dia/i,
+  });
+  await expect(journeyHeading.first()).toBeVisible();
+
   const order = await page.evaluate(() => {
     const ids = [
       "group-why",
-      "group-route",
       "group-itinerary",
       "group-gallery",
       "group-hotels",
@@ -126,7 +131,6 @@ test("greece conversion journey order and investment price", async ({ page }) =>
   });
   expect(order).toEqual([
     "group-why",
-    "group-route",
     "group-itinerary",
     "group-gallery",
     "group-hotels",
