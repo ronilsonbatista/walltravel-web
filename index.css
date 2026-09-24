@@ -57,9 +57,24 @@ textarea:focus-visible,
   --color-text-muted: #5C5E54;  /* Texto secundário */
   --color-accent: #191909;      /* Verde escuro da marca para impacto e botões */
   --color-primary: #5C5E2E;     /* Oliva escuro — AA ≥4.5:1 on cream */
-  --color-primary-light: #B8A66A; /* Dourado discreto */
+  --color-primary-light: #B8A66A; /* Dourado discreto — accent/border only, not body text on cream */
   --border-color: rgba(22, 23, 15, 0.08); /* Borda fina */
   --border-color-active: rgba(184, 166, 106, 0.3); /* Borda ativa dourada */
+
+  /* Semantic contrast surfaces (WCAG AA where applicable) */
+  --text-primary: var(--color-text);
+  --text-secondary: var(--color-text-muted);
+  --text-inverse: #F6F1E8;
+  --text-inverse-muted: rgba(246, 241, 232, 0.86);
+  --surface-dark: #16170F;
+  --surface-cream: var(--bg-color);
+  --surface-card: var(--bg-card);
+  --overlay-hero: linear-gradient(
+    to top,
+    rgba(22, 23, 15, 0.94) 0%,
+    rgba(22, 23, 15, 0.55) 42%,
+    rgba(22, 23, 15, 0.28) 100%
+  );
   
   /* Fonts */
   --font-title: 'Faculty Glyphic', 'Faculty Glyphic Local', serif;
@@ -374,8 +389,8 @@ a {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(22, 23, 15, 0.8) 32%, rgba(22, 23, 15, 0.3) 65%, rgba(22, 23, 15, 0.45) 100%),
-              linear-gradient(to top, rgba(22, 23, 15, 0.4) 0%, transparent 40%);
+  background: linear-gradient(to right, rgba(22, 23, 15, 0.88) 28%, rgba(22, 23, 15, 0.42) 62%, rgba(22, 23, 15, 0.5) 100%),
+              linear-gradient(to top, rgba(22, 23, 15, 0.48) 0%, transparent 42%);
   z-index: 3;
 }
 
@@ -814,7 +829,7 @@ a {
 .service-card-num {
   font-family: var(--font-title);
   font-size: 1.5rem;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   margin-bottom: 0.4rem;
   display: block;
 }
@@ -894,7 +909,7 @@ a {
   display: block;
   font-family: var(--font-title);
   font-size: 1.8rem;
-  color: var(--color-primary-light);
+  color: var(--color-primary); /* olive on cream — AA; gold fails as body text */
   margin-bottom: 0.8rem;
   line-height: 1;
 }
@@ -1033,7 +1048,7 @@ a {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 /* Section 7: Team Section */
@@ -1679,7 +1694,7 @@ a {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   margin-bottom: 0.4rem;
 }
 
@@ -2643,6 +2658,187 @@ a {
   padding-top: 4rem;
 }
 
+/* —— Catalog chapters (collections of journeys) —— */
+.groups-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.group-chapter {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  min-height: min(78svh, 720px);
+  color: var(--text-inverse);
+  text-decoration: none;
+  overflow: hidden;
+  background: var(--surface-dark);
+}
+
+.group-chapter--right {
+  grid-template-columns: 0.85fr 1.15fr;
+}
+
+.group-chapter--right .group-chapter-media {
+  order: 2;
+}
+
+.group-chapter--right .group-chapter-copy {
+  order: 1;
+}
+
+.group-chapter-media {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+}
+
+.group-chapter-media--empty {
+  background: #222018;
+}
+
+.group-chapter-media-hero {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group-chapter:hover .group-chapter-media-hero {
+  transform: scale(1.04);
+}
+
+.group-chapter-media-stack {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.group-chapter-media-stack img {
+  width: 72px;
+  height: 96px;
+  object-fit: cover;
+  border: 1px solid rgba(246, 241, 232, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.group-chapter-veil {
+  display: none;
+}
+
+.group-chapter-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(2rem, 5vw, 3.75rem);
+  background:
+    linear-gradient(160deg, rgba(22, 23, 15, 0.92) 0%, rgba(22, 23, 15, 0.98) 100%);
+}
+
+.group-chapter-badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-primary-light);
+  font-weight: 500;
+  margin-bottom: 0.85rem;
+}
+
+.group-chapter-badge--live {
+  color: var(--text-inverse-muted);
+  border-bottom: 1px solid rgba(240, 230, 200, 0.35);
+  padding-bottom: 0.2rem;
+}
+
+.group-chapter-kicker {
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-inverse-muted);
+  margin-bottom: 0.65rem;
+}
+
+.group-chapter-title {
+  font-family: var(--font-title);
+  font-size: clamp(2.1rem, 4.5vw, 3.35rem);
+  color: var(--text-inverse);
+  margin: 0 0 1rem;
+  line-height: 1.15;
+  max-width: 14ch;
+}
+
+.group-chapter-desc {
+  color: var(--text-inverse-muted);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  max-width: 38ch;
+  margin-bottom: 1.5rem;
+}
+
+.group-chapter-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.75rem;
+  align-items: baseline;
+  margin-bottom: 1.5rem;
+}
+
+.group-chapter-price {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: var(--text-inverse-muted);
+  font-size: 0.85rem;
+}
+
+.group-chapter-price strong {
+  font-family: var(--font-title);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  color: var(--text-inverse);
+  font-weight: 400;
+}
+
+.group-chapter-price--soon {
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.group-chapter-scarcity {
+  font-size: 0.88rem;
+  color: var(--color-primary-light);
+  letter-spacing: 0.04em;
+}
+
+.group-chapter-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-inverse);
+  border-bottom: 1px solid rgba(246, 241, 232, 0.45);
+  padding-bottom: 0.35rem;
+  width: fit-content;
+  transition: border-color 220ms ease, color 220ms ease;
+}
+
+.group-chapter:hover .group-chapter-cta {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-light);
+}
+
+/* Legacy card grid kept for safety if re-enabled */
 .groups-catalog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2778,12 +2974,7 @@ a {
 .group-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(22, 23, 15, 0.94) 0%,
-    rgba(22, 23, 15, 0.52) 42%,
-    rgba(22, 23, 15, 0.22) 100%
-  );
+  background: var(--overlay-hero);
   z-index: 2;
   pointer-events: none;
 }
@@ -3054,8 +3245,8 @@ a {
 }
 
 .group-band--dark {
-  background: #16170f;
-  color: #f0e6c8;
+  background: var(--surface-dark);
+  color: var(--text-inverse);
 }
 
 .group-band-title {
@@ -3744,9 +3935,32 @@ a {
 }
 
 .group-investment-capacity {
-  color: rgba(240, 230, 200, 0.75);
+  color: var(--text-inverse-muted);
   margin: -0.5rem 0 1.5rem;
   font-size: 0.95rem;
+}
+
+.group-investment-hero-price {
+  margin: 0 0 2.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(240, 230, 200, 0.18);
+}
+
+.group-investment-hero-label,
+.group-investment-hero-unit {
+  display: block;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-inverse-muted);
+}
+
+.group-investment-hero-value {
+  font-family: var(--font-title);
+  font-size: clamp(3rem, 8vw, 5rem);
+  line-height: 1.05;
+  color: var(--text-inverse);
+  margin: 0.35rem 0 0.4rem;
 }
 
 .group-investment-card {
@@ -3755,35 +3969,81 @@ a {
   background: transparent;
 }
 
+.group-investment-card--featured {
+  border-top-color: var(--color-primary-light);
+}
+
 .group-investment-card h3 {
-  color: #f6f1e8;
+  color: var(--text-inverse);
 }
 
 .group-investment-card p {
-  color: rgba(240, 230, 200, 0.75);
+  color: var(--text-inverse-muted);
 }
 
 .group-investment-price {
   font-family: var(--font-title);
   font-size: clamp(2rem, 4vw, 2.75rem);
   margin-top: 0.75rem;
-  color: #f0e6c8;
+  color: var(--text-inverse);
+}
+
+.group-investment-card--featured .group-investment-price {
+  font-size: clamp(2.35rem, 4.5vw, 3.15rem);
 }
 
 .group-investment-note,
 .group-price-note {
   font-size: 0.9rem;
-  color: rgba(240, 230, 200, 0.7);
+  color: var(--text-inverse-muted);
   margin-top: 0.5rem;
 }
 
 .group-payment-methods {
   margin-top: 2rem;
-  color: rgba(240, 230, 200, 0.85);
+  color: var(--text-inverse-muted);
 }
 
 .group-subheading--on-dark {
-  color: #f0e6c8;
+  color: var(--text-inverse);
+}
+
+/* Coming soon teaser gallery */
+.group-teaser-gallery {
+  padding: 3rem 1.5rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.group-teaser-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.group-teaser-gallery-item {
+  margin: 0;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--bg-color-alt);
+}
+
+.group-teaser-gallery-item:first-child {
+  grid-column: span 2;
+  aspect-ratio: 4 / 3;
+}
+
+.group-teaser-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group-teaser-gallery-item:hover img {
+  transform: scale(1.04);
 }
 
 .group-faq-item {
@@ -4016,6 +4276,32 @@ a {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .group-chapter {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .group-chapter--right .group-chapter-media,
+  .group-chapter--right .group-chapter-copy {
+    order: unset;
+  }
+
+  .group-chapter-media {
+    min-height: min(52svh, 420px);
+  }
+
+  .group-chapter-media-stack {
+    display: none;
+  }
+
+  .group-teaser-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .group-teaser-gallery-item:first-child {
+    grid-column: span 2;
+  }
+
   .group-manifesto-layout,
   .group-journey,
   .group-final-cta,
@@ -4044,6 +4330,19 @@ a {
 
   .groups-catalog-grid {
     padding: 0 1.25rem 1.5rem;
+  }
+
+  .group-chapter-copy {
+    padding: 2rem 1.25rem 2.5rem;
+  }
+
+  .group-chapter-title {
+    max-width: none;
+  }
+
+  .group-teaser-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
   }
 
   .group-card-img-wrap {
@@ -4192,6 +4491,8 @@ a {
 @media (prefers-reduced-motion: reduce) {
   .group-hero-img,
   .group-card-img-wrap img,
+  .group-chapter-media-hero,
+  .group-teaser-gallery-item img,
   .group-hotel-media img,
   [data-reveal] {
     animation: none !important;

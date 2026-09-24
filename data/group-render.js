@@ -86,10 +86,12 @@ function renderHighlights(group, esc) {
 
 function renderSubnav(group) {
   const links = [];
+  if (group.whyGroup?.length) links.push(["#group-why", "Por quê"]);
   if (group.routeStops?.length) links.push(["#group-route", "Roteiro"]);
-  if (group.routeStops?.some((s) => s.hotel)) links.push(["#group-hotels", "Hotéis"]);
-  if (group.gallery?.length) links.push(["#group-gallery", "Galeria"]);
   if (group.itinerary?.length) links.push(["#group-itinerary", "Dia a dia"]);
+  if (group.gallery?.length) links.push(["#group-gallery", "Galeria"]);
+  if (group.routeStops?.some((s) => s.hotel)) links.push(["#group-hotels", "Hotéis"]);
+  if (group.leader?.name) links.push(["#group-leader", "Líder"]);
   if (group.investmentOptions?.length || group.priceFrom) links.push(["#group-investment", "Investimento"]);
   links.push(["#group-form", "Contato"]);
   if (links.length < 3) return "";
@@ -391,19 +393,31 @@ export function renderInvestment(group, esc) {
 
   const capacity =
     group.groupSize != null
-      ? `<p class="group-investment-capacity">Grupo de ${esc(String(group.groupSize))} viajantes — sem urgência artificial.</p>`
+      ? `<p class="group-investment-capacity">Grupo de ${esc(String(group.groupSize))} viajantes — vagas reais, sem urgência artificial.</p>`
       : "";
+
+  const heroPrice = formatMoney(group.priceFrom, group.currency);
 
   return `<section class="group-band group-band--dark group-investment-band" id="group-investment" data-reveal>
     <div class="section-container group-band-inner">
       <span class="section-tag section-tag--on-dark">Investimento</span>
       <h2 class="group-band-title">Valores e formas de pagamento</h2>
       ${capacity}
+      ${
+        heroPrice
+          ? `<div class="group-investment-hero-price" data-reveal>
+              <span class="group-investment-hero-label">A partir de</span>
+              <p class="group-investment-hero-value">${esc(heroPrice)}</p>
+              <span class="group-investment-hero-unit">por pessoa</span>
+            </div>`
+          : ""
+      }
       <div class="group-investment-grid">
         ${options
-          .map((opt) => {
+          .map((opt, i) => {
             const price = formatMoney(opt.price, group.currency);
-            return `<div class="group-investment-card" data-reveal>
+            const featured = i === 0 && price;
+            return `<div class="group-investment-card ${featured ? "group-investment-card--featured" : ""}" data-reveal>
               <h3>${esc(opt.title)}</h3>
               ${opt.description ? `<p>${esc(opt.description)}</p>` : ""}
               <div class="group-investment-price">${price ? esc(price) : "Sob consulta"}</div>
@@ -447,7 +461,7 @@ export function renderFaq(group, esc) {
 export function renderLeader(group, esc) {
   const leader = group.leader;
   if (!leader?.name) return "";
-  return `<section class="group-band group-band--photo group-leader-band" data-reveal>
+  return `<section class="group-band group-band--photo group-leader-band" id="group-leader" data-reveal>
     ${
       leader.photoUrl
         ? `<div class="group-leader-bg" aria-hidden="true"><img src="${esc(leader.photoUrl)}" alt="" loading="lazy"></div>`
@@ -637,7 +651,62 @@ export function renderGroupsCatalog(groups, esc) {
     groups.find((g) => g.coverImageUrl)?.coverImageUrl ||
     null;
 
-  return `<div class="groups-page group-landing-ds" data-group-over-hero>
+  const chapters = groups
+    .map((g, i) => {
+      const price = formatMoney(g.priceFrom, g.currency);
+      const side = i % 2 === 0 ? "left" : "right";
+      const status = g.comingSoon
+        ? '<span class="group-chapter-badge">Em breve</span>'
+        : g.durationLabel
+          ? `<span class="group-chapter-badge group-chapter-badge--live">${esc(g.durationLabel)}</span>`
+          : "";
+      const imgs = [g.coverImageUrl, ...(g.gallery || [])].filter(Boolean);
+      const unique = [...new Set(imgs)].slice(0, 3);
+      const media =
+        unique.length > 0
+          ? `<div class="group-chapter-media" aria-hidden="true">
+              <img class="group-chapter-media-hero" src="${esc(unique[0])}" alt="" loading="${i === 0 ? "eager" : "lazy"}" ${i === 0 ? 'fetchpriority="high"' : ""} onerror="this.closest('.group-chapter-media')?.remove()">
+              ${
+                unique.length > 1
+                  ? `<div class="group-chapter-media-stack">
+                      ${unique
+                        .slice(1)
+                        .map(
+                          (src, j) =>
+                            `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">`,
+                        )
+                        .join("")}
+                    </div>`
+                  : ""
+              }
+            </div>`
+          : `<div class="group-chapter-media group-chapter-media--empty" aria-hidden="true"></div>`;
+
+      return `<a href="/grupos/${esc(g.slug)}" class="group-chapter group-chapter--${side}" data-reveal data-reveal-delay="${i * 80}">
+        ${media}
+        <div class="group-chapter-veil"></div>
+        <div class="group-chapter-copy">
+          ${status}
+          <p class="group-chapter-kicker">${esc(g.destinationLabel || "Expedição WallTravel")}</p>
+          <h2 class="group-chapter-title">${esc(g.name)}</h2>
+          ${g.shortDescription ? `<p class="group-chapter-desc">${esc(g.shortDescription)}</p>` : ""}
+          <div class="group-chapter-meta">
+            ${
+              price && !g.comingSoon
+                ? `<p class="group-chapter-price"><span>A partir de</span><strong>${esc(price)}</strong></p>`
+                : g.comingSoon
+                  ? `<p class="group-chapter-price group-chapter-price--soon">Datas e investimento em breve</p>`
+                  : ""
+            }
+            ${g.groupSize && !g.comingSoon ? `<p class="group-chapter-scarcity">Grupo de ${esc(String(g.groupSize))}</p>` : ""}
+          </div>
+          <span class="group-chapter-cta">${g.comingSoon ? "Quero ser avisado" : "Explorar a jornada"}</span>
+        </div>
+      </a>`;
+    })
+    .join("");
+
+  return `<div class="groups-page group-landing-ds groups-page--chapters" data-group-over-hero>
     <section class="groups-intro-hero">
       ${
         heroImg
@@ -651,9 +720,9 @@ export function renderGroupsCatalog(groups, esc) {
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-active">Viagens em grupo</span>
         </div>
-        <span class="category-meta-info">Expedições WallTravel</span>
-        <h1 class="groups-intro-title">Viagens em grupo</h1>
-        <p class="groups-header-desc">Roteiros em grupo pequeno, com curadoria, logística completa e líder WallTravel quando indicado.</p>
+        <span class="category-meta-info">Coleções WallTravel</span>
+        <h1 class="groups-intro-title">Coleções de jornadas</h1>
+        <p class="groups-header-desc">Expedições em grupo pequeno, com curadoria, logística completa e presença WallTravel — destinos com intenção, não pacotes genéricos.</p>
       </div>
     </section>
 
@@ -662,36 +731,13 @@ export function renderGroupsCatalog(groups, esc) {
         <h2 class="group-manifesto-sticky" data-manifesto-sticky>Viajar junto muda o ritmo.</h2>
         <div class="group-manifesto-body">
           <p class="group-editorial group-editorial--lead">Grupos pequenos, destinos com intenção e a WallTravel cuidando do que precisa estar resolvido — para sobrar presença no caminho.</p>
-          <p class="group-editorial">Cada expedição tem sua própria página: abertas para reserva ou em breve, sempre com o que já está fechado no CMS — sem inventar o restante.</p>
+          <p class="group-editorial">Cada coleção abaixo é uma jornada própria: aberta para reserva ou em breve. Só o que já está fechado no CMS — sem inventar o restante.</p>
         </div>
       </div>
     </section>
 
-    <div class="groups-catalog-grid">
-      ${groups
-        .map((g, i) => {
-          const price = formatMoney(g.priceFrom, g.currency);
-          const badge = g.comingSoon
-            ? '<span class="group-card-badge">Em breve</span>'
-            : g.durationLabel
-              ? `<span class="group-card-badge group-card-badge--live">${esc(g.durationLabel)}</span>`
-              : "";
-          const imgBlock = g.coverImageUrl
-            ? `<div class="group-card-img-wrap"><img src="${esc(g.coverImageUrl)}" alt="${esc(g.name)}" loading="${i === 0 ? "eager" : "lazy"}" ${i === 0 ? 'fetchpriority="high"' : ""} onerror="this.parentElement.remove()"></div>`
-            : "";
-          return `<a href="/grupos/${esc(g.slug)}" class="group-card" data-reveal data-reveal-delay="${i * 100}">
-            ${imgBlock}
-            <div class="group-card-body">
-              ${badge}
-              <h2>${esc(g.name)}</h2>
-              ${g.shortDescription || g.destinationLabel ? `<p>${esc(g.shortDescription || g.destinationLabel)}</p>` : ""}
-              ${g.destinationLabel && g.shortDescription ? `<p class="group-card-meta">${esc(g.destinationLabel)}</p>` : ""}
-              ${price && !g.comingSoon ? `<p class="group-card-price">A partir de ${esc(price)}</p>` : ""}
-              <span class="category-card-cta">${g.comingSoon ? "Quero ser avisado" : "Ver detalhes"}</span>
-            </div>
-          </a>`;
-        })
-        .join("")}
+    <div class="groups-chapters" aria-label="Coleções de jornadas">
+      ${chapters}
     </div>
   </div>`;
 }
@@ -750,6 +796,7 @@ export function renderGroupDetailPage(group, esc, WA) {
   const waMsg = group.ctaWhatsappMessage || `Olá! Quero saber mais sobre ${group.name}.`;
 
   if (group.comingSoon) {
+    const teaserGallery = (group.gallery || []).slice(0, 4);
     return `<div class="group-detail group-detail--teaser group-landing-ds" data-group-over-hero>
       <div class="group-hero group-hero--teaser group-hero--fullbleed">
         ${renderHeroCarouselV2(group, esc, slides.slice(0, 5))}
@@ -777,15 +824,32 @@ export function renderGroupDetailPage(group, esc, WA) {
           </section>`
             : ""
         }
+        ${
+          teaserGallery.length
+            ? `<section class="group-teaser-gallery section-container" data-reveal>
+            <span class="section-tag">Atmosfera</span>
+            <h2 class="package-section-title">Um olhar sobre o destino</h2>
+            <div class="group-teaser-gallery-grid">
+              ${teaserGallery
+                .map(
+                  (img, i) => `
+                <figure class="group-teaser-gallery-item" data-reveal data-reveal-delay="${i * 60}">
+                  <img src="${esc(img)}" alt="" loading="lazy" onerror="this.parentElement.remove()">
+                </figure>`,
+                )
+                .join("")}
+            </div>
+          </section>`
+            : ""
+        }
         <div class="section-container">
-          ${renderGalleryCinematic({ ...group, gallery: (group.gallery || []).slice(0, 5) }, esc)}
           <section class="group-section group-coming-banner" data-reveal>
             <span class="section-tag">Em breve</span>
             <h2 class="package-section-title">Estamos preparando esta expedição</h2>
             <p>Datas, investimento e roteiro serão publicados quando o grupo abrir — sem inventar o que ainda não está fechado.</p>
           </section>
           ${renderGroupForm(group, esc, WA)}
-          <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="btn-outline group-specialist-link">Falar com especialista</a>
+          <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="btn-outline group-specialist-link" data-storefront-cta="whatsapp">Falar com especialista</a>
         </div>
       </div>
       <div class="sticky-bottom-bar group-sticky-bar">
@@ -819,12 +883,15 @@ export function renderGroupDetailPage(group, esc, WA) {
       ${renderPhotoMoment(group, esc, 3)}
       <div class="section-container">
         ${renderJourneyLine(group, esc)}
-        ${renderHotels(group, esc)}
       </div>
-      ${renderGalleryCinematic(group, esc)}
       <div class="section-container">
         ${renderItineraryAccordion(group, esc)}
       </div>
+      ${renderGalleryCinematic(group, esc)}
+      <div class="section-container">
+        ${renderHotels(group, esc)}
+      </div>
+      ${renderLeader(group, esc)}
       ${renderInvestment(group, esc)}
       <div class="section-container">
         ${renderIncludesExcludes(group, esc)}
@@ -832,7 +899,6 @@ export function renderGroupDetailPage(group, esc, WA) {
         ${renderBomSaber(group, esc)}
         ${renderFaq(group, esc)}
       </div>
-      ${renderLeader(group, esc)}
       <div class="section-container">
         ${renderGroupForm(group, esc, WA)}
       </div>
@@ -841,7 +907,7 @@ export function renderGroupDetailPage(group, esc, WA) {
       <div class="sticky-bottom-price-box">
         ${price ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>` : `<span class="sticky-bottom-price">Fale conosco</span>`}
       </div>
-      <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="sticky-bottom-btn">${esc(group.ctaLabel || "WhatsApp")}</a>
+      <a href="${waLink(WA, waMsg)}" target="_blank" rel="noopener" class="sticky-bottom-btn" data-storefront-cta="whatsapp">${esc(group.ctaLabel || "WhatsApp")}</a>
     </div>
   </div>`;
 }

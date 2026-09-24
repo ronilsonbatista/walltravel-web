@@ -82,3 +82,66 @@ test("skip link targets main content", async ({ page }) => {
   await expect(page.locator(".skip-link")).toHaveAttribute("href", "#main-content");
   await expect(page.locator("#main-content")).toHaveCount(1);
 });
+
+test("grupos catalog uses journey chapters not package card grid", async ({ page }) => {
+  await page.goto("/grupos");
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator(".groups-chapters .group-chapter")).toHaveCount(3);
+  await expect(page.locator(".groups-catalog-grid .group-card")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: /coleções de jornadas/i })).toBeVisible();
+});
+
+test("greece conversion journey order and investment price", async ({ page }) => {
+  await page.goto("/grupos/grecia");
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator("[data-group-over-hero]")).toBeVisible();
+  await expect(page.locator("#group-why")).toBeVisible();
+  await expect(page.locator("#group-route")).toBeVisible();
+  await expect(page.locator("#group-itinerary")).toBeVisible();
+  await expect(page.locator("#group-gallery")).toBeVisible();
+  await expect(page.locator("#group-hotels")).toBeVisible();
+  await expect(page.locator("#group-leader")).toBeVisible();
+  await expect(page.locator("#group-investment")).toBeVisible();
+  await expect(page.locator("#group-form")).toBeVisible();
+
+  const order = await page.evaluate(() => {
+    const ids = [
+      "group-why",
+      "group-route",
+      "group-itinerary",
+      "group-gallery",
+      "group-hotels",
+      "group-leader",
+      "group-investment",
+      "group-form",
+    ];
+    return ids
+      .map((id) => {
+        const el = document.getElementById(id);
+        return el ? { id, top: el.getBoundingClientRect().top + window.scrollY } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.top - b.top)
+      .map((x) => x.id);
+  });
+  expect(order).toEqual([
+    "group-why",
+    "group-route",
+    "group-itinerary",
+    "group-gallery",
+    "group-hotels",
+    "group-leader",
+    "group-investment",
+    "group-form",
+  ]);
+
+  await expect(page.locator(".group-investment-hero-value")).toContainText("31.480");
+});
+
+test("coming soon pages show atmosphere gallery without invented price", async ({ page }) => {
+  await page.goto("/grupos/turquia");
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator(".group-teaser-gallery-item")).toHaveCount(4);
+  await expect(page.locator(".group-investment-hero-value")).toHaveCount(0);
+  await expect(page.getByText(/em breve/i).first()).toBeVisible();
+});
