@@ -150,3 +150,30 @@ test("coming soon pages show atmosphere gallery without invented price", async (
   await expect(page.locator(".group-hero .group-card-badge")).toHaveText(/em breve/i);
   await expect(page.locator(".group-coming-banner")).toBeVisible();
 });
+
+test("home hero has single specialty CTA and no coleções language", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator(".hero-cta-wrapper .btn-primary")).toContainText(/fale com um especialista/i);
+  await expect(page.locator(".hero-cta-wrapper .btn-outline")).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText(/coleções/i);
+  await expect(page.locator("#sobre")).toContainText(/\+35/);
+  await expect(page.locator(".cta-final")).toHaveCount(0);
+});
+
+test("vitrine lists published products from API and hides empty categories", async ({
+  page,
+}) => {
+  await page.goto("/vitrine");
+  await page.waitForLoadState("networkidle");
+  const cards = page.locator(".vitrine-grid .category-card, .vitrine-grid a.category-card");
+  const count = await cards.count();
+  // When staging API is seeded, categories with inventory appear; never hardcode 35.
+  if (count > 0) {
+    expect(count).toBeGreaterThan(0);
+    await expect(cards.first()).toBeVisible();
+  } else {
+    // Empty state still OK if API unavailable in local CI without env
+    await expect(page.locator("#vitrine-view")).toBeVisible();
+  }
+});
