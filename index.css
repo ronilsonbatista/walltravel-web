@@ -1,5 +1,32 @@
-/* Custom Web Font Imports */
-@import url('https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Rubik:ital,wght@0,300..700;1,300..700&display=swap');
+/* Self-hosted fonts only — no render-blocking Google Fonts @import */
+@font-face {
+  font-family: 'Faculty Glyphic';
+  src: url('./assets/03_tipografia/01_titulo/FacultyGlyphic-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rubik';
+  src: url('./assets/03_tipografia/02_texto/Rubik-Regular.ttf') format('truetype');
+  font-weight: 300 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rubik';
+  src: url('./assets/03_tipografia/02_texto/Rubik-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rubik';
+  src: url('./assets/03_tipografia/02_texto/Rubik-SemiBold.ttf') format('truetype');
+  font-weight: 600 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 .skip-link {
   position: absolute;
@@ -31,7 +58,7 @@ textarea:focus-visible,
   outline-offset: 3px;
 }
 
-/* Local Fallback Fonts */
+/* Local Fallback Fonts (legacy aliases) */
 @font-face {
   font-family: 'Faculty Glyphic Local';
   src: url('./assets/03_tipografia/01_titulo/FacultyGlyphic-Regular.ttf') format('truetype');
@@ -77,8 +104,8 @@ textarea:focus-visible,
   );
   
   /* Fonts */
-  --font-title: 'Faculty Glyphic', 'Faculty Glyphic Local', serif;
-  --font-body: 'Rubik', 'Rubik Local', sans-serif;
+  --font-title: 'Faculty Glyphic', 'Faculty Glyphic Local', Georgia, serif;
+  --font-body: 'Rubik', 'Rubik Local', system-ui, sans-serif;
   
   /* Spacing */
   --section-padding-desktop: 7.5rem 2rem;
@@ -977,7 +1004,7 @@ a {
 
 /* Section 5: Premium Aspirational Block */
 .premium-block {
-  background-image: linear-gradient(to right, rgba(25, 25, 9, 0.94) 40%, rgba(25, 25, 9, 0.25) 100%), url('assets/images/bg_aspirational.png');
+  background-image: linear-gradient(to right, rgba(25, 25, 9, 0.94) 40%, rgba(25, 25, 9, 0.25) 100%), url('assets/images/bg_aspirational.jpg');
   background-size: cover;
   background-position: center;
   border: 1px solid var(--border-color);
@@ -1486,11 +1513,12 @@ a {
     transform: translateY(-6px) rotate(-45deg);
   }
 
-  /* Hero adjustments for mobile (78svh to 90svh) */
+  /* Hero adjustments for mobile (first fold — avoid 100vh iOS chrome jump) */
   .hero {
     padding-top: 80px;
-    height: 85vh; /* Fits mobile viewport height request */
+    height: 85svh;
     min-height: 520px;
+    max-height: 920px;
   }
   
   .hero-overlay {
@@ -1590,7 +1618,7 @@ a {
 
   /* Premium block stacking */
   .premium-block {
-    background-image: linear-gradient(to bottom, rgba(25, 25, 9, 0.98) 55%, rgba(25, 25, 9, 0.45) 100%), url('assets/images/bg_aspirational.png');
+    background-image: linear-gradient(to bottom, rgba(25, 25, 9, 0.98) 55%, rgba(25, 25, 9, 0.45) 100%), url('assets/images/bg_aspirational.jpg');
     background-position: center;
     flex-direction: column;
     padding: 4rem 2rem;

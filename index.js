@@ -23,8 +23,6 @@ import {
   renderGroupDetailPage,
   bindGroupForms,
 } from './data/group-render.js';
-import { renderExperienceDetailPage } from './data/experience-render.js';
-import { bindGroupExperience } from './data/group-motion.js';
 import {
   trackStorefrontEvent,
   bindWhatsappTracking,
@@ -32,6 +30,16 @@ import {
 } from './data/storefront-events.js';
 import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
+
+/** Lazy-load motion/experience modules — not needed for first paint on Home. */
+async function loadGroupExperienceBinder() {
+  const mod = await import('./data/group-motion.js');
+  return mod.bindGroupExperience;
+}
+async function loadExperienceRenderer() {
+  const mod = await import('./data/experience-render.js');
+  return mod.renderExperienceDetailPage;
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const WA = getWhatsappNumber();
@@ -298,6 +306,41 @@ document.addEventListener('DOMContentLoaded', async () => {
   const isMobileViewport = () => window.matchMedia('(max-width: 768px)').matches;
   const padSlide = (n) => String(n).padStart(2, '0');
 
+  /** First slide is eager on Home only; later slides use data-src until needed. */
+  const hydrateHeroImage = (slideEl) => {
+    const img = slideEl?.querySelector?.('.hero-slide-img');
+    if (!img || img.dataset.hydrated === '1') return;
+    const picture = img.closest('picture');
+    const source = picture?.querySelector('source[data-srcset]');
+    if (source?.dataset.srcset) {
+      source.srcset = source.dataset.srcset;
+      delete source.dataset.srcset;
+    }
+    if (img.dataset.src) {
+      img.src = img.dataset.src;
+      delete img.dataset.src;
+    }
+    img.dataset.hydrated = '1';
+  };
+
+  const injectHeroPreload = (href) => {
+    if (!href || document.querySelector(`link[data-hero-preload="${href}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = href;
+    link.type = 'image/webp';
+    link.setAttribute('fetchpriority', 'high');
+    link.dataset.heroPreload = href;
+    document.head.appendChild(link);
+  };
+
+  const prefetchHeroSlide = (index) => {
+    if (!slides.length) return;
+    const i = ((index % slides.length) + slides.length) % slides.length;
+    hydrateHeroImage(slides[i]);
+  };
+
   const applySlideVisuals = (slideInfo) => {
     if (!slideInfo || !heroRoot) return;
     heroRoot.setAttribute('data-hero-overlay', slideInfo.overlay || 'balanced');
@@ -319,6 +362,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     progressTracks[currentIndex]?.classList.remove('active');
 
     currentIndex = index;
+
+    // Hydrate target + prefetch only the next slide (not the full catalog)
+    hydrateHeroImage(slides[currentIndex]);
+    prefetchHeroSlide(currentIndex + 1);
 
     // Add active state to new slide and track
     slides[currentIndex].classList.add('active');
@@ -491,6 +538,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (path === '/' || path === '/index.html') {
       homeView.style.display = 'block';
       handleHeaderScroll(); 
+      injectHeroPreload('/images/vitrine/africa-do-sul.webp');
+      hydrateHeroImage(slides[0]);
+      prefetchHeroSlide(1);
       startAutoplay();
       updateSEO(
         "WallTravel — Experiências Incríveis",
@@ -518,7 +568,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await renderPackage(packageSlug);
       } else if (path === '/grupos' || path === '/grupos/') {
         groupsView.style.display = 'block';
-        renderGroupsList();
+        await renderGroupsList();
       } else if (path.startsWith('/grupos/')) {
         groupsView.style.display = 'block';
         let groupSlug = path.substring('/grupos/'.length);
@@ -702,7 +752,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ${packages.map(pkg => `
               <div class="package-card" data-tags="${esc((pkg.tags || []).join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}">
                 <div class="package-card-img-wrapper">
-                  <img src="${esc(pkg.image)}" alt="${esc(pkg.name)}" class="package-card-img" loading="lazy" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
+                  <img src="${esc(pkg.image)}" alt="${esc(pkg.name)}" class="package-card-img" width="800" height="600" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 33vw" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
                 </div>
                 <div class="package-card-content">
                   <div>
@@ -812,12 +862,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     const category = getCategoryBySlug(pkg.categorySlug) || { name: "Vitrine", slug: "vitrine" };
+    const renderExperienceDetailPage = await loadExperienceRenderer();
+    const bindGroupExperience = await loadGroupExperienceBinder();
     packageView.innerHTML = renderExperienceDetailPage(pkg, category, esc, WA);
     groupExperienceCleanup = bindGroupExperience(packageView);
     handleHeaderScroll();
   };
 
-  const renderGroupsList = () => {
+  const renderGroupsList = async () => {
     if (groupExperienceCleanup) {
       groupExperienceCleanup();
       groupExperienceCleanup = null;
@@ -829,6 +881,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
     groupsView.innerHTML = renderGroupsCatalog(groups, esc);
     bindGroupForms(groupsView, WA);
+    const bindGroupExperience = await loadGroupExperienceBinder();
     groupExperienceCleanup = bindGroupExperience(groupsView);
     handleHeaderScroll();
   };
@@ -858,6 +911,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);
     bindGroupForms(groupsView, WA);
+    const bindGroupExperience = await loadGroupExperienceBinder();
     groupExperienceCleanup = bindGroupExperience(groupsView);
     trackStorefrontEvent("group_view", { groupSlug: group.slug, slug: group.slug });
     trackStorefrontEvent("viagem_view", { slug: group.slug });
@@ -880,10 +934,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   handleRouting();
 
   // ==========================================================================
-  // 6. INITIALIZE HERO COMPOSITION ON PAGE LOAD
+  // 6. INITIALIZE HERO COMPOSITION ON PAGE LOAD (Home only)
   // ==========================================================================
   if (slides.length > 0) {
-    changeSlide(0); // sync initial slide from JSON immediately
+    const path = window.location.pathname;
+    if (path === '/' || path === '/index.html') {
+      changeSlide(0); // sync initial slide from JSON immediately
+    }
   }
 
   // ==========================================================================

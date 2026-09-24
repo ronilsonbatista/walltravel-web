@@ -823,7 +823,11 @@ function renderHeroCarouselV2(group, esc, slides) {
         .map(
           (src, i) => `
         <div class="group-hero-slide ${i === 0 ? "is-active" : ""}" data-hero-slide="${i}">
-          <img src="${esc(src)}" alt="" class="group-hero-img" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} onerror="this.closest('.group-hero-slide')?.remove()">
+          ${
+            i === 0
+              ? `<img src="${esc(src)}" alt="" class="group-hero-img" width="1600" height="900" decoding="async" fetchpriority="high" onerror="this.closest('.group-hero-slide')?.remove()">`
+              : `<img data-src="${esc(src)}" alt="" class="group-hero-img" width="1600" height="900" decoding="async" onerror="this.closest('.group-hero-slide')?.remove()">`
+          }
         </div>`,
         )
         .join("")}
