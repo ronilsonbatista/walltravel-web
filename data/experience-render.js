@@ -1,5 +1,5 @@
 /**
- * Experience landing (/viagens/[slug]) — shared visual family with Groups.
+ * Experience landing (/viagens/[slug]) — TravelDetailShell + shared immersive primitives.
  * Modules render only when data exists. Exact CMS/local copy; no invented fields.
  */
 import {
@@ -10,6 +10,12 @@ import {
   renderTravelGallery,
 } from "./group-render.js";
 import { buildWhatsAppCTA } from "./whatsapp-cta.js";
+import {
+  TravelDetailShell,
+  ImmersiveHero,
+  StickyConversionCTA,
+  renderDetailPersonalityIntro,
+} from "./immersive/primitives.js";
 
 function heroSlidesFromPackage(pkg) {
   const imgs = [];
@@ -163,11 +169,22 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
     excludes: pkg.notIncluded || pkg.excludes || [],
   };
 
-  return `<div class="group-detail experience-detail group-landing-ds" data-group-over-hero data-experience-landing>
-    <div class="group-hero group-hero--fullbleed">
-      ${renderTravelHeroCarousel(slides, esc)}
-      <div class="group-hero-overlay group-hero-overlay--strong"></div>
-      <div class="group-hero-content section-container">
+  const introHtml = renderDetailPersonalityIntro(
+    {
+      name: pkg.name,
+      slug: pkg.slug,
+      destinationLabel: pkg.destination || category?.name,
+      durationLabel: pkg.duration,
+      coverImageUrl: pkg.image,
+      image: pkg.image,
+    },
+    esc,
+  );
+
+  const heroHtml = ImmersiveHero({
+    carouselHtml: renderTravelHeroCarousel(slides, esc),
+    overlay: "strong",
+    contentHtml: `
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a><span class="breadcrumb-separator">/</span>
           <a href="/vitrine">Vitrine</a><span class="breadcrumb-separator">/</span>
@@ -179,10 +196,10 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
           ${esc([pkg.destination, pkg.duration].filter(Boolean).join(" · "))}
         </p>
         ${packageHighlights(pkg, esc)}
-      </div>
-    </div>
-    ${experienceSubnav(pkg)}
-    <div class="group-detail-body">
+      `,
+  });
+
+  const bodyHtml = `
       <div class="section-container">
         ${renderAbout(pkg, esc)}
       </div>
@@ -194,13 +211,21 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
         </div>
         ${renderExperiencePricing(pkg, esc, priceUnitLabel)}
         ${renderExperienceCta(pkg, esc, WA)}
-      </div>
-    </div>
-    <div class="sticky-bottom-bar group-sticky-bar">
-      <div class="sticky-bottom-price-box">
-        ${price ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>` : `<span class="sticky-bottom-price">Fale conosco</span>`}
-      </div>
-      <a href="${waSticky}" target="_blank" rel="noopener" class="sticky-bottom-btn" data-storefront-cta="whatsapp">${esc(pkg.ctaLabel || "WhatsApp")}</a>
-    </div>
-  </div>`;
+      </div>`;
+
+  const stickyHtml = StickyConversionCTA({
+    priceHtml: price
+      ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>`
+      : `<span class="sticky-bottom-price">Fale conosco</span>`,
+    ctaHref: waSticky,
+    ctaLabel: pkg.ctaLabel || "WhatsApp",
+  });
+
+  return TravelDetailShell({
+    introHtml,
+    heroHtml,
+    subnavHtml: experienceSubnav(pkg),
+    bodyHtml,
+    stickyHtml,
+  });
 }
