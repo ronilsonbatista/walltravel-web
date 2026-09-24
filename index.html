@@ -21,7 +21,7 @@
   
   <!-- Icons -->
   <link rel="icon" href="/assets/01_logos/01_vetor/01_simbolo/Verde escuro.svg" type="image/svg+xml">
-  
+
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="/index.css">
 </head>
@@ -65,28 +65,52 @@
     <!-- Fullscreen Slideshow Background -->
     <div class="hero-slideshow" id="hero-slideshow">
       <div class="hero-slide active" data-index="0" data-slide-id="africa-do-sul">
-        <img src="/images/vitrine/africa-do-sul.jpg" alt="Safari na África do Sul" class="hero-slide-img" fetchpriority="high" style="object-position: center 35%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/africa-do-sul.webp">
+          <img data-src="/images/vitrine/africa-do-sul.jpg" alt="Safari na África do Sul" class="hero-slide-img" width="1600" height="1600" decoding="async" fetchpriority="high" style="object-position: center 35%;">
+        </picture>
       </div>
       <div class="hero-slide" data-index="1" data-slide-id="maldivas">
-        <img src="/images/vitrine/maldivas.jpg" alt="Bangalôs nas Maldivas" class="hero-slide-img" loading="lazy" style="object-position: center 45%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/maldivas.webp">
+          <img data-src="/images/vitrine/maldivas.jpg" alt="Bangalôs nas Maldivas" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 45%;">
+        </picture>
       </div>
       <div class="hero-slide" data-index="2" data-slide-id="noruega-aurora-boreal">
-        <img src="/images/vitrine/noruega-aurora.jpg" alt="Aurora Boreal na Noruega" class="hero-slide-img" loading="lazy" style="object-position: center 40%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/noruega-aurora.webp">
+          <img data-src="/images/vitrine/noruega-aurora.jpg" alt="Aurora Boreal na Noruega" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 40%;">
+        </picture>
       </div>
       <div class="hero-slide" data-index="3" data-slide-id="europa">
-        <img src="/images/vitrine/europa.jpg" alt="Costa da Europa" class="hero-slide-img" loading="lazy" style="object-position: center 42%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/europa.webp">
+          <img data-src="/images/vitrine/europa.jpg" alt="Costa da Europa" class="hero-slide-img" width="1600" height="967" decoding="async" style="object-position: center 42%;">
+        </picture>
       </div>
       <div class="hero-slide" data-index="4" data-slide-id="lencois-maranhenses">
-        <img src="/images/vitrine/lencois-maranhenses.jpg" alt="Lençóis Maranhenses" class="hero-slide-img" loading="lazy" style="object-position: center 48%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/lencois-maranhenses.webp">
+          <img data-src="/images/vitrine/lencois-maranhenses.jpg" alt="Lençóis Maranhenses" class="hero-slide-img" width="1600" height="899" decoding="async" style="object-position: center 48%;">
+        </picture>
       </div>
       <div class="hero-slide" data-index="5" data-slide-id="noronha">
-        <img src="/images/vitrine/noronha.jpg" alt="Vista de Fernando de Noronha" class="hero-slide-img" loading="lazy" style="object-position: center 40%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/noronha.webp">
+          <img data-src="/images/vitrine/noronha.jpg" alt="Vista de Fernando de Noronha" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 40%;">
+        </picture>
       </div>
       <div class="hero-slide" data-index="6" data-slide-id="asia">
-        <img src="/images/vitrine/asia.jpg" alt="Templo na Ásia" class="hero-slide-img" loading="lazy" style="object-position: center 30%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/asia.webp">
+          <img data-src="/images/vitrine/asia.jpg" alt="Templo na Ásia" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 30%;">
+        </picture>
       </div>
       <div class="hero-slide" data-index="7" data-slide-id="usa">
-        <img src="/images/vitrine/usa.jpg" alt="Canyon nos Estados Unidos" class="hero-slide-img" loading="lazy" style="object-position: center 45%;">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/usa.webp">
+          <img data-src="/images/vitrine/usa.jpg" alt="Canyon nos Estados Unidos" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 45%;">
+        </picture>
       </div>
     </div>
 
@@ -199,7 +223,10 @@
         <!-- Card 1: Aluguel de veículos -->
         <div class="service-card">
           <div class="service-card-img-wrapper">
-            <img src="/assets/images/service_cars.png" alt="Carro esportivo na Itália" loading="lazy">
+            <picture>
+              <source type="image/webp" srcset="/assets/images/service_cars.webp">
+              <img src="/assets/images/service_cars.jpg" alt="Carro esportivo na Itália" width="1024" height="1024" loading="lazy" decoding="async">
+            </picture>
             <div class="service-card-overlay"></div>
           </div>
           <div class="service-card-content">
@@ -218,7 +245,10 @@
         <!-- Card 2: Aluguel de Barcos -->
         <div class="service-card">
           <div class="service-card-img-wrapper">
-            <img src="/assets/images/service_boats.png" alt="Iate no mar Mediterrâneo" loading="lazy">
+            <picture>
+              <source type="image/webp" srcset="/assets/images/service_boats.webp">
+              <img src="/assets/images/service_boats.jpg" alt="Iate no mar Mediterrâneo" width="1024" height="1024" loading="lazy" decoding="async">
+            </picture>
             <div class="service-card-overlay"></div>
           </div>
           <div class="service-card-content">
@@ -237,7 +267,10 @@
         <!-- Card 3: Roteiros Personalizados -->
         <div class="service-card">
           <div class="service-card-img-wrapper">
-            <img src="/assets/images/service_itinerary.png" alt="Diário de viagem e mapas" loading="lazy">
+            <picture>
+              <source type="image/webp" srcset="/assets/images/service_itinerary.webp">
+              <img src="/assets/images/service_itinerary.jpg" alt="Diário de viagem e mapas" width="1024" height="1024" loading="lazy" decoding="async">
+            </picture>
             <div class="service-card-overlay"></div>
           </div>
           <div class="service-card-content">
@@ -356,7 +389,10 @@
       <div class="honeymoon-layout">
         <!-- Left: Image -->
         <div class="honeymoon-img-wrapper">
-          <img src="/images/vitrine/lua-de-mel.jpg" alt="Lua de Mel Premium" loading="lazy">
+          <picture>
+            <source type="image/webp" srcset="/images/vitrine/lua-de-mel.webp">
+            <img src="/images/vitrine/lua-de-mel.jpg" alt="Lua de Mel Premium" width="1024" height="1024" loading="lazy" decoding="async">
+          </picture>
         </div>
         <!-- Right: Text & Info -->
         <div class="honeymoon-content">

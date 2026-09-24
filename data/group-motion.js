@@ -38,6 +38,21 @@ export function initGroupHeroCarousel(root) {
   const progressTracks = Array.from(track.querySelectorAll("[data-hero-dot]"));
   const total = slides.length;
 
+  const hydrateSlideImage = (slideEl) => {
+    const img = slideEl?.querySelector?.(".group-hero-img");
+    if (!img || img.dataset.hydrated === "1") return;
+    if (img.dataset.src) {
+      img.src = img.dataset.src;
+      delete img.dataset.src;
+    }
+    img.dataset.hydrated = "1";
+  };
+
+  const prefetchSlide = (i) => {
+    const slide = slides[((i % total) + total) % total];
+    hydrateSlideImage(slide);
+  };
+
   const activeFill = () =>
     track.querySelector(".group-hero-progress-track.is-active .group-hero-progress-fill");
 
@@ -77,11 +92,15 @@ export function initGroupHeroCarousel(root) {
   const show = (next) => {
     slides[index]?.classList.remove("is-active");
     index = ((next % total) + total) % total;
+    hydrateSlideImage(slides[index]);
+    prefetchSlide(index + 1);
     slides[index]?.classList.add("is-active");
     syncChrome();
     armTimer();
   };
 
+  hydrateSlideImage(slides[0]);
+  prefetchSlide(1);
   slides[0].classList.add("is-active");
   syncChrome();
   armTimer();

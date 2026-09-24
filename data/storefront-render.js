@@ -14,7 +14,7 @@ export function renderDestinoCard(cat, esc, { href }) {
   const noImgClass = cat.image ? "" : " destino-card--no-image";
   const imgBlock = cat.image
     ? `<div class="destino-card-img-wrapper">
-        <img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="destino-card-img" loading="lazy" ${imgOnErrorAttr()}>
+        <img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="destino-card-img" width="800" height="600" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 33vw" ${imgOnErrorAttr()}>
       </div>`
     : "";
 
@@ -38,7 +38,7 @@ export function renderVitrineCategoryCard(cat, esc) {
   const noImgClass = cat.image ? "" : " category-card--no-image";
   const imgBlock = cat.image
     ? `<div class="category-card-img-wrapper">
-        <img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="category-card-img" loading="lazy" ${imgOnErrorAttr()}>
+        <img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="category-card-img" width="800" height="600" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 33vw" ${imgOnErrorAttr()}>
       </div>`
     : "";
 
@@ -57,5 +57,5 @@ export function renderVitrineCategoryCard(cat, esc) {
 
 export function renderCategoryHeroImage(cat, esc) {
   if (!cat.image) return "";
-  return `<img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="category-hero-img" ${imgOnErrorAttr()}>`;
+  return `<img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="category-hero-img" width="1600" height="900" decoding="async" fetchpriority="high" ${imgOnErrorAttr()}>`;
 }
