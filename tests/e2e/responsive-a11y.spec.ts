@@ -38,10 +38,15 @@ for (const pageDef of PAGES) {
 test("mobile menu exposes aria-expanded and 44px hit target", async ({
   browser,
 }) => {
-  const context = await browser.newContext({ ...devices["iPhone 12"] });
+  const context = await browser.newContext({
+    ...devices["iPhone 12"],
+    reducedMotion: "reduce",
+  });
   const page = await context.newPage();
   await page.goto("/");
   await page.waitForLoadState("networkidle");
+  // Organic home intro is session-once; wait until overlay is gone before menu assert
+  await page.locator("[data-wt-page-intro]").waitFor({ state: "detached", timeout: 4000 }).catch(() => {});
   const menu = page.locator("#menu-toggle");
   await expect(menu).toBeVisible();
   await expect(menu).toHaveAttribute("aria-expanded", "false");

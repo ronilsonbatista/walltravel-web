@@ -29,7 +29,7 @@
 }
 
 .skip-link {
-  position: absolute;
+  position: fixed;
   left: 0.75rem;
   top: 0.75rem;
   z-index: 10000;
@@ -732,35 +732,18 @@ a {
 }
 
 .section-rhythm-d {
-  background-color: var(--surface-green);
-  color: var(--text-inverse);
+  background-color: var(--surface-cream);
+  color: inherit;
 }
 
 .section-rhythm-d .section-tag,
 .section-rhythm-d .premium-block-title,
 .section-rhythm-d .premium-block-desc {
-  color: var(--text-inverse);
-}
-
-.section-rhythm-d .section-tag {
-  color: var(--accent-gold);
-}
-
-.section-rhythm-d .btn-primary {
-  background-color: var(--surface-soft);
-  color: var(--surface-olive);
-}
-
-.section-rhythm-d .btn-primary:hover {
-  background-color: var(--text-inverse);
+  /* premium-block owns inverse type */
 }
 
 .section-rhythm-d .premium-block {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  padding-left: 0;
-  padding-right: 0;
+  /* keep aspirational block as the controlled green surface */
 }
 
 .section-container {
@@ -1065,12 +1048,12 @@ a {
   line-height: 1.6;
 }
 
-/* Section 5: Premium Aspirational Block */
+/* Section 5: Premium Aspirational Block — controlled WallTravel green (never near-black) */
 .premium-block {
-  background-image: linear-gradient(to right, rgba(25, 25, 9, 0.94) 40%, rgba(25, 25, 9, 0.25) 100%), url('assets/images/bg_aspirational.jpg');
+  background-image: linear-gradient(to right, rgba(63, 67, 40, 0.94) 40%, rgba(63, 67, 40, 0.35) 100%), url('assets/images/bg_aspirational.jpg');
   background-size: cover;
   background-position: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid color-mix(in srgb, var(--surface-olive) 35%, transparent);
   border-radius: var(--border-radius);
   padding: 6rem 5rem;
   display: flex;

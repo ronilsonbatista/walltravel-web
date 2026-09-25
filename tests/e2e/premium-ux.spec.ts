@@ -56,11 +56,17 @@ test.describe("premium UX refinement", () => {
       return {
         heroTop: hr.top,
         headerBottom: hdr.bottom,
+        headerPos: getComputedStyle(header).position,
         paddingTop: hs.paddingTop,
+        slideshowTop: document.querySelector(".hero-slideshow")?.getBoundingClientRect().top ?? null,
       };
     });
-    expect(metrics.heroTop).toBeLessThanOrEqual(1);
+    expect(metrics.headerPos).toBe("fixed");
     expect(parseFloat(metrics.paddingTop)).toBe(0);
+    // Slideshow fills hero edge-to-edge; hero itself starts at document top (no spacer gap)
+    expect(metrics.heroTop).toBeLessThanOrEqual(2);
+    expect(metrics.slideshowTop).toBeLessThanOrEqual(2);
+    expect(metrics.headerBottom).toBeGreaterThan(40);
     await context.close();
   });
 

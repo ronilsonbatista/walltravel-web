@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const banner = document.createElement("div");
     banner.setAttribute("role", "status");
       banner.style.cssText =
-      "position:sticky;top:0;z-index:1000;background:var(--surface-olive,#3F4328);color:var(--text-inverse,#F6F1E8);padding:0.65rem 1rem;text-align:center;font-size:0.85rem;";
+      "position:fixed;left:0;right:0;bottom:0;z-index:900;background:var(--surface-olive,#3F4328);color:var(--text-inverse,#F6F1E8);padding:0.65rem 1rem;padding-bottom:max(0.65rem, env(safe-area-inset-bottom, 0px));text-align:center;font-size:0.85rem;pointer-events:none;";
     banner.textContent =
       "Catálogo temporariamente em modo local — tente novamente em instantes.";
     document.body.prepend(banner);
