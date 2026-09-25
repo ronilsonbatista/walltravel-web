@@ -7,12 +7,21 @@
 export const INTRO_PRESETS = Object.freeze({
   home: Object.freeze({
     id: "home",
-    /** Stage 1 presence (arrival + anticipation) — ~10s first session */
-    stage1Ms: 10000,
-    stage1MobileMs: 10000,
-    /** Organic reveal → expansion into hero */
+    /**
+     * Reading hold — tuned by watching the opening, not a fixed timer.
+     * Desktop gives the line time to be read once, calmly.
+     * Mobile is shorter so the same signature does not feel like a wait.
+     */
+    readingMs: 4000,
+    readingMobileMs: 3000,
+    revealMs: 680,
+    revealMobileMs: 480,
     expansionMs: 2000,
-    expansionMobileMs: 1600,
+    expansionMobileMs: 1650,
+    heroMs: 640,
+    skipMs: 820,
+    reducedReadingMs: 880,
+    reducedRevealMs: 280,
     exitMs: 480,
     sessionKey: "wt_immersive_intro_played",
   }),
@@ -64,6 +73,7 @@ export const IMMERSIVE_TOKENS = Object.freeze({
   easingStandard: "cubic-bezier(0.16, 1, 0.3, 1)",
   easingEnter: "cubic-bezier(0.16, 1, 0.3, 1)",
   easingExit: "cubic-bezier(0.4, 0, 1, 1)",
+  easingIntro: "cubic-bezier(0.22, 1, 0.36, 1)",
   sessionIntroKey: INTRO_PRESETS.home.sessionKey,
   sessionPageIntroPrefix: "wt_page_intro_",
   presets: INTRO_PRESETS,

@@ -113,6 +113,7 @@ textarea:focus-visible,
   );
 
   /* Motion tokens — soft cubic editorial (no bounce) */
+  --easing-intro: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 200ms;
   --duration-medium: 400ms;
   --duration-slow: 850ms;
@@ -441,6 +442,11 @@ a {
 
 .hero-slide.active .hero-slide-img {
   transform: scale(1);
+}
+
+/* First hero frame shares crop with the opening aperture */
+.hero-slide[data-slide-id="africa-do-sul"] .hero-slide-img {
+  object-position: center 35%;
 }
 
 /* Heavily-weighted left-to-right gradient — WallTravel olive (never near-black fills) */
@@ -4914,102 +4920,140 @@ html.wt-intro-skip .wt-page-intro--home {
   transition: opacity var(--duration-intro-exit, var(--duration-fast)) var(--easing-exit);
 }
 
-/* Home organic: Stage 1 presence (breathing) → reveal cutout → expansion → hero */
+/* Home opening stack, inside .wt-page-intro (z 9000):
+   veil 0 · aperture 1 · copy 3 · skip 4
+   Header stays at 1000 and only fades in at the handoff.
+   Skip-link stays at 10000. */
+
+.wt-page-intro--home {
+  background: #F6F1E8;
+  overflow: hidden;
+}
+
 .wt-page-intro--home .wt-page-intro-veil {
   opacity: 1;
+  background:
+    radial-gradient(ellipse at 30% 18%, rgba(232, 221, 200, 0.55), transparent 52%),
+    radial-gradient(ellipse at 78% 88%, rgba(122, 124, 94, 0.12), transparent 46%),
+    #F6F1E8;
 }
 
-.wt-page-intro--home.is-stage-1 .wt-page-intro-veil {
-  animation: wtIntroBreathVeil 4.2s var(--easing-standard) infinite;
+html[data-intro-state="reading"] .wt-page-intro--home .wt-page-intro-veil {
+  animation: wtIntroVeilBreath 7.2s ease-in-out infinite;
 }
 
-.wt-page-intro--home.is-revealing .wt-page-intro-veil {
-  animation: wtIntroVeilFade var(--duration-intro-expansion, 2000ms) var(--easing-enter) forwards;
+@keyframes wtIntroVeilBreath {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.965; }
 }
 
-.wt-page-intro-organic {
-  position: absolute;
-  inset: 0;
+.wt-home-aperture {
+  --wt-aperture-from: 0.74;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 95vh;
+  min-height: 650px;
   z-index: 1;
+  overflow: hidden;
   pointer-events: none;
   opacity: 0;
+  background: #3F4328;
+  border-radius: 18% 14% 16% 12% / 24% 20% 22% 18%;
+  transform: scale(var(--wt-aperture-from));
+  transform-origin: 50% 46%;
+  transition:
+    opacity var(--duration-intro-reveal, 680ms) var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform var(--duration-intro-expansion, 2000ms) var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-radius var(--duration-intro-expansion, 2000ms) var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-.wt-page-intro--home.is-revealing .wt-page-intro-organic {
+.wt-home-aperture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  display: block;
+  transform: scale(calc(1 / var(--wt-aperture-from)));
+  transform-origin: 50% 46%;
+  transition: transform var(--duration-intro-expansion, 2000ms) var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.wt-home-aperture-grade {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(
+      to right,
+      rgba(63, 67, 40, 0.92) 22%,
+      rgba(63, 67, 40, 0.55) 52%,
+      rgba(63, 67, 40, 0.28) 78%,
+      rgba(63, 67, 40, 0.18) 100%
+    ),
+    linear-gradient(to top, rgba(63, 67, 40, 0.42) 0%, transparent 48%);
+  transition: opacity calc(var(--duration-intro-expansion, 2000ms) * 0.55) var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1));
+  transition-delay: calc(var(--duration-intro-expansion, 2000ms) * 0.28);
+}
+
+html[data-intro-state="reveal"] .wt-home-aperture {
   opacity: 1;
 }
 
-.wt-page-intro-organic-cutout {
-  position: absolute;
-  left: 50%;
-  top: 52%;
-  width: 0;
-  height: 0;
-  border-radius: 48% 42% 50% 44%;
-  box-shadow: 0 0 0 100vmax var(--surface-base);
-  transform: translate3d(-50%, -50%, 0);
-  will-change: width, height, border-radius;
+html[data-intro-state="expanding"] .wt-home-aperture,
+html[data-intro-state="hero"] .wt-home-aperture,
+html[data-intro-state="skipping"] .wt-home-aperture {
+  opacity: 1;
+  transform: scale(1);
+  border-radius: 0% 0% 0% 0% / 0% 0% 0% 0%;
 }
 
-.wt-page-intro--home.is-revealing .wt-page-intro-organic-cutout {
-  animation: wtOrganicMaskGrow var(--duration-intro-expansion, 2000ms) var(--easing-enter) forwards;
+html[data-intro-state="expanding"] .wt-home-aperture img,
+html[data-intro-state="hero"] .wt-home-aperture img,
+html[data-intro-state="skipping"] .wt-home-aperture img {
+  transform: scale(1);
 }
 
-@keyframes wtIntroBreathVeil {
-  0%, 100% {
-    filter: saturate(1);
-    opacity: 1;
-  }
-  50% {
-    filter: saturate(1.06);
-    opacity: 0.97;
-  }
+html[data-intro-state="expanding"] .wt-home-aperture-grade,
+html[data-intro-state="hero"] .wt-home-aperture-grade,
+html[data-intro-state="skipping"] .wt-home-aperture-grade {
+  opacity: 1;
 }
 
-@keyframes wtIntroVeilFade {
-  0% { opacity: 1; }
-  45% { opacity: 0; }
-  100% { opacity: 0; }
+html[data-intro-state="skipping"] .wt-home-aperture,
+html[data-intro-state="skipping"] .wt-home-aperture img {
+  transition-duration: var(--duration-intro-skip, 820ms);
 }
 
-@keyframes wtOrganicMaskGrow {
-  0% {
-    width: min(28vmin, 220px);
-    height: min(24vmin, 190px);
-    border-radius: 52% 46% 48% 44%;
-  }
-  38% {
-    width: min(62vmin, 520px);
-    height: min(54vmin, 460px);
-    border-radius: 44% 38% 46% 40%;
-  }
-  72% {
-    width: min(98vmin, 980px);
-    height: min(86vmin, 820px);
-    border-radius: 16% 12% 14% 10%;
-  }
-  100% {
-    width: 160vmax;
-    height: 160vmax;
-    border-radius: 0;
-  }
+html[data-intro-state="skipping"] .wt-home-aperture-grade {
+  transition-duration: calc(var(--duration-intro-skip, 820ms) * 0.62);
+  transition-delay: 40ms;
+}
+
+html[data-intro-state="reveal"] .wt-page-intro.is-playing .wt-page-intro-skip,
+html[data-intro-state="expanding"] .wt-page-intro.is-playing .wt-page-intro-skip,
+html[data-intro-state="hero"] .wt-page-intro.is-playing .wt-page-intro-skip,
+html[data-intro-state="skipping"] .wt-page-intro.is-playing .wt-page-intro-skip {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.wt-page-intro--home.is-reduced-exit {
+  opacity: 0;
+  transition: opacity 280ms linear;
 }
 
 @media (max-width: 768px) {
-  .wt-page-intro--home.is-revealing .wt-page-intro-organic-cutout,
-  .wt-page-intro--home.is-revealing .wt-page-intro-veil {
-    --duration-intro-expansion: 1600ms;
-    animation-duration: var(--duration-intro-expansion, 1600ms);
+  .wt-home-aperture {
+    height: 100svh;
+    min-height: 560px;
+    --wt-aperture-from: 0.78;
   }
 
-  /* Mobile: quieter breathing — opacity only */
-  .wt-page-intro--home.is-stage-1 .wt-page-intro-veil {
-    animation-name: wtIntroBreathVeilMobile;
-  }
-
-  @keyframes wtIntroBreathVeilMobile {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.985; }
+  .wt-home-aperture img,
+  .hero-slide[data-slide-id="africa-do-sul"] .hero-slide-img {
+    object-position: center 30%;
   }
 }
 
@@ -5021,23 +5065,34 @@ html.wt-intro-skip .wt-page-intro--home {
   padding: 2rem 1.25rem;
 }
 
-.wt-page-intro--home.is-stage-1 .wt-page-intro-stage {
-  animation: wtIntroStageBreathe 5.6s var(--easing-standard) infinite;
+.wt-page-intro--home .wt-page-intro-stage {
+  z-index: 3;
+  max-width: min(40rem, 90vw);
+  padding:
+    max(2rem, env(safe-area-inset-top, 0px))
+    1.35rem
+    max(2rem, env(safe-area-inset-bottom, 0px));
+  background: none;
+  transition:
+    opacity 900ms var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform 900ms var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-.wt-page-intro--home.is-revealing .wt-page-intro-stage {
-  animation: wtIntroStageOut var(--duration-intro-expansion, 2000ms) var(--easing-exit) forwards;
+html[data-intro-state="reveal"] .wt-page-intro--home .wt-page-intro-stage,
+html[data-intro-state="expanding"] .wt-page-intro--home .wt-page-intro-stage,
+html[data-intro-state="hero"] .wt-page-intro--home .wt-page-intro-stage,
+html[data-intro-state="skipping"] .wt-page-intro--home .wt-page-intro-stage {
+  opacity: 0;
+  transform: translate3d(0, -12px, 0);
+  pointer-events: none;
 }
 
-@keyframes wtIntroStageBreathe {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.96; transform: scale(1.012); }
+html[data-intro-state="reveal"] .wt-page-intro--home .wt-page-intro-stage {
+  transition-duration: 520ms;
 }
 
-@keyframes wtIntroStageOut {
-  0% { opacity: 1; transform: none; }
-  35% { opacity: 0; transform: translate3d(0, -10px, 0); }
-  100% { opacity: 0; transform: translate3d(0, -10px, 0); }
+html[data-intro-state="skipping"] .wt-page-intro--home .wt-page-intro-stage {
+  transition-duration: 420ms;
 }
 
 .wt-page-intro-eyebrow {
@@ -5060,15 +5115,37 @@ html.wt-intro-skip .wt-page-intro--home {
   animation: wtIntroIn var(--duration-medium) var(--easing-enter) 120ms forwards;
 }
 
-.wt-page-intro--home.is-stage-1 .wt-page-intro-brand {
-  animation:
-    wtIntroIn var(--duration-medium) var(--easing-enter) 120ms forwards,
-    wtIntroBrandAccent 5.6s var(--easing-standard) 600ms infinite;
+.wt-page-intro--home .wt-page-intro-brand {
+  font-size: clamp(2.6rem, 7vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  opacity: 1;
+  animation: none;
 }
 
-@keyframes wtIntroBrandAccent {
-  0%, 100% { color: var(--surface-olive); }
-  50% { color: color-mix(in srgb, var(--surface-olive) 88%, var(--accent-gold) 12%); }
+html[data-intro-state="reading"] .wt-page-intro--home .wt-page-intro-brand {
+  animation: wtIntroBrandBreath 6.4s ease-in-out infinite;
+}
+
+@keyframes wtIntroBrandBreath {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.94; }
+}
+
+.wt-page-intro-accent {
+  display: block;
+  width: 3.25rem;
+  height: 1px;
+  margin: 1.15rem auto 0;
+  background: #5C5E2E;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 1.7s var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+html[data-intro-state="reading"] .wt-page-intro-accent,
+html[data-intro-state="reveal"] .wt-page-intro-accent {
+  transform: scaleX(1);
 }
 
 .wt-page-intro-title {
@@ -5090,11 +5167,98 @@ html.wt-intro-skip .wt-page-intro--home {
   animation: wtIntroIn var(--duration-medium) var(--easing-enter) 280ms forwards;
 }
 
-/* CSS-first pending shell: brand/line visible before JS `.is-playing` */
-html.wt-intro-pending .wt-page-intro--home .wt-page-intro-brand,
-html.wt-intro-pending .wt-page-intro--home .wt-page-intro-line {
+.wt-page-intro--home .wt-page-intro-line {
+  font-family: var(--font-title);
+  margin: 1.15rem auto 0;
+  max-width: min(16em, 88vw);
+  font-size: clamp(1.28rem, 2.5vw, 1.72rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: #3F4328;
+  text-wrap: balance;
   opacity: 1;
   animation: none;
+}
+
+html[data-intro-state="reading"] .wt-page-intro--home .wt-page-intro-line {
+  animation: wtIntroLineBreath 5.4s ease-in-out infinite;
+}
+
+@keyframes wtIntroLineBreath {
+  0%, 100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  50% { opacity: 0.9; transform: translate3d(0, 1px, 0); }
+}
+
+/* Chrome stays out of the opening and fades in only once the photograph is seated. */
+html.wt-intro-pending .header,
+html.wt-intro-active .header,
+html.wt-intro-pending .hero-overlay,
+html.wt-intro-active .hero-overlay,
+html.wt-intro-pending .hero-container,
+html.wt-intro-active .hero-container,
+html.wt-intro-pending .hero-nav-arrows,
+html.wt-intro-active .hero-nav-arrows,
+html.wt-intro-pending .hero-progress-wrapper,
+html.wt-intro-active .hero-progress-wrapper,
+html.wt-intro-pending .whatsapp-float,
+html.wt-intro-active .whatsapp-float {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.wt-intro-handoff .hero-overlay {
+  opacity: 1;
+  pointer-events: none;
+  transition: none;
+}
+
+html.wt-intro-done .hero-container,
+html.wt-intro-done .hero-nav-arrows,
+html.wt-intro-done .hero-progress-wrapper {
+  animation: wtHeroReceive 640ms var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+html.wt-intro-done .header {
+  pointer-events: auto;
+}
+
+@keyframes wtHeroReceive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+html.wt-intro-pending .hero-slide.active .hero-slide-img,
+html.wt-intro-active .hero-slide.active .hero-slide-img,
+html.wt-intro-done .hero-slide.active .hero-slide-img {
+  transform: scale(1);
+  transition: none;
+}
+
+html.wt-intro-pending .hero .progress-bar-track.active .progress-bar-fill,
+html.wt-intro-active .hero .progress-bar-track.active .progress-bar-fill,
+html.wt-intro-done:not(.wt-hero-live) .hero .progress-bar-track.active .progress-bar-fill {
+  width: 0;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-page-intro--home .wt-page-intro-veil,
+  .wt-page-intro--home .wt-page-intro-brand,
+  .wt-page-intro--home .wt-page-intro-line,
+  .wt-page-intro-accent,
+  .wt-home-aperture,
+  .wt-home-aperture img,
+  .wt-home-aperture-grade {
+    animation: none !important;
+  }
+
+  html.wt-intro-done .hero-container,
+  html.wt-intro-done .hero-nav-arrows,
+  html.wt-intro-done .hero-progress-wrapper {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 .wt-page-intro-media {

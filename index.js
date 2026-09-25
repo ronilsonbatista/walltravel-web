@@ -52,6 +52,13 @@ async function loadExperienceRenderer() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const bootPathEarly = window.location.pathname;
+  const bootIsHomeEarly = bootPathEarly === "/" || bootPathEarly === "/index.html";
+  let homeIntroPromise = Promise.resolve(false);
+  if (bootIsHomeEarly && document.querySelector("[data-wt-page-intro][data-intro-preset='home']")) {
+    homeIntroPromise = playPageIntro(document.getElementById("home-view") || document);
+  }
+
   const WA = getWhatsappNumber();
   const esc = (value) =>
     String(value ?? "")
@@ -464,9 +471,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
+  const homeIntroBlocking = () => {
+    const root = document.documentElement;
+    if (root.classList.contains("wt-intro-pending") || root.classList.contains("wt-intro-active")) {
+      return true;
+    }
+    return root.classList.contains("wt-intro-done") && !root.classList.contains("wt-hero-live");
+  };
+
   const startAutoplay = () => {
     const path = window.location.pathname;
     if (path !== '/' && path !== '/index.html') return; // only run on home page
+    if (homeIntroBlocking()) return;
     
     clearInterval(autoplayInterval);
     if (prefersReducedMotion) return;
@@ -503,6 +519,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.addEventListener('keydown', (e) => {
     const path = window.location.pathname;
     if (path !== '/' && path !== '/index.html') return; // only navigate hero on home page
+    if (homeIntroBlocking()) return;
     
     if (e.key === 'ArrowLeft') {
       let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
@@ -590,9 +607,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       handleHeaderScroll(); 
       injectHeroPreload('/images/vitrine/africa-do-sul.webp');
       hydrateHeroImage(slides[0]);
-      prefetchHeroSlide(1);
-      // Opening plays once/session; hero autoplay + deferred analytics after intro
-      playPageIntro(homeView).finally(() => {
+      const scheduleIdle = window.requestIdleCallback || ((cb) => window.setTimeout(cb, 1400));
+      scheduleIdle(() => prefetchHeroSlide(1));
+      // Opening already started at boot. Autoplay waits until the hero is seated.
+      homeIntroPromise.finally(() => {
         startAutoplay();
         if (deferHomePageView) {
           trackStorefrontEvent("page_view", { path: "/" });

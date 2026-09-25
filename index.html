@@ -7,33 +7,49 @@
   <title>WallTravel — Experiências Incríveis</title>
   <meta name="description" content="WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem.">
 
-  <!-- First paint: cream shell before stylesheet (no white flash) -->
+  <!-- First paint: cream + wordmark before stylesheet or JS (no white flash) -->
+  <link rel="preload" href="/assets/03_tipografia/01_titulo/FacultyGlyphic-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="/images/vitrine/africa-do-sul.webp" as="image" type="image/webp" fetchpriority="high">
   <style id="wt-critical-cream">
     html{background-color:#F6F1E8;color:#16170F}
     body{background-color:#F6F1E8;margin:0}
     html.wt-intro-skip #wt-home-intro-mount [data-wt-page-intro]{display:none!important}
     html.wt-intro-pending #wt-home-intro-mount [data-wt-page-intro]{
       position:fixed;inset:0;z-index:9000;display:grid;place-items:center;
-      background:#F6F1E8;color:#16170F
+      background:#F6F1E8;color:#16170F;overflow:hidden
     }
     html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-veil{
       position:absolute;inset:0;
       background:
-        radial-gradient(ellipse at 30% 20%,rgba(232,221,200,.7),transparent 55%),
-        radial-gradient(ellipse at 80% 80%,rgba(122,124,94,.14),transparent 50%),
+        radial-gradient(ellipse at 30% 18%,rgba(232,221,200,.55),transparent 52%),
+        radial-gradient(ellipse at 78% 88%,rgba(122,124,94,.12),transparent 46%),
         #F6F1E8
     }
+    html.wt-intro-pending #wt-home-intro-mount .wt-home-aperture{opacity:0}
     html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-stage{
-      position:relative;z-index:2;text-align:center;max-width:min(36rem,90vw);padding:2rem 1.25rem
+      position:relative;z-index:3;text-align:center;max-width:min(40rem,90vw);
+      padding:max(2rem,env(safe-area-inset-top)) 1.35rem max(2rem,env(safe-area-inset-bottom))
     }
     html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-brand{
-      font-family:Georgia,serif;font-size:clamp(2.4rem,7vw,3.75rem);line-height:1.05;color:#3F4328;margin:0
+      font-family:"Faculty Glyphic",Georgia,serif;font-weight:400;
+      font-size:clamp(2.6rem,7vw,4.25rem);line-height:1.02;letter-spacing:-0.02em;
+      color:#3F4328;margin:0
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-accent{
+      display:block;width:3.25rem;height:1px;margin:1.15rem auto 0;background:#5C5E2E;transform:scaleX(0)
     }
     html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-line{
-      margin:1rem auto 0;max-width:28rem;color:#5C5E54;font-weight:300;line-height:1.55
+      font-family:"Faculty Glyphic",Georgia,serif;font-weight:400;
+      margin:1.15rem auto 0;max-width:min(16em,88vw);
+      font-size:clamp(1.28rem,2.5vw,1.72rem);line-height:1.35;letter-spacing:-0.015em;color:#3F4328
     }
-    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-organic{display:none}
     html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-skip{opacity:0;pointer-events:none}
+    html.wt-intro-pending .header,
+    html.wt-intro-pending .hero-overlay,
+    html.wt-intro-pending .hero-container,
+    html.wt-intro-pending .hero-nav-arrows,
+    html.wt-intro-pending .hero-progress-wrapper,
+    html.wt-intro-pending .whatsapp-float{opacity:0}
     html.wt-intro-pending,html.wt-intro-pending body{overflow:hidden}
   </style>
   <script>
@@ -44,10 +60,13 @@
       try {
         if (sessionStorage.getItem("wt_immersive_intro_played") === "1") skip = true;
       } catch (e) {}
+      var reduced = false;
       try {
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) skip = true;
+        reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       } catch (e2) {}
+      if (reduced && !skip) document.documentElement.classList.add("wt-intro-reduced");
       document.documentElement.classList.add(skip ? "wt-intro-skip" : "wt-intro-pending");
+      if (!skip) document.documentElement.dataset.introState = "arrival";
       document.documentElement.style.backgroundColor = "#F6F1E8";
     })();
   </script>
@@ -104,11 +123,15 @@
   <div id="home-view">
   <!-- Immersive home opening — CSS-first shell (visible before JS on first session) -->
   <div id="wt-home-intro-mount">
-    <div class="wt-page-intro wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
+    <div class="wt-page-intro wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" data-intro-state="arrival" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
       <div class="wt-page-intro-veil" aria-hidden="true"></div>
-      <div class="wt-page-intro-organic" aria-hidden="true"><span class="wt-page-intro-organic-cutout" data-intro-organic-cutout></span></div>
+      <div class="wt-home-aperture" data-intro-aperture aria-hidden="true">
+        <img src="/images/vitrine/africa-do-sul.webp" alt="" width="1600" height="1600" decoding="async" fetchpriority="high">
+        <span class="wt-home-aperture-grade" aria-hidden="true"></span>
+      </div>
       <div class="wt-page-intro-stage">
         <p class="wt-page-intro-brand" data-intro-brand>WallTravel</p>
+        <span class="wt-page-intro-accent" data-intro-accent aria-hidden="true"></span>
         <p class="wt-page-intro-line" data-intro-line>Experiências extraordinárias desenhadas com propósito.</p>
       </div>
       <button type="button" class="wt-page-intro-skip" data-intro-skip>Pular introdução</button>
@@ -130,8 +153,8 @@
     <div class="hero-slideshow" id="hero-slideshow">
       <div class="hero-slide active" data-index="0" data-slide-id="africa-do-sul">
         <picture>
-          <source type="image/webp" data-srcset="/images/vitrine/africa-do-sul.webp">
-          <img data-src="/images/vitrine/africa-do-sul.jpg" alt="Safari na África do Sul" class="hero-slide-img" width="1600" height="1600" decoding="async" fetchpriority="high" style="object-position: center 35%;">
+          <source type="image/webp" srcset="/images/vitrine/africa-do-sul.webp">
+          <img src="/images/vitrine/africa-do-sul.jpg" alt="Safari na África do Sul" class="hero-slide-img" width="1600" height="1600" decoding="async" fetchpriority="high">
         </picture>
       </div>
       <div class="hero-slide" data-index="1" data-slide-id="maldivas">

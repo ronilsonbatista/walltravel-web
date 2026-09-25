@@ -36,8 +36,10 @@ test.describe("immersive intro timing", () => {
     await page.goto("/");
     const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
     await expect(intro).toBeVisible({ timeout: 5000 });
-    await expect(intro).toHaveClass(/is-stage-1/);
-    await expect(intro).toHaveAttribute("data-intro-stage1-ms", "10000");
+    await expect(intro).toHaveAttribute("data-intro-state", "reading", { timeout: 4000 });
+    const readingMs = Number(await intro.getAttribute("data-intro-reading-ms"));
+    expect(readingMs).toBeGreaterThanOrEqual(2800);
+    expect(readingMs).toBeLessThanOrEqual(6500);
     await expect(intro.locator("[data-intro-skip]")).toBeVisible();
     await expect(intro.locator("[data-intro-brand]")).toContainText("WallTravel");
   });
@@ -65,21 +67,33 @@ test.describe("immersive intro timing", () => {
     await page.goto("/");
     const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
     await expect(intro).toBeVisible();
-    await page.mouse.wheel(0, 120);
+    await intro.hover();
+    await page.mouse.wheel(0, 140);
     await expect(page.locator("[data-wt-page-intro][data-intro-preset='home']")).toHaveCount(0, {
       timeout: 2000,
     });
   });
 
-  test("reduced-motion skips full home intro", async ({ browser }) => {
+  test("reduced-motion shows a short static intro then the hero", async ({ browser }) => {
     const context = await browser.newContext({ reducedMotion: "reduce" });
     const page = await context.newPage();
     await clearHomeIntroSession(page);
-    await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
-    await expect(page.locator("[data-wt-page-intro][data-intro-preset='home']")).toHaveCount(0);
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
+    await expect(intro).toBeVisible({ timeout: 4000 });
+    await expect(intro).toHaveCount(0, { timeout: 2500 });
     await expect(page.locator(".hero")).toBeVisible();
     await context.close();
+  });
+
+  test("Escape accelerates home intro into the hero", async ({ page }) => {
+    await clearHomeIntroSession(page);
+    await page.goto("/");
+    const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
+    await expect(intro).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(intro).toHaveCount(0, { timeout: 2000 });
+    await expect(page.locator(".hero-slide.active")).toHaveAttribute("data-index", "0");
   });
 
   test("hero autoplay starts only after intro ends", async ({ page }) => {
