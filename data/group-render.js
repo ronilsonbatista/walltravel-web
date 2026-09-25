@@ -5,7 +5,7 @@ import {
   GroupDetailTemplate,
   ImmersiveHero,
   renderDetailPersonalityIntro,
-  ImmersivePageIntro,
+  renderGroupCatalogIntro,
 } from "./immersive/primitives.js";
 
 function formatMoney(priceFrom, currency = "BRL") {
@@ -804,12 +804,7 @@ export function renderGroupsCatalog(groups, esc) {
     .join("");
 
   return `<div class="groups-page group-landing-ds groups-page--chapters" data-group-over-hero>
-    ${ImmersivePageIntro({
-      brand: "WallTravel",
-      line: "Viagens em grupo",
-      variant: "short",
-      sessionKey: "wt_page_intro_grupos",
-    })}
+    ${renderGroupCatalogIntro()}
     <div class="group-hero group-hero--fullbleed groups-catalog-hero">
       ${HeroCarousel({ slides: heroSlides, name: "Viagens em grupo", esc })}
       <div class="group-hero-overlay group-hero-overlay--strong"></div>

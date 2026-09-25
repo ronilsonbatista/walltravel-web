@@ -6,6 +6,51 @@
   
   <title>WallTravel — Experiências Incríveis</title>
   <meta name="description" content="WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem.">
+
+  <!-- First paint: cream shell before stylesheet (no white flash) -->
+  <style id="wt-critical-cream">
+    html{background-color:#F6F1E8;color:#16170F}
+    body{background-color:#F6F1E8;margin:0}
+    html.wt-intro-skip #wt-home-intro-mount [data-wt-page-intro]{display:none!important}
+    html.wt-intro-pending #wt-home-intro-mount [data-wt-page-intro]{
+      position:fixed;inset:0;z-index:9000;display:grid;place-items:center;
+      background:#F6F1E8;color:#16170F
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-veil{
+      position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse at 30% 20%,rgba(232,221,200,.7),transparent 55%),
+        radial-gradient(ellipse at 80% 80%,rgba(122,124,94,.14),transparent 50%),
+        #F6F1E8
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-stage{
+      position:relative;z-index:2;text-align:center;max-width:min(36rem,90vw);padding:2rem 1.25rem
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-brand{
+      font-family:Georgia,serif;font-size:clamp(2.4rem,7vw,3.75rem);line-height:1.05;color:#3F4328;margin:0
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-line{
+      margin:1rem auto 0;max-width:28rem;color:#5C5E54;font-weight:300;line-height:1.55
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-organic{display:none}
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-skip{opacity:0;pointer-events:none}
+    html.wt-intro-pending,html.wt-intro-pending body{overflow:hidden}
+  </style>
+  <script>
+    (function () {
+      var path = location.pathname || "/";
+      var isHome = path === "/" || path === "/index.html";
+      var skip = !isHome;
+      try {
+        if (sessionStorage.getItem("wt_immersive_intro_played") === "1") skip = true;
+      } catch (e) {}
+      try {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) skip = true;
+      } catch (e2) {}
+      document.documentElement.classList.add(skip ? "wt-intro-skip" : "wt-intro-pending");
+      document.documentElement.style.backgroundColor = "#F6F1E8";
+    })();
+  </script>
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -57,8 +102,25 @@
 
   <div id="main-content" tabindex="-1">
   <div id="home-view">
-  <!-- Immersive home opening (once per session) — mounted by immersive system -->
-  <div id="wt-home-intro-mount"></div>
+  <!-- Immersive home opening — CSS-first shell (visible before JS on first session) -->
+  <div id="wt-home-intro-mount">
+    <div class="wt-page-intro wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
+      <div class="wt-page-intro-veil" aria-hidden="true"></div>
+      <div class="wt-page-intro-organic" aria-hidden="true"><span class="wt-page-intro-organic-cutout" data-intro-organic-cutout></span></div>
+      <div class="wt-page-intro-stage">
+        <p class="wt-page-intro-brand" data-intro-brand>WallTravel</p>
+        <p class="wt-page-intro-line" data-intro-line>Experiências extraordinárias desenhadas com propósito.</p>
+      </div>
+      <button type="button" class="wt-page-intro-skip" data-intro-skip>Pular introdução</button>
+    </div>
+  </div>
+  <script>
+    (function () {
+      if (!document.documentElement.classList.contains("wt-intro-skip")) return;
+      var mount = document.getElementById("wt-home-intro-mount");
+      if (mount) mount.replaceChildren();
+    })();
+  </script>
 
   <!-- ==========================================================================
        HERO / SLIDESHOW SECTION (CINEMATOGRAPHIC FULLSCREEN)

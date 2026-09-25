@@ -36,6 +36,9 @@ import {
   renderDestinationExplorer,
   playPageIntro,
   initDestinationExplorer,
+  hasPlayedSessionIntro,
+  prefersReducedMotion as immersivePrefersReducedMotion,
+  IMMERSIVE_TOKENS,
 } from './data/immersive/primitives.js';
 
 /** Lazy-load motion/experience modules — not needed for first paint on Home. */
@@ -61,7 +64,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   await Promise.all([hydrateStorefront(), hydrateGroups()]);
   hydrateWhatsAppCTAs(document);
   bindWhatsappTracking(document);
-  bindAnalyticsPageHooks(document);
+
+  const bootPath = window.location.pathname;
+  const bootIsHome = bootPath === "/" || bootPath === "/index.html";
+  const deferHomePageView =
+    bootIsHome &&
+    !hasPlayedSessionIntro(IMMERSIVE_TOKENS.sessionIntroKey) &&
+    !immersivePrefersReducedMotion();
+  bindAnalyticsPageHooks(document, { deferPageView: deferHomePageView });
 
   const renderHomeDestinosExplorer = () => {
     const mount = document.getElementById('destinos-explorer');
@@ -103,10 +113,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderHomeDestinosExplorer();
   updateFooterDestinosLinks();
 
-  // Home opening intro — once per session
+  // Home opening intro — CSS-first shell already in HTML; ensure markup once
   const homeIntroMount = document.getElementById("wt-home-intro-mount");
   if (homeIntroMount) {
-    homeIntroMount.innerHTML = renderHomeOpeningIntro();
+    if (document.documentElement.classList.contains("wt-intro-skip")) {
+      homeIntroMount.querySelector("[data-wt-page-intro]")?.remove();
+    } else if (!homeIntroMount.querySelector("[data-wt-page-intro]")) {
+      homeIntroMount.innerHTML = renderHomeOpeningIntro({ cssFirst: true });
+    }
   }
 
   if (getStorefrontSource() === "local" && getStorefrontHydrateError()) {
@@ -577,8 +591,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       injectHeroPreload('/images/vitrine/africa-do-sul.webp');
       hydrateHeroImage(slides[0]);
       prefetchHeroSlide(1);
-      // Opening plays once/session; hero autoplay starts after intro (or immediately if skipped)
-      playPageIntro(homeView).finally(() => startAutoplay());
+      // Opening plays once/session; hero autoplay + deferred analytics after intro
+      playPageIntro(homeView).finally(() => {
+        startAutoplay();
+        if (deferHomePageView) {
+          trackStorefrontEvent("page_view", { path: "/" });
+        }
+      });
       updateSEO(
         "WallTravel — Experiências Incríveis",
         "WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem."

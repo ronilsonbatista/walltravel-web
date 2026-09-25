@@ -12,6 +12,7 @@ export {
 } from "./tokens.js";
 
 export {
+  ImmersiveIntro,
   ImmersivePageIntro,
   ImmersiveHero,
   DestinationReveal,
@@ -27,8 +28,10 @@ export {
   renderDestinationExplorer,
   renderDetailPersonalityIntro,
   renderVitrineIntro,
+  renderGroupCatalogIntro,
   renderHomeOpeningIntro,
   playPageIntro,
+  playImmersiveIntro,
   initDestinationExplorer,
   PageIntro,
   HeroReveal,
@@ -37,3 +40,5 @@ export {
   DestinationTransition,
   JourneyTransition,
 } from "./primitives.js";
+
+export { INTRO_PRESETS, resolveIntroPreset } from "./tokens.js";

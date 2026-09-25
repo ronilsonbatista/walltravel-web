@@ -5,6 +5,8 @@
 
 import {
   IMMERSIVE_TOKENS,
+  INTRO_PRESETS,
+  resolveIntroPreset,
   hasPlayedSessionIntro,
   markSessionIntroPlayed,
   prefersReducedMotion,
@@ -20,11 +22,30 @@ function escAttr(value) {
     .replace(/'/g, "&#39;");
 }
 
+/** Map legacy variant names → ImmersiveIntro preset ids */
+function normalizePreset(preset, variant) {
+  if (preset && INTRO_PRESETS[preset]) return preset;
+  if (variant === "short") return "catalog";
+  if (variant === "detail") return "detail";
+  if (variant === "groupCatalog" || variant === "grupos") return "groupCatalog";
+  if (variant === "catalog" || variant === "vitrine") return "catalog";
+  if (variant === "home") return "home";
+  return preset && INTRO_PRESETS[preset] ? preset : "home";
+}
+
+/** CSS modifier class for a preset */
+function presetCssMod(preset) {
+  if (preset === "groupCatalog") return "group-catalog";
+  if (preset === "catalog") return "catalog";
+  return preset;
+}
+
 /**
- * ImmersivePageIntro — cream → brand → line → optional media → dismiss.
- * @param {{ brand?: string, eyebrow?: string, title?: string, line?: string, mediaUrl?: string, mediaAlt?: string, variant?: "home"|"short"|"detail", sessionKey?: string }} opts
+ * ImmersiveIntro — shared cream opening for home / catalog / groupCatalog / detail.
+ * Alias: ImmersivePageIntro.
+ * @param {{ brand?: string, eyebrow?: string, title?: string, line?: string, mediaUrl?: string, mediaAlt?: string, preset?: "home"|"catalog"|"groupCatalog"|"detail", variant?: string, sessionKey?: string, cssFirst?: boolean, skipLabel?: string }} opts
  */
-export function ImmersivePageIntro(opts = {}) {
+export function ImmersiveIntro(opts = {}) {
   const {
     brand = "WallTravel",
     eyebrow = "",
@@ -32,23 +53,32 @@ export function ImmersivePageIntro(opts = {}) {
     line = "",
     mediaUrl = "",
     mediaAlt = "",
-    variant = "home",
-    sessionKey = IMMERSIVE_TOKENS.sessionIntroKey,
+    skipLabel = "Pular introdução",
+    cssFirst = false,
   } = opts;
 
+  const preset = normalizePreset(opts.preset, opts.variant);
+  const presetCfg = resolveIntroPreset(preset);
+  const sessionKey =
+    opts.sessionKey ||
+    presetCfg.sessionKey ||
+    `${IMMERSIVE_TOKENS.sessionPageIntroPrefix}${preset}`;
+  const cssMod = presetCssMod(preset);
   const organic =
-    variant === "home"
+    preset === "home"
       ? `<div class="wt-page-intro-organic" aria-hidden="true"><span class="wt-page-intro-organic-cutout" data-intro-organic-cutout></span></div>`
       : "";
+  const hiddenAttr = cssFirst ? "" : "hidden";
+  const ariaHidden = cssFirst ? "false" : "true";
 
-  return `<div class="wt-page-intro wt-page-intro--${escAttr(variant)}" data-wt-page-intro data-intro-variant="${escAttr(variant)}" data-intro-session-key="${escAttr(sessionKey)}" hidden aria-hidden="true">
+  return `<div class="wt-page-intro wt-page-intro--${escAttr(cssMod)}" data-wt-page-intro data-intro-preset="${escAttr(preset)}" data-intro-variant="${escAttr(cssMod)}" data-intro-session-key="${escAttr(sessionKey)}" ${hiddenAttr} aria-hidden="${ariaHidden}" role="dialog" aria-label="Introdução WallTravel">
     <div class="wt-page-intro-veil" aria-hidden="true"></div>
     ${organic}
     <div class="wt-page-intro-stage">
       ${eyebrow ? `<p class="wt-page-intro-eyebrow">${escAttr(eyebrow)}</p>` : ""}
-      <p class="wt-page-intro-brand">${escAttr(brand)}</p>
+      <p class="wt-page-intro-brand" data-intro-brand>${escAttr(brand)}</p>
       ${title ? `<h2 class="wt-page-intro-title">${escAttr(title)}</h2>` : ""}
-      ${line ? `<p class="wt-page-intro-line">${escAttr(line)}</p>` : ""}
+      ${line ? `<p class="wt-page-intro-line" data-intro-line>${escAttr(line)}</p>` : ""}
       ${
         mediaUrl
           ? `<div class="wt-page-intro-media" data-intro-media>
@@ -57,7 +87,13 @@ export function ImmersivePageIntro(opts = {}) {
           : ""
       }
     </div>
+    <button type="button" class="wt-page-intro-skip" data-intro-skip>${escAttr(skipLabel)}</button>
   </div>`;
+}
+
+/** @deprecated prefer ImmersiveIntro — kept as alias */
+export function ImmersivePageIntro(opts = {}) {
+  return ImmersiveIntro(opts);
 }
 
 /**
@@ -325,89 +361,244 @@ export function renderDetailPersonalityIntro(entity = {}, esc = escAttr) {
   const cover = entity.coverImageUrl || entity.image || "";
   const eyebrow = dest ? `Entrando em ${dest}` : "WallTravel";
 
-  return ImmersivePageIntro({
+  return ImmersiveIntro({
     brand: "WallTravel",
     eyebrow,
     title,
     line: date,
     mediaUrl: cover,
     mediaAlt: title,
-    variant: "detail",
+    preset: "detail",
     sessionKey: `${IMMERSIVE_TOKENS.sessionPageIntroPrefix}${entity.slug || title}`,
   });
 }
 
 /**
- * Vitrine short intro markup.
+ * Vitrine / catalog short intro markup.
  */
 export function renderVitrineIntro() {
-  return ImmersivePageIntro({
+  return ImmersiveIntro({
     brand: "WallTravel",
     line: "Vitrine de experiências",
-    variant: "short",
-    sessionKey: `${IMMERSIVE_TOKENS.sessionPageIntroPrefix}vitrine`,
+    preset: "catalog",
+    sessionKey: INTRO_PRESETS.catalog.sessionKey,
   });
 }
 
 /**
- * Home opening intro.
+ * Groups catalog intro markup.
  */
-export function renderHomeOpeningIntro() {
-  return ImmersivePageIntro({
+export function renderGroupCatalogIntro() {
+  return ImmersiveIntro({
+    brand: "WallTravel",
+    line: "Viagens em grupo",
+    preset: "groupCatalog",
+    sessionKey: INTRO_PRESETS.groupCatalog.sessionKey,
+  });
+}
+
+/**
+ * Home opening intro (also used as CSS-first shell source of truth).
+ */
+export function renderHomeOpeningIntro({ cssFirst = false } = {}) {
+  return ImmersiveIntro({
     brand: "WallTravel",
     line: "Experiências extraordinárias desenhadas com propósito.",
-    variant: "home",
-    sessionKey: IMMERSIVE_TOKENS.sessionIntroKey,
+    preset: "home",
+    sessionKey: INTRO_PRESETS.home.sessionKey,
+    cssFirst,
   });
 }
 
+function waitMs(ms, signal) {
+  return new Promise((resolve) => {
+    if (signal?.aborted) {
+      resolve("aborted");
+      return;
+    }
+    const id = window.setTimeout(() => resolve("done"), ms);
+    const onAbort = () => {
+      window.clearTimeout(id);
+      resolve("aborted");
+    };
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
+function finishIntro(el, key) {
+  markSessionIntroPlayed(key);
+  el.remove();
+  document.documentElement.classList.remove("wt-intro-active", "wt-intro-pending");
+  document.documentElement.classList.add("wt-intro-done");
+  try {
+    document.dispatchEvent(new CustomEvent("wt:immersive-intro-end", { detail: { key } }));
+  } catch {
+    /* ignore */
+  }
+}
+
 /**
- * Play ImmersivePageIntro once per session key; resolves when finished.
+ * Play ImmersiveIntro once per session key; resolves when finished.
+ * Home: Stage 1 breathing (~10s) → organic reveal/expansion → hero.
+ * Skip anytime via click/tap/scroll/swipe/Enter/Space/Escape/Skip button.
  */
 export function playPageIntro(root = document) {
-  const el = root.querySelector?.("[data-wt-page-intro]") || document.querySelector("[data-wt-page-intro]");
+  const el =
+    root.querySelector?.("[data-wt-page-intro]") || document.querySelector("[data-wt-page-intro]");
   if (!el) return Promise.resolve(false);
 
   const key = el.getAttribute("data-intro-session-key") || IMMERSIVE_TOKENS.sessionIntroKey;
-  const variant = el.getAttribute("data-intro-variant") || "home";
+  const preset = normalizePreset(
+    el.getAttribute("data-intro-preset"),
+    el.getAttribute("data-intro-variant"),
+  );
+  const cfg = resolveIntroPreset(preset);
+  const mobile = isMobileViewport();
 
   if (hasPlayedSessionIntro(key) || prefersReducedMotion()) {
     el.remove();
+    document.documentElement.classList.remove("wt-intro-active", "wt-intro-pending");
+    document.documentElement.classList.add("wt-intro-skip");
     return Promise.resolve(false);
   }
 
   el.hidden = false;
+  el.removeAttribute("hidden");
   el.setAttribute("aria-hidden", "false");
   el.classList.add("is-playing");
   document.documentElement.classList.add("wt-intro-active");
+  document.documentElement.classList.remove("wt-intro-skip", "wt-intro-pending");
 
-  const duration =
-    variant === "short"
-      ? IMMERSIVE_TOKENS.introShortMs
-      : variant === "detail"
-        ? isMobileViewport()
-          ? 1100
-          : 1500
-        : isMobileViewport()
-          ? IMMERSIVE_TOKENS.introMobileMs
-          : IMMERSIVE_TOKENS.introDesktopMs;
-
-  if (variant === "home") {
-    el.style.setProperty("--duration-intro", `${duration}ms`);
-  }
+  const exitMs = cfg.exitMs || IMMERSIVE_TOKENS.durationFast;
+  el.style.setProperty("--duration-intro-exit", `${exitMs}ms`);
 
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    let settled = false;
+    let exiting = false;
+    const ac = new AbortController();
+    const { signal } = ac;
+
+    const settle = (played) => {
+      if (settled) return;
+      settled = true;
+      try {
+        ac.abort();
+      } catch {
+        /* ignore */
+      }
+      resolve(played);
+    };
+
+    const smoothExit = () => {
+      if (settled || exiting) return;
+      exiting = true;
+      try {
+        ac.abort();
+      } catch {
+        /* ignore */
+      }
+      el.classList.remove("is-stage-1", "is-revealing");
       el.classList.add("is-exiting");
       window.setTimeout(() => {
-        markSessionIntroPlayed(key);
-        el.remove();
-        document.documentElement.classList.remove("wt-intro-active");
-        resolve(true);
-      }, IMMERSIVE_TOKENS.durationFast);
-    }, duration);
+        finishIntro(el, key);
+        settle(true);
+      }, exitMs);
+    };
+
+    const onSkip = (e) => {
+      if (settled || exiting) return;
+      if (e?.type === "keydown") {
+        const k = e.key;
+        if (k !== "Escape" && k !== "Enter" && k !== " " && k !== "Spacebar") return;
+        e.preventDefault();
+      }
+      smoothExit();
+    };
+
+    // Interaction skips — mobile skips immediately (smooth exit still)
+    el.addEventListener("click", onSkip, { signal });
+    el.querySelector("[data-intro-skip]")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      onSkip(e);
+    }, { signal });
+    window.addEventListener("keydown", onSkip, { signal });
+    window.addEventListener(
+      "wheel",
+      (e) => {
+        if (Math.abs(e.deltaY) > 8 || Math.abs(e.deltaX) > 8) onSkip(e);
+      },
+      { signal, passive: true },
+    );
+    window.addEventListener(
+      "touchmove",
+      () => onSkip({ type: "touchmove" }),
+      { signal, passive: true },
+    );
+    let touchX = null;
+    let touchY = null;
+    window.addEventListener(
+      "touchstart",
+      (e) => {
+        touchX = e.changedTouches?.[0]?.clientX ?? null;
+        touchY = e.changedTouches?.[0]?.clientY ?? null;
+      },
+      { signal, passive: true },
+    );
+    window.addEventListener(
+      "touchend",
+      (e) => {
+        if (touchX == null) return;
+        const x = e.changedTouches?.[0]?.clientX ?? touchX;
+        const y = e.changedTouches?.[0]?.clientY ?? touchY;
+        const dx = x - touchX;
+        const dy = y - touchY;
+        touchX = null;
+        touchY = null;
+        if (Math.abs(dx) > 36 || Math.abs(dy) > 36) onSkip(e);
+      },
+      { signal, passive: true },
+    );
+
+    const run = async () => {
+      if (preset === "home") {
+        const stage1 = mobile ? cfg.stage1MobileMs : cfg.stage1Ms;
+        const expansion = mobile ? cfg.expansionMobileMs : cfg.expansionMs;
+        el.dataset.introStage1Ms = String(stage1);
+        el.dataset.introExpansionMs = String(expansion);
+        el.style.setProperty("--duration-intro-stage1", `${stage1}ms`);
+        el.style.setProperty("--duration-intro-expansion", `${expansion}ms`);
+        el.style.setProperty("--duration-intro", `${stage1 + expansion}ms`);
+
+        el.classList.add("is-stage-1");
+        const stage1Result = await waitMs(stage1, signal);
+        if (settled) return;
+        if (stage1Result === "aborted") return;
+
+        el.classList.remove("is-stage-1");
+        el.classList.add("is-revealing");
+        const revealResult = await waitMs(expansion, signal);
+        if (settled) return;
+        if (revealResult === "aborted") return;
+
+        smoothExit();
+        return;
+      }
+
+      const total = mobile ? cfg.totalMobileMs || cfg.totalMs : cfg.totalMs;
+      el.dataset.introTotalMs = String(total);
+      el.style.setProperty("--duration-intro", `${total}ms`);
+      const result = await waitMs(total, signal);
+      if (settled) return;
+      if (result === "aborted") return;
+      smoothExit();
+    };
+
+    run();
   });
 }
+
+/** Alias for shared system naming */
+export const playImmersiveIntro = playPageIntro;
 
 /**
  * Destination Explorer interactions — desktop hover / mobile swipe peek.
@@ -502,7 +693,7 @@ export function initDestinationExplorer(root = document) {
 }
 
 /** Shared motion primitive aliases (CSS/WAAPI system names). */
-export const PageIntro = ImmersivePageIntro;
+export const PageIntro = ImmersiveIntro;
 export const HeroReveal = ImmersiveHero;
 export const ImageReveal = MediaReveal;
 export const StaggerGroup = SectionReveal;
@@ -511,6 +702,8 @@ export const JourneyTransition = SectionReveal;
 
 export {
   IMMERSIVE_TOKENS,
+  INTRO_PRESETS,
+  resolveIntroPreset,
   hasPlayedSessionIntro,
   markSessionIntroPlayed,
   prefersReducedMotion,
