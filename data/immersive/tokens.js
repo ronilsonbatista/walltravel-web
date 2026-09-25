@@ -11,17 +11,17 @@
 export const INTRO_PRESETS = Object.freeze({
   home: Object.freeze({
     id: "home",
-    /** Desktop ~3.8s to the hero. Mobile ~3.0s. Phrase stays readable. */
-    readingMs: 2100,
-    readingMobileMs: 1650,
-    revealMs: 380,
-    revealMobileMs: 280,
-    expansionMs: 1280,
-    expansionMobileMs: 1050,
-    heroMs: 480,
+    /** Count window. Desktop total ~2.6s, mobile ~2.2s, including the cream fade. */
+    readingMs: 2280,
+    readingMobileMs: 1880,
+    revealMs: 0,
+    revealMobileMs: 0,
+    expansionMs: 0,
+    expansionMobileMs: 0,
+    heroMs: 320,
     skipMs: 520,
-    reducedReadingMs: 420,
-    reducedRevealMs: 200,
+    reducedReadingMs: 280,
+    reducedRevealMs: 160,
     contentExitMs: 220,
     exitMs: 280,
     handoff: "hero",

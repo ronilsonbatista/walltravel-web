@@ -36,7 +36,7 @@ test.describe("immersive intro timing", () => {
     await page.goto("/");
     const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
     await expect(intro).toBeVisible({ timeout: 5000 });
-    await expect(intro).toHaveAttribute("data-intro-state", "reading", { timeout: 4000 });
+    await expect(intro).toHaveAttribute("data-intro-state", "intro", { timeout: 4000 });
     const readingMs = Number(await intro.getAttribute("data-intro-reading-ms"));
     expect(readingMs).toBeGreaterThanOrEqual(1400);
     expect(readingMs).toBeLessThanOrEqual(2500);
@@ -44,13 +44,72 @@ test.describe("immersive intro timing", () => {
     await expect(count).toBeVisible();
     const early = Number(await count.textContent());
     expect(early).toBeGreaterThanOrEqual(0);
-    expect(early).toBeLessThan(35);
+    expect(early).toBeLessThan(45);
+    const hidden = await page.evaluate(() => ({
+      hero: getComputedStyle(document.querySelector(".hero") as Element).visibility,
+      header: getComputedStyle(document.querySelector(".header") as Element).visibility,
+      progress: getComputedStyle(document.querySelector(".hero-progress-wrapper") as Element).visibility,
+      whatsapp: getComputedStyle(document.querySelector(".whatsapp-float") as Element).visibility,
+      introImages: document.querySelectorAll("[data-wt-page-intro] img").length,
+    }));
+    expect(hidden.hero).toBe("hidden");
+    expect(hidden.header).toBe("hidden");
+    expect(hidden.progress).toBe("hidden");
+    expect(hidden.whatsapp).toBe("hidden");
+    expect(hidden.introImages).toBe(0);
     await expect(intro.locator("[data-intro-skip]")).toHaveCount(0);
     await expect(intro.locator("[data-intro-brand]")).toContainText("WallTravel");
     await page.waitForTimeout(700);
     const mid = Number(await count.textContent());
     expect(mid).toBeGreaterThan(early);
     expect(mid).toBeLessThan(100);
+  });
+
+  test("100 starts the handoff immediately and the hero stays hidden until then", async ({ page }) => {
+    await clearHomeIntroSession(page);
+    await page.goto("/");
+    await expect(page.locator("[data-intro-count]")).toBeVisible();
+    const result = await page.evaluate(() => {
+      return new Promise<string>((resolve) => {
+        const count = document.querySelector("[data-intro-count]");
+        const root = document.documentElement;
+        const tick = () => {
+          if (!count) {
+            resolve("missing");
+            return;
+          }
+          if (count.textContent === "100") {
+            resolve(root.dataset.introPhase === "intro" ? "late" : "immediate");
+            return;
+          }
+          if (root.classList.contains("wt-hero-live") && !document.querySelector("[data-wt-page-intro]")) {
+            resolve("done");
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        tick();
+      });
+    });
+    expect(result).not.toBe("late");
+    await expect.poll(async () => {
+      return page.evaluate(() => {
+        const root = document.documentElement;
+        const header = document.querySelector("header.header");
+        const hero = document.querySelector(".hero");
+        return {
+          phase: root.dataset.introPhase || "",
+          hold: root.classList.contains("wt-intro-hold"),
+          hero: hero ? getComputedStyle(hero).visibility : "missing",
+          header: header ? getComputedStyle(header).visibility : "missing",
+        };
+      });
+    }, { timeout: 4000 }).toEqual({
+      phase: "hero-live",
+      hold: false,
+      hero: "visible",
+      header: "visible",
+    });
   });
 
   test("intro has no skip and finishes into the hero once per session", async ({ page }) => {
@@ -70,7 +129,16 @@ test.describe("immersive intro timing", () => {
 
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
-    await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
+    const returned = await page.evaluate(() => ({
+      intro: document.querySelectorAll("[data-wt-page-intro]").length,
+      hold: document.documentElement.classList.contains("wt-intro-hold"),
+      live: document.documentElement.classList.contains("wt-hero-live"),
+      hero: getComputedStyle(document.querySelector(".hero") as Element).visibility,
+    }));
+    expect(returned.intro).toBe(0);
+    expect(returned.hold).toBe(false);
+    expect(returned.live).toBe(true);
+    expect(returned.hero).toBe("visible");
     await expect(page.locator(".hero")).toBeVisible();
   });
 
@@ -135,6 +203,35 @@ test.describe("immersive intro timing", () => {
     await page.goto("/viagens/safari-africa");
     await page.waitForLoadState("domcontentloaded");
     await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
+  });
+
+  test("slow network does not show the hero before the intro", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "CDP network emulation is Chromium-only");
+    test.setTimeout(45000);
+    await clearHomeIntroSession(page);
+    const client = await page.context().newCDPSession(page);
+    await client.send("Network.enable");
+    await client.send("Network.emulateNetworkConditions", {
+      offline: false,
+      latency: 400,
+      downloadThroughput: (400 * 1024) / 8,
+      uploadThroughput: (400 * 1024) / 8,
+    });
+    await client.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+    await page.goto("/", { waitUntil: "commit", timeout: 20000 });
+    await page.waitForSelector(".hero", { state: "attached", timeout: 20000 });
+    const vis = await page.evaluate(() => ({
+      hero: getComputedStyle(document.querySelector(".hero") as Element).visibility,
+      header: getComputedStyle(document.querySelector(".header") as Element).visibility,
+      phase: document.documentElement.dataset.introPhase || "",
+      hold: document.documentElement.classList.contains("wt-intro-hold"),
+      intro: document.querySelectorAll("[data-wt-page-intro]").length,
+    }));
+    expect(vis.hold).toBe(true);
+    expect(vis.intro).toBe(1);
+    expect(vis.hero).toBe("hidden");
+    expect(vis.header).toBe("hidden");
+    expect(vis.phase).not.toBe("hero-live");
   });
 
   test("mobile hero photo starts at the top", async ({ browser }) => {

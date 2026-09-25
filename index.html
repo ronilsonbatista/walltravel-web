@@ -13,45 +13,52 @@
   <style id="wt-critical-cream">
     html{background-color:#F6F1E8;color:#16170F}
     body{background-color:#F6F1E8;margin:0}
-    html.wt-intro-skip #wt-home-intro-mount [data-wt-page-intro]{display:none!important}
-    html.wt-intro-pending #wt-home-intro-mount [data-wt-page-intro]{
+    html.wt-intro-skip #wt-home-intro-mount{display:none!important}
+    html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:transparent}
+    html.wt-intro-skip .logo-svg{filter:brightness(0) invert(1)}
+    html.wt-intro-skip .hero{position:relative;height:100svh;min-height:100svh;overflow:hidden;background:#3F4328}
+    html.wt-intro-skip .hero-slideshow,html.wt-intro-skip .hero-slide.active{position:absolute;inset:0}
+    html.wt-intro-skip .hero-slide{opacity:0}
+    html.wt-intro-skip .hero-slide.active{opacity:1}
+    html.wt-intro-skip .hero-slide-img{width:100%;height:100%;object-fit:cover;display:block}
+    html.wt-intro-hold #wt-home-intro-mount [data-wt-page-intro]{
       position:fixed;inset:0;z-index:9000;display:grid;place-items:center;
       background:#F6F1E8;color:#16170F;overflow:hidden
     }
-    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-veil{
-      position:absolute;inset:0;
-      background:
-        radial-gradient(ellipse at 30% 18%,rgba(232,221,200,.55),transparent 52%),
-        radial-gradient(ellipse at 78% 88%,rgba(122,124,94,.12),transparent 46%),
-        #F6F1E8
-    }
-    html.wt-intro-pending #wt-home-intro-mount .wt-home-aperture{opacity:0}
-    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-stage{
+    html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-veil{position:absolute;inset:0;background:#F6F1E8}
+    html.wt-intro-hold #wt-home-intro-mount .wt-home-aperture{display:none!important}
+    html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-stage{
       position:relative;z-index:3;text-align:center;max-width:min(40rem,90vw);
       padding:max(2rem,env(safe-area-inset-top)) 1.35rem max(2rem,env(safe-area-inset-bottom))
     }
-    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-brand{
+    html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-brand{
       font-family:"Faculty Glyphic",Georgia,serif;font-weight:400;
       font-size:clamp(2.6rem,7vw,4.25rem);line-height:1.02;letter-spacing:-0.02em;
       color:#3F4328;margin:0
     }
-    html.wt-intro-pending #wt-home-intro-mount .wt-intro-count{
-      margin:1.65rem 0 0;font-family:"Faculty Glyphic",Georgia,serif;font-size:clamp(1.85rem,4.2vw,2.35rem);
-      letter-spacing:0.16em;color:#5C5E2E;font-variant-numeric:tabular-nums;line-height:1
+    html.wt-intro-hold #wt-home-intro-mount .wt-intro-count{
+      margin:1.15rem 0 0;font-family:"Faculty Glyphic",Georgia,serif;font-size:0.95rem;
+      letter-spacing:0.14em;color:#5C5E2E;font-variant-numeric:tabular-nums;line-height:1
     }
-    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-line{
+    html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-line{
       font-family:"Faculty Glyphic",Georgia,serif;font-weight:400;
       margin:1.15rem auto 0;max-width:min(16em,88vw);
       font-size:clamp(1.28rem,2.5vw,1.72rem);line-height:1.35;letter-spacing:-0.015em;color:#3F4328
     }
-    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-skip{opacity:0;pointer-events:none}
-    html.wt-intro-pending .header,
-    html.wt-intro-pending .hero-overlay,
-    html.wt-intro-pending .hero-container,
-    html.wt-intro-pending .hero-nav-arrows,
-    html.wt-intro-pending .hero-progress-wrapper,
-    html.wt-intro-pending .whatsapp-float{opacity:0}
-    html.wt-intro-pending,html.wt-intro-pending body{overflow:hidden}
+    html.wt-intro-hold .header,
+    html.wt-intro-hold .skip-link,
+    html.wt-intro-hold #home-view > .hero,
+    html.wt-intro-hold #home-view > .section,
+    html.wt-intro-hold footer,
+    html.wt-intro-hold .whatsapp-float,
+    html.wt-intro-hold .wt-storefront-fallback{
+      visibility:hidden !important
+    }
+    html.wt-intro-hold .header{opacity:1 !important}
+    html.wt-intro-hold.wt-intro-transition #home-view > .hero{
+      visibility:visible !important
+    }
+    html.wt-intro-hold,html.wt-intro-hold body{overflow:hidden;height:100%}
   </style>
   <script>
     (function () {
@@ -65,10 +72,27 @@
       try {
         reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       } catch (e2) {}
-      if (reduced && !skip) document.documentElement.classList.add("wt-intro-reduced");
-      document.documentElement.classList.add(skip ? "wt-intro-skip" : "wt-intro-pending");
-      if (!skip) document.documentElement.dataset.introState = "arrival";
-      document.documentElement.style.backgroundColor = "#F6F1E8";
+      var root = document.documentElement;
+      if (skip) {
+        root.classList.add("wt-intro-skip", "wt-hero-live");
+        root.dataset.introPhase = "hero-live";
+      } else {
+        root.classList.add("wt-intro-hold", "wt-intro-pending");
+        root.dataset.introPhase = "boot";
+        root.dataset.introState = "boot";
+        if (reduced) root.classList.add("wt-intro-reduced");
+        document.addEventListener("DOMContentLoaded", function () {
+          window.setTimeout(function () {
+            if (root.classList.contains("wt-hero-live") || window.__wtHomeIntro) return;
+            root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+            root.classList.add("wt-intro-skip", "wt-hero-live");
+            root.dataset.introPhase = "hero-live";
+            var late = document.getElementById("wt-home-intro-mount");
+            if (late) late.replaceChildren();
+          }, 1500);
+        });
+      }
+      root.style.backgroundColor = "#F6F1E8";
     })();
   </script>
   
@@ -89,6 +113,7 @@
 
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="/index.css">
+  <noscript><style>#wt-home-intro-mount{display:none!important}</style></noscript>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Ir para o conteúdo</a>
@@ -124,12 +149,8 @@
   <div id="home-view">
   <!-- Immersive home opening — CSS-first shell (visible before JS on first session) -->
   <div id="wt-home-intro-mount">
-    <div class="wt-page-intro wt-page-intro--seat wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" data-intro-state="arrival" data-intro-handoff="hero" data-intro-target=".hero" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
+    <div class="wt-page-intro wt-page-intro--seat wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" data-intro-state="boot" data-intro-handoff="hero" data-intro-target=".hero" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
       <div class="wt-page-intro-veil" aria-hidden="true"></div>
-      <div class="wt-intro-aperture wt-home-aperture" data-intro-aperture data-intro-grade="home" aria-hidden="true">
-        <img src="/images/vitrine/africa-do-sul.webp" alt="" width="1600" height="1600" decoding="async" fetchpriority="high">
-        <span class="wt-intro-aperture-grade wt-home-aperture-grade" aria-hidden="true"></span>
-      </div>
       <div class="wt-page-intro-stage">
         <p class="wt-page-intro-brand" data-intro-brand>WallTravel</p>
         <p class="wt-page-intro-line" data-intro-line>Experiências extraordinárias desenhadas com propósito.</p>
@@ -139,9 +160,90 @@
   </div>
   <script>
     (function () {
-      if (!document.documentElement.classList.contains("wt-intro-skip")) return;
-      var mount = document.getElementById("wt-home-intro-mount");
-      if (mount) mount.replaceChildren();
+      var root = document.documentElement;
+      if (root.classList.contains("wt-intro-skip")) {
+        var skipped = document.getElementById("wt-home-intro-mount");
+        if (skipped) skipped.replaceChildren();
+        window.__wtHomeIntro = Promise.resolve(false);
+        return;
+      }
+      var el = document.querySelector("[data-wt-page-intro]");
+      if (!el) {
+        window.__wtHomeIntro = Promise.resolve(false);
+        return;
+      }
+      var key = el.getAttribute("data-intro-session-key") || "wt_immersive_intro_played";
+      var reduced = root.classList.contains("wt-intro-reduced");
+      var mobile = false;
+      try { mobile = window.matchMedia("(max-width: 768px)").matches; } catch (e) {}
+      var reading = reduced ? 280 : (mobile ? 1880 : 2280);
+      var fadeMs = reduced ? 160 : 320;
+      root.classList.add("wt-intro-hold", "wt-intro-pending", "wt-intro-active");
+      root.dataset.introPhase = "intro";
+      el.dataset.introState = "intro";
+      root.dataset.introState = "intro";
+      el.dataset.introReadingMs = String(reading);
+      el.dataset.introFadeMs = String(fadeMs);
+      el.style.setProperty("--duration-intro-exit", fadeMs + "ms");
+      var count = el.querySelector("[data-intro-count]");
+      if (count) count.textContent = "0";
+      window.setTimeout(function () {
+        var header = document.querySelector(".header");
+        var hero = document.querySelector(".hero");
+        if (header) header.setAttribute("inert", "");
+        if (hero) hero.setAttribute("inert", "");
+      }, 0);
+
+      window.__wtHomeIntro = new Promise(function (resolve) {
+        var settled = false;
+        var handoffStarted = false;
+        var clock = 0;
+        var failsafe = 0;
+        var finish = function () {
+          if (settled) return;
+          settled = true;
+          if (clock) window.clearTimeout(clock);
+          if (failsafe) window.clearTimeout(failsafe);
+          try { sessionStorage.setItem(key, "1"); } catch (err) {}
+          var header = document.querySelector(".header");
+          var hero = document.querySelector(".hero");
+          if (header) header.removeAttribute("inert");
+          if (hero) hero.removeAttribute("inert");
+          if (el.parentNode) el.remove();
+          root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+          root.classList.add("wt-hero-live", "wt-intro-done");
+          root.dataset.introPhase = "hero-live";
+          root.dataset.introState = "hero-live";
+          try { document.dispatchEvent(new CustomEvent("wt:hero-live")); } catch (err2) {}
+          resolve(true);
+        };
+        var beginHandoff = function () {
+          if (handoffStarted || settled) return;
+          handoffStarted = true;
+          if (count) count.textContent = "100";
+          el.dataset.introState = "transition";
+          root.dataset.introState = "transition";
+          root.dataset.introPhase = "transition";
+          root.classList.add("wt-intro-transition");
+          window.setTimeout(finish, fadeMs);
+        };
+        var t0 = performance.now();
+        var frame = function () {
+          if (settled || handoffStarted) return;
+          var p = Math.min(1, (performance.now() - t0) / reading);
+          if (p < 1) {
+            if (count) count.textContent = String(Math.min(99, Math.round(p * 100)));
+            clock = window.setTimeout(frame, 32);
+            return;
+          }
+          beginHandoff();
+        };
+        failsafe = window.setTimeout(function () {
+          if (!handoffStarted) beginHandoff();
+          else finish();
+        }, reading + fadeMs + 1200);
+        clock = window.setTimeout(frame, 32);
+      });
     })();
   </script>
 

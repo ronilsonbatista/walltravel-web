@@ -5098,8 +5098,49 @@ a {
 html.wt-intro-active,
 html.wt-intro-active body,
 html.wt-intro-pending,
-html.wt-intro-pending body {
+html.wt-intro-pending body,
+html.wt-intro-hold,
+html.wt-intro-hold body {
   overflow: hidden;
+  height: 100%;
+}
+
+html.wt-intro-hold .header,
+html.wt-intro-hold .skip-link,
+html.wt-intro-hold #home-view > .hero,
+html.wt-intro-hold #home-view > .section,
+html.wt-intro-hold footer,
+html.wt-intro-hold .whatsapp-float,
+html.wt-intro-hold .wt-storefront-fallback {
+  visibility: hidden !important;
+}
+
+html.wt-intro-hold .header {
+  opacity: 1 !important;
+}
+
+html.wt-intro-hold.wt-intro-transition #home-view > .hero {
+  visibility: visible !important;
+}
+
+html.wt-intro-hold.wt-intro-transition .header,
+html.wt-intro-hold.wt-intro-transition footer,
+html.wt-intro-hold.wt-intro-transition .whatsapp-float,
+html.wt-intro-hold.wt-intro-transition .wt-storefront-fallback,
+html.wt-intro-hold.wt-intro-transition #home-view > .section {
+  visibility: hidden !important;
+}
+
+html.wt-intro-transition .wt-page-intro--home {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.wt-hero-live .header,
+html.wt-hero-live .skip-link,
+html.wt-hero-live #home-view > :not(#wt-home-intro-mount),
+html.wt-hero-live footer {
+  visibility: visible !important;
 }
 
 .wt-page-intro {
@@ -5144,6 +5185,11 @@ html.wt-intro-skip .wt-page-intro--home {
 .wt-page-intro--home {
   background: #F6F1E8;
   overflow: hidden;
+  transition: opacity var(--duration-intro-exit, 320ms) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wt-page-intro--home .wt-home-aperture {
+  display: none !important;
 }
 
 .wt-page-intro--home .wt-page-intro-veil {
@@ -5475,10 +5521,10 @@ html[data-intro-state="reveal"] .wt-page-intro-accent {
 
 /* IntroProgress — one hairline. Grows with the sequence, never a spinner. */
 .wt-intro-count {
-  margin: 1.65rem 0 0;
+  margin: 1.15rem 0 0;
   font-family: var(--font-title);
-  font-size: clamp(1.85rem, 4.2vw, 2.35rem);
-  letter-spacing: 0.16em;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
   color: #5C5E2E;
   font-variant-numeric: tabular-nums;
   line-height: 1;
@@ -5487,10 +5533,10 @@ html[data-intro-state="reveal"] .wt-page-intro-accent {
 .wt-intro-count::after {
   content: "";
   display: block;
-  width: 4.25rem;
+  width: 2.75rem;
   height: 1px;
-  margin: 0.85rem auto 0;
-  background: rgba(92, 94, 46, 0.45);
+  margin: 0.7rem auto 0;
+  background: rgba(92, 94, 46, 0.4);
 }
 
 .wt-page-intro--home .wt-page-intro-stage {
@@ -5636,6 +5682,19 @@ html.wt-intro-receive .sticky-bottom-bar {
 }
 
 html.wt-intro-done .header {
+  pointer-events: auto;
+}
+
+html.wt-intro-transition .hero-overlay,
+html.wt-intro-transition .hero-container,
+html.wt-intro-transition .hero-nav-arrows,
+html.wt-intro-transition .hero-progress-wrapper,
+html.wt-hero-live .hero-container,
+html.wt-hero-live .hero-nav-arrows,
+html.wt-hero-live .hero-progress-wrapper,
+html.wt-hero-live .header {
+  animation: none;
+  opacity: 1;
   pointer-events: auto;
 }
 

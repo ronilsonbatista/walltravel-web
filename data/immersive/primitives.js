@@ -22,8 +22,6 @@ function escAttr(value) {
     .replace(/'/g, "&#39;");
 }
 
-const HOME_APERTURE_SRC = "/images/vitrine/africa-do-sul.webp";
-
 /** Map legacy variant names → ImmersiveIntro preset ids */
 function normalizePreset(preset, variant) {
   const raw = preset || variant || "home";
@@ -84,7 +82,7 @@ export function ImmersiveIntro(opts = {}) {
   const handoff = presetCfg.handoff || "hero";
   const grade = presetCfg.grade || "home";
   const progress = presetCfg.progress || "subtle";
-  const src = preset === "home" ? HOME_APERTURE_SRC : mediaUrl;
+  const src = preset === "home" ? "" : mediaUrl;
   const compact = handoff === "content" ? " wt-intro-aperture--compact" : "";
   const aperture = src
     ? `<div class="wt-intro-aperture wt-home-aperture${compact}" data-intro-aperture data-intro-grade="${escAttr(grade)}" aria-hidden="true"><img src="${escAttr(src)}" alt="" width="1600" height="900" decoding="async" fetchpriority="high"><span class="wt-intro-aperture-grade wt-home-aperture-grade" aria-hidden="true"></span></div>`
@@ -505,12 +503,12 @@ function bindApertureToHero(aperture, selector) {
 }
 
 /**
- * Play ImmersiveIntro once per session key; resolves when finished.
- * Home state machine: ARRIVAL → READING → REVEAL → EXPANDING → HERO → COMPLETE.
- * SKIPPING accelerates the same handoff. It does not cut the frame.
- * Skip via click/tap/scroll/swipe/Escape/Skip button.
+ * Home opening only.
+ * BOOT → INTRO → TRANSITION → HERO_LIVE.
+ * The site stays visually hidden until the cream screen finishes.
  */
 export function playPageIntro(root = document) {
+  if (typeof window !== "undefined" && window.__wtHomeIntro) return window.__wtHomeIntro;
   const el =
     root.querySelector?.("[data-wt-page-intro]") || document.querySelector("[data-wt-page-intro]");
   if (!el) return Promise.resolve(false);
@@ -535,9 +533,11 @@ export function playPageIntro(root = document) {
 
   if (hasPlayedSessionIntro(key)) {
     el.remove();
-    document.documentElement.classList.remove("wt-intro-active", "wt-intro-pending");
-    document.documentElement.classList.add("wt-intro-skip");
-    delete document.documentElement.dataset.introState;
+    const rootEl = document.documentElement;
+    rootEl.classList.remove("wt-intro-active", "wt-intro-pending", "wt-intro-hold", "wt-intro-transition");
+    rootEl.classList.add("wt-intro-skip", "wt-hero-live");
+    rootEl.dataset.introPhase = "hero-live";
+    delete rootEl.dataset.introState;
     return Promise.resolve(false);
   }
 
@@ -545,73 +545,27 @@ export function playPageIntro(root = document) {
   el.removeAttribute("hidden");
   el.setAttribute("aria-hidden", "false");
   el.classList.add("is-playing");
-  document.documentElement.classList.add("wt-intro-active");
-  document.documentElement.classList.remove("wt-intro-skip", "wt-intro-pending", "wt-hero-live");
+  const rootEl = document.documentElement;
+  rootEl.classList.add("wt-intro-hold", "wt-intro-pending", "wt-intro-active");
+  rootEl.classList.remove("wt-intro-skip", "wt-hero-live", "wt-intro-transition");
+  rootEl.dataset.introPhase = "intro";
 
-  const exitMs = cfg.exitMs || IMMERSIVE_TOKENS.durationFast;
-  el.style.setProperty("--duration-intro-exit", `${exitMs}ms`);
+  const fadeMs = reduced ? cfg.reducedRevealMs || 160 : cfg.heroMs || 320;
+  el.style.setProperty("--duration-intro-exit", `${fadeMs}ms`);
 
   return new Promise((resolve) => {
     let settled = false;
-    let exiting = false;
     let handoffStarted = false;
     let failsafe = 0;
-    const ac = new AbortController();
-    const { signal } = ac;
-    const handoffMode = el.getAttribute("data-intro-handoff") || cfg.handoff || "hero";
+    let clock = 0;
     const target = el.getAttribute("data-intro-target") || cfg.target || "";
-    const unbindAperture = bindApertureToHero(el.querySelector("[data-intro-aperture]"), target);
 
     const settle = (played) => {
       if (settled) return;
       settled = true;
-      unbindAperture();
       if (failsafe) window.clearTimeout(failsafe);
-      try {
-        ac.abort();
-      } catch {
-        /* ignore */
-      }
+      if (clock) window.clearTimeout(clock);
       resolve(played);
-    };
-
-    const paintFrame = () =>
-      new Promise((resolveFrame) => {
-        requestAnimationFrame(() => requestAnimationFrame(resolveFrame));
-      });
-
-    const arriveHero = async () => {
-      if (handoffStarted || settled) return;
-      handoffStarted = true;
-      exiting = true;
-      try {
-        ac.abort();
-      } catch {
-        /* ignore */
-      }
-      setIntroState(el, "hero");
-      if (handoffMode === "content") {
-        el.classList.add("is-content-exit");
-        window.setTimeout(() => {
-          if (settled) return;
-          finishIntro(el, key);
-          document.documentElement.classList.add("wt-hero-live");
-          document.dispatchEvent(new CustomEvent("wt:hero-live"));
-          settle(true);
-        }, cfg.contentExitMs || 200);
-        return;
-      }
-      document.documentElement.classList.add("wt-intro-handoff", "wt-intro-receive");
-      await paintFrame();
-      if (settled) return;
-      finishIntro(el, key);
-      const heroMs = reduced ? 160 : cfg.heroMs || 480;
-      window.setTimeout(() => {
-        document.documentElement.classList.add("wt-hero-live");
-        document.documentElement.classList.remove("wt-intro-handoff", "wt-intro-receive");
-        document.dispatchEvent(new CustomEvent("wt:hero-live"));
-        settle(true);
-      }, heroMs);
     };
 
     const paintCount = (n) => {
@@ -619,59 +573,62 @@ export function playPageIntro(root = document) {
       if (node) node.textContent = String(n);
     };
 
+    const goLive = () => {
+      if (settled) return;
+      finishIntro(el, key);
+      rootEl.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+      rootEl.classList.add("wt-hero-live", "wt-intro-done");
+      rootEl.dataset.introPhase = "hero-live";
+      rootEl.dataset.introState = "hero-live";
+      document.dispatchEvent(new CustomEvent("wt:hero-live"));
+      settle(true);
+    };
+
+    const beginHandoff = () => {
+      if (handoffStarted || settled) return;
+      handoffStarted = true;
+      paintCount(100);
+      setIntroState(el, "transition");
+      rootEl.dataset.introPhase = "transition";
+      rootEl.classList.add("wt-intro-transition");
+      window.setTimeout(goLive, fadeMs);
+    };
+
     const run = () => {
       const reading = reduced ? cfg.reducedReadingMs : mobile ? cfg.readingMobileMs : cfg.readingMs;
-      const reveal = reduced ? 0 : mobile ? cfg.revealMobileMs : cfg.revealMs;
-      const expansion = reduced ? 0 : mobile ? cfg.expansionMobileMs : cfg.expansionMs;
-      const total = Math.max(1, reading + reveal + expansion);
+      const total = Math.max(1, reading);
       el.dataset.introReadingMs = String(reading);
-      el.dataset.introRevealMs = String(reveal);
-      el.dataset.introExpansionMs = String(expansion);
-      el.dataset.introTotalMs = String(total);
+      el.dataset.introRevealMs = "0";
+      el.dataset.introExpansionMs = "0";
+      el.dataset.introTotalMs = String(total + fadeMs);
+      el.dataset.introFadeMs = String(fadeMs);
       el.style.setProperty("--duration-intro-reading", `${reading}ms`);
-      el.style.setProperty("--duration-intro-reveal", `${reveal}ms`);
-      el.style.setProperty("--duration-intro-expansion", `${expansion}ms`);
       el.style.setProperty("--easing-intro", IMMERSIVE_TOKENS.easingIntro);
       setIntroInert(true, target);
-      setIntroState(el, "reading");
+      setIntroState(el, "intro");
       paintCount(0);
 
       failsafe = window.setTimeout(() => {
-        if (!settled && !handoffStarted) {
+        if (!settled) {
           paintCount(100);
-          arriveHero();
+          if (!handoffStarted) beginHandoff();
+          else goLive();
         }
-      }, total + (cfg.heroMs || 0) + 900);
+      }, total + fadeMs + 800);
 
       const t0 = performance.now();
       const frame = () => {
         if (settled || handoffStarted) return;
         const elapsed = performance.now() - t0;
         const p = Math.min(1, elapsed / total);
-        paintCount(Math.min(100, Math.round(p * 100)));
-        if (!reduced) {
-          const state = el.dataset.introState;
-          if (elapsed >= reading + reveal && state !== "expanding" && state !== "hero") {
-            setIntroState(el, "expanding");
-          } else if (elapsed >= reading && state === "reading") {
-            setIntroState(el, "reveal");
-          }
-        }
         if (p < 1) {
-          requestAnimationFrame(frame);
+          paintCount(Math.min(99, Math.round(p * 100)));
+          clock = window.setTimeout(frame, 32);
           return;
         }
-        paintCount(100);
-        if (reduced) {
-          el.classList.add("is-reduced-exit");
-          window.setTimeout(() => {
-            if (!settled && !handoffStarted) arriveHero();
-          }, cfg.reducedRevealMs || 200);
-          return;
-        }
-        arriveHero();
+        beginHandoff();
       };
-      requestAnimationFrame(frame);
+      clock = window.setTimeout(frame, 32);
     };
 
     run();
