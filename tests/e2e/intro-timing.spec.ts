@@ -73,7 +73,10 @@ test.describe("immersive intro timing", () => {
         viewH: window.innerHeight,
         pct: trackBox.width ? (fillBox.width / trackBox.width) * 100 : 0,
         n,
-        font: getComputedStyle(count).fontSize,
+        font: parseFloat(getComputedStyle(count).fontSize),
+        opacity: getComputedStyle(count).opacity,
+        color: getComputedStyle(count).color,
+        countBottomGap: window.innerHeight - count.getBoundingClientRect().bottom,
       };
     });
     expect(rail).not.toBeNull();
@@ -81,7 +84,11 @@ test.describe("immersive intro timing", () => {
     expect(rail!.height).toBeLessThanOrEqual(2);
     expect(rail!.bottom).toBeGreaterThanOrEqual(rail!.viewH - 2);
     expect(Math.abs(rail!.pct - rail!.n)).toBeLessThan(3);
-    expect(parseFloat(rail!.font)).toBeLessThanOrEqual(15);
+    expect(rail!.font).toBeGreaterThanOrEqual(14);
+    expect(rail!.font).toBeLessThanOrEqual(16);
+    expect(rail!.opacity).toBe("1");
+    expect(rail!.color).toMatch(/rgb\(\s*63,\s*67,\s*40\s*\)/);
+    expect(rail!.countBottomGap).toBeGreaterThan(12);
     await expect(intro.locator("[data-intro-skip]")).toHaveCount(0);
     await expect(intro.locator("[data-intro-brand]")).toContainText("WallTravel");
     await page.waitForTimeout(700);
@@ -116,7 +123,22 @@ test.describe("immersive intro timing", () => {
         tick();
       });
     });
-    expect(result).not.toBe("late");
+    expect(result).toBe("immediate");
+    const hundred = await page.evaluate(() => {
+      const count = document.querySelector("[data-intro-count]");
+      if (!count) return null;
+      const box = count.getBoundingClientRect();
+      return {
+        text: count.textContent,
+        opacity: getComputedStyle(count).opacity,
+        height: box.height,
+      };
+    });
+    expect(hundred?.text).toBe("100");
+    expect(hundred?.opacity).toBe("1");
+    expect(hundred!.height).toBeGreaterThan(12);
+    await page.waitForTimeout(140);
+    await expect(page.locator("[data-intro-count]")).toHaveText("100");
     await expect.poll(async () => {
       return page.evaluate(() => {
         const root = document.documentElement;
