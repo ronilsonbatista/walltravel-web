@@ -121,14 +121,22 @@ test.describe("premium UX refinement", () => {
       const h1 = document.querySelector(".hero-title");
       const header = document.querySelector(".header");
       const logo = document.querySelector(".logo-link, .logo-svg");
+      const btn = document.querySelector(".hero-left .btn-primary");
+      const card = document.querySelector(".hero-slide-card");
       return {
         h1Top: h1?.getBoundingClientRect().top ?? null,
         headerBottom: header?.getBoundingClientRect().bottom ?? null,
         logoBottom: logo?.getBoundingClientRect().bottom ?? null,
+        btnTop: btn?.getBoundingClientRect().top ?? null,
+        btnBottom: btn?.getBoundingClientRect().bottom ?? null,
+        cardTop: card?.getBoundingClientRect().top ?? null,
+        btnText: btn?.textContent?.trim() ?? "",
       };
     });
     expect(metrics.h1Top).toBeGreaterThan(metrics.headerBottom - 2);
     expect(metrics.h1Top).toBeGreaterThan(metrics.logoBottom + 8);
+    expect(metrics.btnText).toMatch(/especialista/i);
+    expect(metrics.btnBottom).toBeLessThanOrEqual(metrics.cardTop + 1);
     await context.close();
   });
 });
