@@ -383,11 +383,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const img = slideEl?.querySelector?.('.hero-slide-img');
     if (!img || img.dataset.hydrated === '1') return;
     const picture = img.closest('picture');
-    const source = picture?.querySelector('source[data-srcset]');
-    if (source?.dataset.srcset) {
-      source.srcset = source.dataset.srcset;
-      delete source.dataset.srcset;
-    }
+    picture?.querySelectorAll('source[data-srcset]').forEach((source) => {
+      if (source.dataset.srcset) {
+        source.srcset = source.dataset.srcset;
+        delete source.dataset.srcset;
+      }
+    });
     if (img.dataset.src) {
       img.src = img.dataset.src;
       delete img.dataset.src;
@@ -883,7 +884,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="package-card-ctas">
                       <a href="/viagens/${esc(pkg.slug)}" class="btn-outline">Ver detalhes</a>
-                      <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'product', entity: { name: pkg.name, slug: pkg.slug }, customMessage: pkg.ctaWhatsappMessage, source: 'category-card' }).href}" target="_blank" rel="noopener" class="btn-primary" style="background-color: #25d366; border-color: #25d366; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                      <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'product', entity: { name: pkg.name, slug: pkg.slug }, customMessage: pkg.ctaWhatsappMessage, source: 'category-card' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp">
                         <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.88 14c-.24.69-1.23 1.26-1.7 1.32-.47.06-.94.24-3.04-.6-2.52-1.01-4.14-3.57-4.26-3.73-.12-.17-.99-1.31-.99-2.5 0-1.19.62-1.77.84-2.01.22-.24.47-.3.63-.3.16 0 .32.01.46.01.15 0 .35-.06.55.42.2.49.69 1.68.75 1.8.06.12.1.26.02.42-.08.17-.12.27-.24.41-.12.14-.26.32-.37.43-.13.13-.26.27-.11.53.15.26.67 1.1 1.43 1.78.98.88 1.81 1.15 2.07 1.28.26.13.41.11.56-.06.15-.17.65-.75.82-1.01.17-.26.34-.22.57-.14.24.08 1.5.71 1.76.84.26.13.43.2.49.31.06.12.06.69-.18 1.38z"/></svg>
                         WhatsApp
                       </a>

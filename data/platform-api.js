@@ -113,10 +113,34 @@ export async function fetchPublicGroupBySlug(slug) {
   return body.item;
 }
 
+/** Public presentation covers. The CMS file named hero-santorini is the cliff/cruise shot. */
+const PRESENTATION_COVERS = {
+  grecia: "/images/groups/grecia-santorini.webp",
+};
+
+function presentGroup(group) {
+  const cover = PRESENTATION_COVERS[group?.slug];
+  if (!cover) return group;
+  const gallery = Array.isArray(group.gallery) ? group.gallery : [];
+  return {
+    ...group,
+    coverImageUrl: cover,
+    gallery: [
+      cover,
+      ...gallery.filter(
+        (src) =>
+          src &&
+          src !== cover &&
+          !String(src).includes("hero-santorini.webp"),
+      ),
+    ],
+  };
+}
+
 /** Map Public API group summary/detail → web group shape. */
 export function mapGroup(apiGroup) {
   if (!apiGroup?.slug) return null;
-  return {
+  return presentGroup({
     slug: apiGroup.slug,
     name: apiGroup.name,
     shortDescription: apiGroup.shortDescription ?? null,
@@ -159,7 +183,7 @@ export function mapGroup(apiGroup) {
     seoDescription: apiGroup.seoDescription ?? null,
     ctaWhatsappMessage: apiGroup.ctaWhatsappMessage ?? null,
     publishedAt: apiGroup.publishedAt ?? null,
-  };
+  });
 }
 
 /** Map Public API product summary/detail → legacy package shape. */

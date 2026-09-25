@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F6F1E8">
   
   <title>WallTravel — Experiências Incríveis</title>
   <meta name="description" content="WallTravel – Destinos e viagens desenhadas para o seu ritmo. Planeje a próxima aventura com quem acompanha cada detalhe.">
@@ -42,12 +43,10 @@
       font-size:0.98rem;line-height:1.5;letter-spacing:0.012em;color:#3F4328
     }
     html.wt-intro-hold #wt-home-intro-mount .wt-intro-rail{
-      position:absolute;left:0;right:0;bottom:0;z-index:5;overflow:visible;
-      height:calc(3rem + env(safe-area-inset-bottom,0px))
+      position:absolute;left:0;right:0;bottom:0;z-index:5;overflow:visible;height:auto
     }
     html.wt-intro-hold #wt-home-intro-mount .wt-intro-count{
-      position:absolute;right:max(1.35rem,env(safe-area-inset-right,0px));
-      bottom:calc(1.15rem + env(safe-area-inset-bottom,0px));margin:0;z-index:2;
+      position:static;display:block;margin:2.35rem auto 0;text-align:center;z-index:2;
       font-family:"Rubik",system-ui,sans-serif;font-size:15px;font-weight:500;
       letter-spacing:0.04em;color:#3F4328;opacity:1;font-variant-numeric:tabular-nums;line-height:1
     }
@@ -91,6 +90,8 @@
       if (skip) {
         root.classList.add("wt-intro-skip", "wt-hero-live");
         root.dataset.introPhase = "hero-live";
+        var theme = document.querySelector('meta[name="theme-color"]');
+        if (theme) theme.setAttribute("content", "#3F4328");
       } else {
         root.classList.add("wt-intro-hold", "wt-intro-pending");
         root.dataset.introPhase = "boot";
@@ -169,9 +170,9 @@
       <div class="wt-page-intro-stage">
         <p class="wt-page-intro-brand" data-intro-brand>WallTravel</p>
         <p class="wt-page-intro-line" data-intro-line>Experiências extraordinárias desenhadas com propósito.</p>
+        <p class="wt-intro-count" data-intro-count>0</p>
       </div>
       <div class="wt-intro-rail">
-        <p class="wt-intro-count" data-intro-count>0</p>
         <div class="wt-intro-rail-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Abertura">
           <span class="wt-intro-rail-fill" data-intro-rail></span>
         </div>
@@ -240,6 +241,8 @@
           root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
           root.classList.add("wt-hero-live", "wt-intro-done");
           root.dataset.introPhase = "hero-live";
+          var theme = document.querySelector('meta[name="theme-color"]');
+          if (theme) theme.setAttribute("content", "#3F4328");
           root.dataset.introState = "hero-live";
           try { document.dispatchEvent(new CustomEvent("wt:hero-live")); } catch (err2) {}
           resolve(true);
@@ -300,8 +303,9 @@
       </div>
       <div class="hero-slide" data-index="3" data-slide-id="europa">
         <picture>
-          <source type="image/webp" data-srcset="/images/vitrine/europa.webp">
-          <img data-src="/images/vitrine/europa.jpg" alt="Costa da Europa" class="hero-slide-img" width="1600" height="967" decoding="async">
+          <source media="(max-width: 768px)" type="image/webp" data-srcset="/images/vitrine/europa-paris-noite-mobile.webp">
+          <source type="image/webp" data-srcset="/images/vitrine/europa-paris-noite.webp">
+          <img data-src="/images/vitrine/europa-paris-noite.jpg" alt="Torre Eiffel iluminada em Paris à noite" class="hero-slide-img" width="2400" height="1600" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="4" data-slide-id="alpes">
@@ -318,8 +322,9 @@
       </div>
       <div class="hero-slide" data-index="6" data-slide-id="asia">
         <picture>
-          <source type="image/webp" data-srcset="/images/vitrine/asia.webp">
-          <img data-src="/images/vitrine/asia.jpg" alt="Baía com formações cársticas na Ásia" class="hero-slide-img" width="1600" height="1000" decoding="async">
+          <source media="(max-width: 768px)" type="image/webp" data-srcset="/images/vitrine/asia-kyoto-mobile.webp">
+          <source type="image/webp" data-srcset="/images/vitrine/asia-kyoto.webp">
+          <img data-src="/images/vitrine/asia-kyoto.jpg" alt="Rua de Kyoto ao anoitecer, no Japão" class="hero-slide-img" width="2000" height="1333" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="7" data-slide-id="usa">

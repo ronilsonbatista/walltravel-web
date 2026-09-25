@@ -171,11 +171,21 @@ export function HeroCarousel({ slides = [], name = "", esc = escAttr } = {}) {
         .map(
           (src, i) => `
         <div class="group-hero-slide ${i === 0 ? "is-active" : ""}" data-hero-slide="${i}">
-          ${
-            i === 0
-              ? `<img src="${esc(src)}" alt="${esc(name)}" class="group-hero-img" width="1600" height="900" decoding="async" fetchpriority="high" onerror="this.closest('.group-hero-slide')?.remove()">`
-              : `<img data-src="${esc(src)}" alt="" class="group-hero-img" width="1600" height="900" decoding="async" onerror="this.closest('.group-hero-slide')?.remove()">`
-          }
+          ${(() => {
+            const mobile = String(src).includes("grecia-santorini.webp")
+              ? "/images/groups/grecia-santorini-mobile.webp"
+              : "";
+            const img =
+              i === 0
+                ? `<img src="${esc(src)}" alt="${esc(name)}" class="group-hero-img" width="1600" height="900" decoding="async" fetchpriority="high" onerror="this.closest('.group-hero-slide')?.remove()">`
+                : `<img data-src="${esc(src)}" alt="" class="group-hero-img" width="1600" height="900" decoding="async" onerror="this.closest('.group-hero-slide')?.remove()">`;
+            if (!mobile) return img;
+            const source =
+              i === 0
+                ? `<source media="(max-width: 768px)" srcset="${esc(mobile)}" type="image/webp">`
+                : `<source media="(max-width: 768px)" data-srcset="${esc(mobile)}" type="image/webp">`;
+            return `<picture>${source}${img}</picture>`;
+          })()}
         </div>`,
         )
         .join("")}

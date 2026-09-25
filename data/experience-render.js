@@ -126,7 +126,7 @@ function renderExperienceCta(pkg, esc, WA) {
       <p class="group-final-cta-lede">Fale com a equipe WallTravel pelo WhatsApp — roteiro sob medida a partir desta experiência.</p>
     </div>
     <div class="sidebar-ctas experience-cta-row">
-      <a href="${primary}" target="_blank" rel="noopener" class="btn-primary" style="background-color:#25d366;border-color:#25d366;color:#fff;" data-storefront-cta="whatsapp">
+      <a href="${primary}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp">
         ${esc(pkg.ctaLabel || "Planejar minha viagem")}
       </a>
       <a href="${specialist}" target="_blank" rel="noopener" class="btn-outline" data-storefront-cta="specialist">

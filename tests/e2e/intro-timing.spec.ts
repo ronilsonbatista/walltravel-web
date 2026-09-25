@@ -76,7 +76,14 @@ test.describe("immersive intro timing", () => {
         font: parseFloat(getComputedStyle(count).fontSize),
         opacity: getComputedStyle(count).opacity,
         color: getComputedStyle(count).color,
-        countBottomGap: window.innerHeight - count.getBoundingClientRect().bottom,
+        centerDelta: Math.abs(
+          count.getBoundingClientRect().left +
+            count.getBoundingClientRect().width / 2 -
+            window.innerWidth / 2,
+        ),
+        belowLine:
+          count.getBoundingClientRect().top -
+          (document.querySelector("[data-intro-line]")?.getBoundingClientRect().bottom || 0),
       };
     });
     expect(rail).not.toBeNull();
@@ -88,7 +95,9 @@ test.describe("immersive intro timing", () => {
     expect(rail!.font).toBeLessThanOrEqual(16);
     expect(rail!.opacity).toBe("1");
     expect(rail!.color).toMatch(/rgb\(\s*63,\s*67,\s*40\s*\)/);
-    expect(rail!.countBottomGap).toBeGreaterThan(12);
+    expect(rail!.centerDelta).toBeLessThan(16);
+    expect(rail!.belowLine).toBeGreaterThan(24);
+    expect(rail!.belowLine).toBeLessThan(160);
     await expect(intro.locator("[data-intro-skip]")).toHaveCount(0);
     await expect(intro.locator("[data-intro-brand]")).toContainText("WallTravel");
     await page.waitForTimeout(700);

@@ -753,10 +753,17 @@ export function renderGroupsCatalog(groups, esc) {
           : "";
       const imgs = [g.coverImageUrl, ...(g.gallery || [])].filter(Boolean);
       const unique = [...new Set(imgs)].slice(0, 3);
+      const cover = unique[0] || "";
+      const mobileCover = cover.includes("grecia-santorini.webp")
+        ? "/images/groups/grecia-santorini-mobile.webp"
+        : "";
       const media =
         unique.length > 0
           ? `<div class="group-chapter-media" aria-hidden="true">
-              <img class="group-chapter-media-hero" src="${esc(unique[0])}" alt="" loading="${i === 0 ? "eager" : "lazy"}" ${i === 0 ? 'fetchpriority="high"' : ""} onerror="this.closest('.group-chapter-media')?.remove()">
+              <picture>
+                ${mobileCover ? `<source media="(max-width: 768px)" srcset="${esc(mobileCover)}" type="image/webp">` : ""}
+                <img class="group-chapter-media-hero" src="${esc(cover)}" alt="" loading="${i === 0 ? "eager" : "lazy"}" ${i === 0 ? 'fetchpriority="high"' : ""} onerror="this.closest('.group-chapter-media')?.remove()">
+              </picture>
               ${
                 unique.length > 1
                   ? `<div class="group-chapter-media-stack">
@@ -795,7 +802,7 @@ export function renderGroupsCatalog(groups, esc) {
             }
             ${g.groupSize && !g.comingSoon ? `<p class="group-chapter-scarcity">Grupo de ${esc(String(g.groupSize))}</p>` : ""}
           </div>
-          <span class="group-chapter-cta">${g.comingSoon ? "Quero ser avisado" : "Explorar a jornada"}</span>
+          <span class="group-chapter-cta${g.comingSoon ? " group-chapter-cta--soon" : ""}">${g.comingSoon ? "Quero ser avisado" : "Ver detalhes"}</span>
         </div>
       </a>`;
     })
