@@ -6,3 +6,5 @@ dist/
 .tempmediaStorage/
 *.log
 .vercel
+test-results/
+.perf-asset-archive/
