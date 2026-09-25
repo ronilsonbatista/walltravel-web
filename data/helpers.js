@@ -9,13 +9,14 @@ import {
 } from "./platform-api.js";
 import { trackStorefrontEvent } from "./storefront-events.js";
 
-/** @type {"platform" | "local"} */
-let source = "local";
+/** @type {"platform" | "empty"} */
+let source = "empty";
 /** @type {string | null} */
 let hydrateError = null;
 
-let categories = [...vitrineData.categories];
-let packages = [...vitrineData.packages];
+/** Categories/packages — CMS is source of truth after Phase 18 migration. */
+let categories = [];
+let packages = [];
 const detailCache = new Map();
 
 function categoryHasInventory(cat) {
@@ -23,41 +24,25 @@ function categoryHasInventory(cat) {
   return count > 0;
 }
 
-function buildLocalCategoriesFromPackages(pkgList) {
-  const counts = {};
-  for (const p of pkgList) {
-    const slug = p.categorySlug;
-    if (!slug) continue;
-    counts[slug] = (counts[slug] || 0) + 1;
-  }
-  return vitrineData.categories
-    .map((c) => ({
-      ...c,
-      packageCount: counts[c.slug] || 0,
-      experienceCount: counts[c.slug] || 0,
-      image: c.image || null,
-    }))
-    .filter(categoryHasInventory);
-}
-
-function useLocalFallback(reason) {
-  source = "local";
+function useEmptyStorefront(reason) {
+  source = "empty";
   hydrateError = reason;
-  packages = [...vitrineData.packages];
-  categories = buildLocalCategoriesFromPackages(packages);
+  packages = [];
+  categories = [];
   trackStorefrontEvent("storefront_api_fallback", { reason });
 }
 
 /**
  * Hydrate storefront from Platform Public API.
- * On failure: keep local JSON (elegant degradation).
+ * After CMS migration: do NOT fall back to data/vitrine.json packages at runtime.
+ * Hero / honeymoon institutional blocks remain local (below).
  */
 export async function hydrateStorefront() {
   hydrateError = null;
   detailCache.clear();
 
   if (!getPlatformApiBase()) {
-    useLocalFallback("config_missing");
+    useEmptyStorefront("config_missing");
     return { source, error: hydrateError };
   }
 
@@ -76,13 +61,13 @@ export async function hydrateStorefront() {
     });
     return { source, error: null };
   } catch (e) {
-    useLocalFallback(e?.code || e?.message || "fetch_failed");
+    useEmptyStorefront(e?.code || e?.message || "fetch_failed");
     return { source, error: hydrateError };
   }
 }
 
 export function getStorefrontSource() {
-  return source;
+  return source === "platform" ? "platform" : "local";
 }
 
 export function getStorefrontHydrateError() {
@@ -117,7 +102,6 @@ export async function resolvePackageBySlug(slug) {
   try {
     const detail = mapProduct(await fetchPublicProductBySlug(slug));
     detailCache.set(slug, detail);
-    // keep list in sync
     const idx = packages.findIndex((p) => p.slug === slug);
     if (idx >= 0) packages[idx] = { ...packages[idx], ...detail };
     else packages.push(detail);
@@ -128,6 +112,7 @@ export async function resolvePackageBySlug(slug) {
 }
 
 // Hero / honeymoon remain local (institutional home content ownership = web)
+// Note: packages/categories are NOT read from vitrine.json at runtime.
 export const getHeroSlides = () => vitrineData.heroSlides;
 export const getHeroSlideById = (id) =>
   vitrineData.heroSlides.find((s) => s.id === id);
