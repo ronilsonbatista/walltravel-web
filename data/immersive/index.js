@@ -30,4 +30,10 @@ export {
   renderHomeOpeningIntro,
   playPageIntro,
   initDestinationExplorer,
+  PageIntro,
+  HeroReveal,
+  ImageReveal,
+  StaggerGroup,
+  DestinationTransition,
+  JourneyTransition,
 } from "./primitives.js";

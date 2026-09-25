@@ -49,15 +49,15 @@
       "overlay": "left-heavy"
     },
     {
-      "id": "lencois-maranhenses",
+      "id": "alpes",
       "order": 5,
-      "title": "Lençóis Maranhenses",
-      "subtitle": "Dunas, lagoas cristalinas e logística privativa com conforto absoluto no Maranhão.",
-      "image": "/images/vitrine/lencois-maranhenses.jpg",
+      "title": "Alpes",
+      "subtitle": "Picos, ar rarefeito e ritmos de ski ou trilha — inspiração alpina sob medida, sem pacote engessado.",
+      "image": "/images/vitrine/alpes.jpg",
       "ctaLabel": "Planejar minha viagem",
-      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para os Lençóis Maranhenses com a WallTravel.",
-      "objectPositionDesktop": "center 48%",
-      "objectPositionMobile": "center 45%",
+      "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem inspirada nos Alpes com a WallTravel.",
+      "objectPositionDesktop": "center 42%",
+      "objectPositionMobile": "center 38%",
       "overlay": "balanced"
     },
     {
@@ -68,20 +68,20 @@
       "image": "/images/vitrine/noronha.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para Fernando de Noronha com a WallTravel.",
-      "objectPositionDesktop": "center 40%",
-      "objectPositionMobile": "center 35%",
+      "objectPositionDesktop": "center 45%",
+      "objectPositionMobile": "center 42%",
       "overlay": "left-heavy"
     },
     {
       "id": "asia",
       "order": 7,
       "title": "Ásia",
-      "subtitle": "Imersão em templos sagrados, cultura milenar e guias locais privativos.",
+      "subtitle": "Paisagens cinematográficas, ritmos locais e hospedagens com intenção — Ásia além do óbvio.",
       "image": "/images/vitrine/asia.jpg",
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a Ásia com a WallTravel.",
-      "objectPositionDesktop": "center 30%",
-      "objectPositionMobile": "center 28%",
+      "objectPositionDesktop": "center 40%",
+      "objectPositionMobile": "center 36%",
       "overlay": "bottom-heavy"
     },
     {

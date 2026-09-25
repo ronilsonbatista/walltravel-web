@@ -811,7 +811,7 @@ export function renderGroupsCatalog(groups, esc) {
         </div>
         <span class="category-meta-info">WallTravel</span>
         <h1 class="groups-intro-title" data-reveal>Viagens em grupo</h1>
-        <p class="groups-header-desc" data-reveal>Expedições em grupo pequeno, com curadoria, logística completa e presença WallTravel — destinos com intenção, não pacotes genéricos.</p>
+        <p class="groups-header-desc" data-reveal>Expedições em grupo pequeno — curadoria, logística e presença WallTravel em cada destino.</p>
       </div>
     </div>
 
@@ -820,7 +820,7 @@ export function renderGroupsCatalog(groups, esc) {
         <h2 class="group-manifesto-sticky" data-manifesto-sticky>Viajar junto muda o ritmo.</h2>
         <div class="group-manifesto-body">
           <p class="group-editorial group-editorial--lead">Grupos pequenos, destinos com intenção e a WallTravel cuidando do que precisa estar resolvido — para sobrar presença no caminho.</p>
-          <p class="group-editorial">Cada jornada abaixo é própria: aberta para reserva ou em breve. Só o que já está fechado no CMS — sem inventar o restante.</p>
+          <p class="group-editorial">Cada jornada abaixo é própria: aberta para reserva ou em breve. Mostramos apenas o que já está confirmado — sem inventar o restante.</p>
         </div>
       </div>
     </section>

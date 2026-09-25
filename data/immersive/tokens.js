@@ -8,20 +8,21 @@ export const IMMERSIVE_TOKENS = Object.freeze({
   surfaceSoft: "#FFFDF7",
   surfaceSand: "#E8DDC8",
   surfaceGreen: "#5C5E2E",
-  surfaceGreenSoft: "#8A8C5A",
+  surfaceGreenSoft: "#7A7C5E",
+  surfaceGreenMist: "#E8EAE0",
   surfaceOlive: "#3F4328",
   textPrimary: "#16170F",
   textSecondary: "#5C5E54",
   textInverse: "#F6F1E8",
   accentPrimary: "#5C5E2E",
   accentGold: "#B8A66A",
-  durationFast: 220,
-  durationMedium: 450,
-  durationSlow: 900,
-  /** Home opening — desktop */
-  introDesktopMs: 1700,
-  /** Home opening — mobile */
-  introMobileMs: 1200,
+  durationFast: 200,
+  durationMedium: 400,
+  durationSlow: 850,
+  /** Home opening — desktop (~1.7–2.3s organic) */
+  introDesktopMs: 2000,
+  /** Home opening — mobile (~1.2–1.7s) */
+  introMobileMs: 1450,
   /** Vitrine / secondary page intros */
   introShortMs: 480,
   easingStandard: "cubic-bezier(0.16, 1, 0.3, 1)",

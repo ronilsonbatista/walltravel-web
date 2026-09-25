@@ -36,8 +36,14 @@ export function ImmersivePageIntro(opts = {}) {
     sessionKey = IMMERSIVE_TOKENS.sessionIntroKey,
   } = opts;
 
+  const organic =
+    variant === "home"
+      ? `<div class="wt-page-intro-organic" aria-hidden="true"><span class="wt-page-intro-organic-cutout" data-intro-organic-cutout></span></div>`
+      : "";
+
   return `<div class="wt-page-intro wt-page-intro--${escAttr(variant)}" data-wt-page-intro data-intro-variant="${escAttr(variant)}" data-intro-session-key="${escAttr(sessionKey)}" hidden aria-hidden="true">
     <div class="wt-page-intro-veil" aria-hidden="true"></div>
+    ${organic}
     <div class="wt-page-intro-stage">
       ${eyebrow ? `<p class="wt-page-intro-eyebrow">${escAttr(eyebrow)}</p>` : ""}
       <p class="wt-page-intro-brand">${escAttr(brand)}</p>
@@ -238,8 +244,7 @@ export function renderDestinationExplorer(destinations = [], esc = escAttr) {
         .join("")}
     </div>
     <div class="wt-dest-explorer-cta">
-      <a href="/vitrine" class="btn-primary">Ver vitrine completa</a>
-      <a href="/grupos" class="btn-outline">Viagens em grupo</a>
+      <a href="/vitrine" class="btn-primary wt-dest-explorer-cta-primary">Ver vitrine completa</a>
     </div>
   </div>`;
 }
@@ -387,6 +392,10 @@ export function playPageIntro(root = document) {
           ? IMMERSIVE_TOKENS.introMobileMs
           : IMMERSIVE_TOKENS.introDesktopMs;
 
+  if (variant === "home") {
+    el.style.setProperty("--duration-intro", `${duration}ms`);
+  }
+
   return new Promise((resolve) => {
     window.setTimeout(() => {
       el.classList.add("is-exiting");
@@ -424,12 +433,17 @@ export function initDestinationExplorer(root = document) {
     const nextMeta = preview.querySelector(".wt-dest-preview-meta")?.textContent || "";
     const href = preview.getAttribute("href") || "#";
     if (img && nextImg?.src) {
+      const stage = explorer.querySelector("[data-explorer-image]");
+      stage?.classList.add("is-transitioning");
       img.style.opacity = "0";
+      img.style.transform = prefersReducedMotion() ? "none" : "scale(1.03)";
       window.setTimeout(() => {
         img.src = nextImg.src;
         img.alt = nextTitle;
         img.style.opacity = "1";
-      }, prefersReducedMotion() ? 0 : 160);
+        img.style.transform = "none";
+        stage?.classList.remove("is-transitioning");
+      }, prefersReducedMotion() ? 0 : 220);
     }
     if (title) title.textContent = nextTitle;
     if (desc) desc.textContent = nextDesc;
@@ -486,6 +500,14 @@ export function initDestinationExplorer(root = document) {
     rail?.removeEventListener("touchend", onTouchEnd);
   };
 }
+
+/** Shared motion primitive aliases (CSS/WAAPI system names). */
+export const PageIntro = ImmersivePageIntro;
+export const HeroReveal = ImmersiveHero;
+export const ImageReveal = MediaReveal;
+export const StaggerGroup = SectionReveal;
+export const DestinationTransition = DestinationReveal;
+export const JourneyTransition = SectionReveal;
 
 export {
   IMMERSIVE_TOKENS,
