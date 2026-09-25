@@ -199,6 +199,7 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
       `,
   });
 
+  const includesHtml = renderIncludesExcludes(includesGroup, esc);
   const bodyHtml = `
       <div class="section-container">
         ${renderAbout(pkg, esc)}
@@ -206,9 +207,7 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
       ${pkg.gallery?.length ? renderTravelGallery(pkg.gallery, pkg.name, esc) : ""}
       <div class="section-container">
         ${pkg.itinerary?.length ? renderItineraryAccordion(itineraryGroup, esc) : ""}
-        <div id="exp-includes">
-          ${renderIncludesExcludes(includesGroup, esc)}
-        </div>
+        ${includesHtml ? `<div id="exp-includes">${includesHtml}</div>` : ""}
         ${renderExperiencePricing(pkg, esc, priceUnitLabel)}
         ${renderExperienceCta(pkg, esc, WA)}
       </div>`;

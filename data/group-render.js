@@ -607,18 +607,28 @@ export function renderGroupForm(group, esc, WA) {
 }
 
 export function renderIncludesExcludes(group, esc) {
-  if (!group.includes?.length && !group.excludes?.length) return "";
+  const includes = group.includes || [];
+  const excludes = group.excludes || [];
+  if (!includes.length && !excludes.length) return "";
   return `<section class="group-section" data-reveal>
     <h2 class="package-section-title">O que está incluso</h2>
     <div class="included-grid group-includes-panels">
-      <div class="group-includes-panel">
+      ${
+        includes.length
+          ? `<div class="group-includes-panel">
         <h3 class="group-subheading">Incluso</h3>
-        <ul class="included-list">${(group.includes || []).map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
-      </div>
-      <div class="group-includes-panel">
+        <ul class="included-list">${includes.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
+      </div>`
+          : ""
+      }
+      ${
+        excludes.length
+          ? `<div class="group-includes-panel">
         <h3 class="group-subheading">Não incluso</h3>
-        <ul class="not-included-list">${(group.excludes || []).map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
-      </div>
+        <ul class="not-included-list">${excludes.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
+      </div>`
+          : ""
+      }
     </div>
   </section>`;
 }
@@ -894,7 +904,7 @@ export function renderGroupDetailPage(group, esc, WA) {
           <section class="group-section group-coming-banner" data-reveal>
             <span class="section-tag">Em breve</span>
             <h2 class="package-section-title">Estamos preparando esta expedição</h2>
-            <p>Datas, investimento e roteiro serão publicados quando o grupo abrir — sem inventar o que ainda não está fechado.</p>
+            <p>Datas, investimento e roteiro serão publicados quando o grupo abrir. Deixe seu contato e avisamos você em primeira mão.</p>
           </section>
           ${renderGroupForm(group, esc, WA)}
           <a href="${waSpecialist}" target="_blank" rel="noopener" class="btn-outline group-specialist-link" data-storefront-cta="whatsapp">Falar com especialista</a>

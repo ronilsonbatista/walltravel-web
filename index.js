@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 2. MOBILE MENU INTERACTION (ACCESSIBLE & COMPREHENSIVE CLOSED TRIGGERS)
   // ==========================================================================
   const menuBtn = document.querySelector('.menu-btn');
-  const navMenu = document.querySelector('.nav-menu');
+  const navMenu = document.getElementById('nav-menu') || document.querySelector('nav.nav-menu');
   const navLinks = navMenu ? navMenu.querySelectorAll('a') : [];
 
   const setMobileMenuOpen = (open) => {
@@ -240,8 +240,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     navMenu.classList.toggle('active', open);
     menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      navMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    } else {
+      navMenu.removeAttribute('aria-hidden');
+    }
+    document.body.classList.toggle('nav-open', open);
     document.body.style.overflow = open ? 'hidden' : '';
   };
+
+  const syncMobileNavA11y = () => {
+    if (!navMenu) return;
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      const open = navMenu.classList.contains('active');
+      navMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    } else {
+      navMenu.removeAttribute('aria-hidden');
+      setMobileMenuOpen(false);
+    }
+  };
+  syncMobileNavA11y();
+  window.addEventListener('resize', syncMobileNavA11y, { passive: true });
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!navMenu.classList.contains('active'));
