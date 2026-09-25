@@ -84,7 +84,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!mount) return;
     const featured = getFeaturedCategories();
     const pool = featured.length ? featured : getCategories();
-    const destinations = pool.slice(0, 4).map((cat) => {
+    const destinations = pool
+      .filter((cat) => !/lencois|lençóis/i.test(`${cat.slug || ""} ${cat.name || ""}`))
+      .slice(0, 4)
+      .map((cat) => {
       const count = cat.packageCount || 0;
       return {
         name: cat.name,
@@ -632,7 +635,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       updateSEO(
         "WallTravel — Experiências Incríveis",
-        "WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem."
+        "WallTravel – Destinos e viagens desenhadas para o seu ritmo. Planeje a próxima aventura com quem acompanha cada detalhe."
       );
     } else {
       clearInterval(autoplayInterval);

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
   <title>WallTravel — Experiências Incríveis</title>
-  <meta name="description" content="WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem.">
+  <meta name="description" content="WallTravel – Destinos e viagens desenhadas para o seu ritmo. Planeje a próxima aventura com quem acompanha cada detalhe.">
 
   <!-- First paint: cream + wordmark before stylesheet or JS (no white flash) -->
   <link rel="preload" href="/assets/03_tipografia/01_titulo/FacultyGlyphic-Regular.ttf" as="font" type="font/ttf" crossorigin>
@@ -33,17 +33,26 @@
     }
     html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-brand{
       font-family:"Faculty Glyphic",Georgia,serif;font-weight:400;
-      font-size:clamp(2.6rem,7vw,4.25rem);line-height:1.02;letter-spacing:-0.02em;
+      font-size:clamp(1.85rem,8vw,2.15rem);line-height:1.08;letter-spacing:0.01em;
       color:#3F4328;margin:0
-    }
-    html.wt-intro-hold #wt-home-intro-mount .wt-intro-count{
-      margin:1.15rem 0 0;font-family:"Faculty Glyphic",Georgia,serif;font-size:0.95rem;
-      letter-spacing:0.14em;color:#5C5E2E;font-variant-numeric:tabular-nums;line-height:1
     }
     html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-line{
       font-family:"Faculty Glyphic",Georgia,serif;font-weight:400;
-      margin:1.15rem auto 0;max-width:min(16em,88vw);
-      font-size:clamp(1.28rem,2.5vw,1.72rem);line-height:1.35;letter-spacing:-0.015em;color:#3F4328
+      margin:1.35rem auto 0;max-width:16.5em;
+      font-size:0.98rem;line-height:1.5;letter-spacing:0.012em;color:#3F4328
+    }
+    html.wt-intro-hold #wt-home-intro-mount .wt-intro-rail{position:absolute;left:0;right:0;bottom:0;z-index:4}
+    html.wt-intro-hold #wt-home-intro-mount .wt-intro-count{
+      position:absolute;right:max(1.15rem,env(safe-area-inset-right));
+      bottom:calc(0.65rem + env(safe-area-inset-bottom,0px));margin:0;
+      font-family:"Rubik",system-ui,sans-serif;font-size:13px;font-weight:400;
+      letter-spacing:0.16em;color:#5C5E2E;font-variant-numeric:tabular-nums;line-height:1
+    }
+    html.wt-intro-hold #wt-home-intro-mount .wt-intro-rail-track{display:block;height:1px;background:rgba(63,67,40,0.16)}
+    html.wt-intro-hold #wt-home-intro-mount .wt-intro-rail-fill{display:block;height:1px;width:0%;background:#3F4328}
+    @media (min-width:769px){
+      html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-brand{font-size:clamp(2.15rem,2.8vw,2.65rem)}
+      html.wt-intro-hold #wt-home-intro-mount .wt-page-intro-line{font-size:clamp(1.02rem,1.15vw,1.2rem);max-width:22em;line-height:1.5}
     }
     html.wt-intro-hold .header,
     html.wt-intro-hold .skip-link,
@@ -99,13 +108,13 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="WallTravel — Experiências Incríveis">
-  <meta property="og:description" content="WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem.">
+  <meta property="og:description" content="WallTravel – Destinos e viagens desenhadas para o seu ritmo. Planeje a próxima aventura com quem acompanha cada detalhe.">
   <meta property="og:image" content="/images/vitrine/noronha.jpg">
   
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="WallTravel — Experiências Incríveis">
-  <meta name="twitter:description" content="WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem.">
+  <meta name="twitter:description" content="WallTravel – Destinos e viagens desenhadas para o seu ritmo. Planeje a próxima aventura com quem acompanha cada detalhe.">
   <meta name="twitter:image" content="/images/vitrine/noronha.jpg">
   
   <!-- Icons -->
@@ -154,7 +163,12 @@
       <div class="wt-page-intro-stage">
         <p class="wt-page-intro-brand" data-intro-brand>WallTravel</p>
         <p class="wt-page-intro-line" data-intro-line>Experiências extraordinárias desenhadas com propósito.</p>
+      </div>
+      <div class="wt-intro-rail">
         <p class="wt-intro-count" data-intro-count>0</p>
+        <div class="wt-intro-rail-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Abertura">
+          <span class="wt-intro-rail-fill" data-intro-rail></span>
+        </div>
       </div>
     </div>
   </div>
@@ -176,7 +190,7 @@
       var reduced = root.classList.contains("wt-intro-reduced");
       var mobile = false;
       try { mobile = window.matchMedia("(max-width: 768px)").matches; } catch (e) {}
-      var reading = reduced ? 280 : (mobile ? 1880 : 2280);
+      var reading = reduced ? 280 : (mobile ? 1720 : 2120);
       var fadeMs = reduced ? 160 : 320;
       root.classList.add("wt-intro-hold", "wt-intro-pending", "wt-intro-active");
       root.dataset.introPhase = "intro";
@@ -186,7 +200,14 @@
       el.dataset.introFadeMs = String(fadeMs);
       el.style.setProperty("--duration-intro-exit", fadeMs + "ms");
       var count = el.querySelector("[data-intro-count]");
-      if (count) count.textContent = "0";
+      var rail = el.querySelector("[data-intro-rail]");
+      var railTrack = el.querySelector(".wt-intro-rail-track");
+      var paintCount = function (n) {
+        if (count) count.textContent = String(n);
+        if (rail) rail.style.width = n + "%";
+        if (railTrack) railTrack.setAttribute("aria-valuenow", String(n));
+      };
+      paintCount(0);
       window.setTimeout(function () {
         var header = document.querySelector(".header");
         var hero = document.querySelector(".hero");
@@ -220,7 +241,7 @@
         var beginHandoff = function () {
           if (handoffStarted || settled) return;
           handoffStarted = true;
-          if (count) count.textContent = "100";
+          paintCount(100);
           el.dataset.introState = "transition";
           root.dataset.introState = "transition";
           root.dataset.introPhase = "transition";
@@ -232,7 +253,7 @@
           if (settled || handoffStarted) return;
           var p = Math.min(1, (performance.now() - t0) / reading);
           if (p < 1) {
-            if (count) count.textContent = String(Math.min(99, Math.round(p * 100)));
+            paintCount(Math.min(99, Math.round(p * 100)));
             clock = window.setTimeout(frame, 32);
             return;
           }
@@ -417,7 +438,7 @@
             <div>
               <div class="service-card-num">01</div>
               <h3 class="service-card-title">Aluguel de veículos</h3>
-              <p class="service-card-desc">Com a WallTravel, você sonha e nós realizamos. Alugue veículos premium para suas viagens como: Porsche, Ferraris, etc...</p>
+              <p class="service-card-desc">Veículos escolhidos para cada etapa da viagem — de modelos confortáveis a esportivos de alta performance.</p>
             </div>
             <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Aluguel de veículos" data-wa-message="Olá! Gostaria de saber mais sobre Aluguel de veículos com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
               Quero Alugar
@@ -438,10 +459,10 @@
           <div class="service-card-content">
             <div>
               <div class="service-card-num">02</div>
-              <h3 class="service-card-title">Aluguéis de barcos</h3>
-              <p class="service-card-desc">Alugue barcos e lanchas. Temos diversos parceiros pelo mundo para oferecer a melhor experiência para sua viagem.</p>
+              <h3 class="service-card-title">Iates e embarcações privadas</h3>
+              <p class="service-card-desc">Embarcações privadas com parceiros selecionados, no destino e no ritmo da viagem.</p>
             </div>
-            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Aluguel de barcos" data-wa-message="Olá! Gostaria de saber mais sobre Aluguel de barcos com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
+            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Iates e embarcações privadas" data-wa-message="Olá! Gostaria de saber mais sobre iates e embarcações privadas com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
               Quero Alugar
               <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
             </a>
@@ -480,7 +501,7 @@
   <section class="section section-rhythm-a fade-in-section" id="diferenciais">
     <div class="section-container">
       <div class="section-header">
-        <span class="section-tag">Diferenciais Exclusivos</span>
+        <span class="section-tag">Diferenciais</span>
         <h2 class="section-title">Por que escolher a WallTravel?</h2>
       </div>
 
@@ -517,8 +538,8 @@
         <!-- Item 5 -->
         <div class="feature-item">
           <span class="feature-number">05</span>
-          <h3 class="feature-title">Jurídico Incluso</h3>
-          <p class="feature-desc">Tranquilidade completa com suporte legal para documentações, vistos e seguros.</p>
+          <h3 class="feature-title">Apoio documental</h3>
+          <p class="feature-desc">Orientação para documentações, vistos e seguros, para a viagem seguir sem surpresa.</p>
         </div>
 
         <!-- Item 6 -->
@@ -532,7 +553,7 @@
         <div class="feature-item">
           <span class="feature-number">07</span>
           <h3 class="feature-title">Clientes encantados</h3>
-          <p class="feature-desc">Excelência comprovada na satisfação de centenas de viajantes pelo mundo.</p>
+          <p class="feature-desc">Cada viagem é acompanhada de perto, do planejamento ao retorno.</p>
         </div>
 
         <!-- Item 8 -->
@@ -553,9 +574,9 @@
     <div class="section-container">
       <div class="premium-block">
         <div class="premium-block-content">
-          <span class="section-tag" style="margin-bottom: 1rem; display: block;">Curadoria de luxo</span>
+          <span class="section-tag" style="margin-bottom: 1rem; display: block;">Curadoria</span>
           <h2 class="premium-block-title">Levamos vocês para qualquer lugar do mundo.</h2>
-          <p class="premium-block-desc">Tenha uma experiência premium e super personalizada com a Walltravel. Cuidamos desde o começo ao fim de sua viagem.</p>
+          <p class="premium-block-desc">Cuidamos do começo ao fim, no seu ritmo e do seu jeito.</p>
           <a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="premium" data-wa-message="Olá! Gostaria de conversar sobre uma viagem premium com a WallTravel." target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp">Planejar Agora</a>
         </div>
         <div class="premium-block-visual">
@@ -575,7 +596,7 @@
         <div class="honeymoon-img-wrapper">
           <picture>
             <source type="image/webp" srcset="/images/vitrine/lua-de-mel.webp">
-            <img src="/images/vitrine/lua-de-mel.jpg" alt="Lua de Mel Premium" width="1024" height="1024" loading="lazy" decoding="async">
+            <img src="/images/vitrine/lua-de-mel.jpg" alt="Lua de mel" width="1024" height="1024" loading="lazy" decoding="async">
           </picture>
         </div>
         <!-- Right: Text & Info -->
@@ -603,7 +624,7 @@
             </div>
             <div class="honeymoon-highlight-card">
               <span class="highlight-bullet">✦</span>
-              <p>Experiências exclusivas</p>
+              <p>Detalhes só de vocês</p>
             </div>
           </div>
           <a href="#" data-wa-cta data-wa-page-type="HONEYMOON" data-wa-placement="honeymoon" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp" style="margin-top: 1rem;">
@@ -614,66 +635,7 @@
     </div>
   </section>
 
-  <!-- ==========================================================================
-       SECTION 5: DEPOIMENTOS (TESTIMONIALS)
-       ========================================================================== -->
-  <section class="section section-rhythm-c fade-in-section" id="prova-social">
-    <div class="section-container">
-      <div class="section-header">
-        <span class="section-tag">Depoimentos</span>
-        <h2 class="section-title">O que dizem nossos viajantes</h2>
-        <p style="margin-top: 1rem; font-size: 1.1rem;">Experiências reais, depoimentos sinceros.</p>
-      </div>
-
-      <div class="testimonials-container">
-        
-        <!-- Depoimento 1 -->
-        <div class="testimonial-card">
-          <p class="testimonial-text">Nunca pensei que uma viagem pudesse ser tão bem planejada. Cada detalhe foi pensado especialmente para nós. A Walltravel superou todas as expectativas!</p>
-          <div class="testimonial-author">
-            <div class="testimonial-info">
-              <h4>Maria Santos</h4>
-              <p>São Paulo</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Depoimento 2 -->
-        <div class="testimonial-card">
-          <p class="testimonial-text">Ótimo atendimento e viagem incrível! O roteiro foi bem pensado e conseguimos aproveitar cada momento. Equipe muito profissional e atenciosa.</p>
-          <div class="testimonial-author">
-            <div class="testimonial-info">
-              <h4>Fernanda Costa</h4>
-              <p>Florianópolis</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Depoimento 3 -->
-        <div class="testimonial-card">
-          <p class="testimonial-text">O acompanhamento 24h salvou nossa lua de mel. Quando tivemos problema no voo, eles resolveram tudo em minutos pelo WhatsApp.</p>
-          <div class="testimonial-author">
-            <div class="testimonial-info">
-              <h4>Carlos e Ana</h4>
-              <p>Rio de Janeiro</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Depoimento 4 -->
-        <div class="testimonial-card">
-          <p class="testimonial-text">Já usei outras agências, mas nunca recebi um roteiro tão detalhado e personalizado. Visitamos lugares que jamais encontraríamos sozinhos.</p>
-          <div class="testimonial-author">
-            <div class="testimonial-info">
-              <h4>Roberto Lima</h4>
-              <p>Brasília</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
+  <!-- Depoimentos ficam fora da página até haver citações reais aprovadas. -->
 
   <!-- ==========================================================================
        SECTION 6: EQUIPE / SOBRE NÓS
@@ -687,7 +649,7 @@
           
           <p class="team-lead">Somos <strong>Wallace, Weslley e Ronilson</strong> - três apaixonados por viagens que transformaram essa paixão em uma missão: criar experiências inesquecíveis para cada cliente.</p>
           
-          <p class="team-body-text">Juntos já visitamos mais de 35 países, moramos no exterior e entendemos que cada viajante é único. Por isso, criamos apenas roteiros personalizados, com o acompanhamento mais completo do mercado.</p>
+          <p class="team-body-text">Juntos já visitamos mais de 35 países, moramos no exterior e entendemos que cada viajante é único. Por isso, criamos roteiros personalizados, com acompanhamento do planejamento ao retorno.</p>
           
           <p class="team-body-text">Nossa experiência prática nos destinos + atendimento humanizado 24h = sua viagem dos sonhos sem preocupações.</p>
           

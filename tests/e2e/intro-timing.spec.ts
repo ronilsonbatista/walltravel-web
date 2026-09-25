@@ -57,6 +57,31 @@ test.describe("immersive intro timing", () => {
     expect(hidden.progress).toBe("hidden");
     expect(hidden.whatsapp).toBe("hidden");
     expect(hidden.introImages).toBe(0);
+    const rail = await page.evaluate(() => {
+      const fill = document.querySelector("[data-intro-rail]") as HTMLElement | null;
+      const track = document.querySelector(".wt-intro-rail-track") as HTMLElement | null;
+      const count = document.querySelector("[data-intro-count]");
+      if (!fill || !track || !count) return null;
+      const trackBox = track.getBoundingClientRect();
+      const fillBox = fill.getBoundingClientRect();
+      const n = Number(count.textContent);
+      return {
+        trackWidth: trackBox.width,
+        viewport: document.documentElement.clientWidth,
+        height: trackBox.height,
+        bottom: Math.round(trackBox.bottom),
+        viewH: window.innerHeight,
+        pct: trackBox.width ? (fillBox.width / trackBox.width) * 100 : 0,
+        n,
+        font: getComputedStyle(count).fontSize,
+      };
+    });
+    expect(rail).not.toBeNull();
+    expect(rail!.trackWidth).toBeGreaterThan(rail!.viewport - 2);
+    expect(rail!.height).toBeLessThanOrEqual(2);
+    expect(rail!.bottom).toBeGreaterThanOrEqual(rail!.viewH - 2);
+    expect(Math.abs(rail!.pct - rail!.n)).toBeLessThan(3);
+    expect(parseFloat(rail!.font)).toBeLessThanOrEqual(15);
     await expect(intro.locator("[data-intro-skip]")).toHaveCount(0);
     await expect(intro.locator("[data-intro-brand]")).toContainText("WallTravel");
     await page.waitForTimeout(700);

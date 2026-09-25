@@ -570,7 +570,11 @@ export function playPageIntro(root = document) {
 
     const paintCount = (n) => {
       const node = el.querySelector("[data-intro-count]");
+      const rail = el.querySelector("[data-intro-rail]");
+      const track = el.querySelector(".wt-intro-rail-track");
       if (node) node.textContent = String(n);
+      if (rail) rail.style.width = `${n}%`;
+      if (track) track.setAttribute("aria-valuenow", String(n));
     };
 
     const goLive = () => {

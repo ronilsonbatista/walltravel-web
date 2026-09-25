@@ -11,9 +11,9 @@
 export const INTRO_PRESETS = Object.freeze({
   home: Object.freeze({
     id: "home",
-    /** Count window. Desktop total ~2.6s, mobile ~2.2s, including the cream fade. */
-    readingMs: 2280,
-    readingMobileMs: 1880,
+    /** Count window. Desktop total ~2.44s, mobile ~2.04s, including the cream fade. */
+    readingMs: 2120,
+    readingMobileMs: 1720,
     revealMs: 0,
     revealMobileMs: 0,
     expansionMs: 0,
