@@ -32,7 +32,6 @@ import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
 import {
   renderHomeOpeningIntro,
-  renderVitrineIntro,
   renderDestinationExplorer,
   playPageIntro,
   initDestinationExplorer,
@@ -132,6 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (getStorefrontSource() === "local" && getStorefrontHydrateError()) {
     const banner = document.createElement("div");
+    banner.className = "wt-storefront-fallback";
     banner.setAttribute("role", "status");
       banner.style.cssText =
       "position:fixed;left:0;right:0;bottom:0;z-index:900;background:var(--surface-olive,#3F4328);color:var(--text-inverse,#F6F1E8);padding:0.65rem 1rem;padding-bottom:max(0.65rem, env(safe-area-inset-bottom, 0px));text-align:center;font-size:0.85rem;pointer-events:none;";
@@ -224,6 +224,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         header.classList.remove('scrolled');
       }
       return;
+    }
+
+    const mobileOverlay = window.matchMedia("(max-width: 768px)").matches;
+    if (
+      mobileOverlay &&
+      (path === "/vitrine" || path === "/vitrine/" || path.startsWith("/vitrine/") || path.startsWith("/viagens/") || path.startsWith("/pacote/"))
+    ) {
+      const band = document.querySelector(".wt-vitrine-mast, #package-view .group-hero, #category-view .category-hero-right");
+      if (band) {
+        header.classList.toggle("scrolled", window.scrollY > Math.max(48, band.offsetHeight * 0.45));
+        return;
+      }
     }
 
     if (isGroupDetailPath(path) || isGroupsCatalogPath(path)) {
@@ -533,29 +545,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Swipe gesture navigation for Mobile
   const heroSection = document.getElementById('destinos');
   let touchStartX = 0;
-  let touchEndX = 0;
+  let touchStartY = 0;
 
   if (heroSection) {
     heroSection.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
     }, { passive: true });
 
     heroSection.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
+      if (homeIntroBlocking()) return;
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      const dy = e.changedTouches[0].screenY - touchStartY;
+      if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy)) return;
+      if (dx < 0) changeSlide((currentIndex + 1) % slides.length);
+      else changeSlide((currentIndex - 1 + slides.length) % slides.length);
     }, { passive: true });
   }
 
-  const handleSwipe = () => {
-    const swipeThreshold = 55;
-    if (touchStartX - touchEndX > swipeThreshold) {
-      let nextIndex = (currentIndex + 1) % slides.length;
-      changeSlide(nextIndex);
-    } else if (touchEndX - touchStartX > swipeThreshold) {
-      let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-      changeSlide(prevIndex);
-    }
-  };
+  window.matchMedia("(max-width: 768px)").addEventListener("change", () => {
+    applySlideVisuals(heroSlidesData[currentIndex]);
+  });
 
   // Pause Autoplay on Hover
   const hero = document.getElementById('destinos');
@@ -604,9 +614,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (path === '/' || path === '/index.html') {
       homeView.style.display = 'block';
+      if (!document.querySelector("[data-wt-page-intro][data-intro-preset='home']")) {
+        document.documentElement.classList.add("wt-hero-live");
+      }
       handleHeaderScroll(); 
       injectHeroPreload('/images/vitrine/africa-do-sul.webp');
       hydrateHeroImage(slides[0]);
+      applySlideVisuals(heroSlidesData[0]);
       const scheduleIdle = window.requestIdleCallback || ((cb) => window.setTimeout(cb, 1400));
       scheduleIdle(() => prefetchHeroSlide(1));
       // Opening already started at boot. Autoplay waits until the hero is seated.
@@ -733,8 +747,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       "Explore experiências exclusivas sob medida, divididas por estilos de viagem curados pela WallTravel."
     );
 
+    const leadImage = categories.find((cat) => cat.image)?.image || "/images/vitrine/europa.webp";
     vitrineView.innerHTML = `
-      ${renderVitrineIntro()}
+      <figure class="wt-vitrine-mast">
+        <img src="${esc(leadImage)}" alt="" width="1600" height="900" decoding="async">
+        <figcaption>
+          <h1>Vitrine de Viagens</h1>
+          <p>Experiências exclusivas, divididas por estilos de viagem.</p>
+        </figcaption>
+      </figure>
       <div class="vitrine-header wt-vitrine-header" data-reveal>
         <div class="breadcrumb">
           <a href="/">Início</a>
@@ -750,8 +771,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         ${categories.map((cat) => renderVitrineCategoryCard(cat, esc)).join('')}
       </div>
     `;
-    playPageIntro(vitrineView);
     vitrineView.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-revealed"));
+    handleHeaderScroll();
   };
 
   // B. Render dynamic Category page (/vitrine/[categorySlug])
@@ -913,6 +934,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
     searchEl?.addEventListener('input', applyFilters);
+    handleHeaderScroll();
   };
 
   // C. Render experience detail (/viagens/[slug] · /pacote/[slug] alias) — Groups visual family
@@ -943,7 +965,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const bindGroupExperience = await loadGroupExperienceBinder();
     packageView.innerHTML = renderExperienceDetailPage(pkg, category, esc, WA);
     groupExperienceCleanup = bindGroupExperience(packageView);
-    playPageIntro(packageView);
     handleHeaderScroll();
   };
 
@@ -961,7 +982,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     bindGroupForms(groupsView, WA);
     const bindGroupExperience = await loadGroupExperienceBinder();
     groupExperienceCleanup = bindGroupExperience(groupsView);
-    playPageIntro(groupsView);
     handleHeaderScroll();
   };
 
@@ -992,7 +1012,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     bindGroupForms(groupsView, WA);
     const bindGroupExperience = await loadGroupExperienceBinder();
     groupExperienceCleanup = bindGroupExperience(groupsView);
-    playPageIntro(groupsView);
     trackStorefrontEvent("group_view", { groupSlug: group.slug, slug: group.slug });
     trackStorefrontEvent("viagem_view", { slug: group.slug });
     handleHeaderScroll();
@@ -1080,11 +1099,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const whatsappFloat = document.getElementById('whatsapp-float');
   if (whatsappFloat) {
     const handleFloatScroll = () => {
-      if (window.scrollY > 400) {
-        whatsappFloat.classList.add('visible');
-      } else {
-        whatsappFloat.classList.remove('visible');
+      const mobile = window.matchMedia("(max-width: 768px)").matches;
+      const band = Array.from(
+        document.querySelectorAll(".hero, .wt-vitrine-mast, .group-hero, .category-hero-right"),
+      ).find((el) => el.getClientRects().length > 0 && el.offsetHeight > 40);
+      let threshold = 400;
+      if (mobile && band) {
+        const top = band.getBoundingClientRect().top + window.scrollY;
+        threshold = top + band.offsetHeight - 8;
       }
+      whatsappFloat.classList.toggle("visible", window.scrollY > threshold);
     };
     
     window.addEventListener('scroll', handleFloatScroll, { passive: true });

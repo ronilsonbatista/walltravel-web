@@ -30,6 +30,7 @@ export {
   renderVitrineIntro,
   renderGroupCatalogIntro,
   renderHomeOpeningIntro,
+  IntroProgress,
   playPageIntro,
   playImmersiveIntro,
   initDestinationExplorer,

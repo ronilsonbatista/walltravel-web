@@ -22,37 +22,54 @@ function escAttr(value) {
     .replace(/'/g, "&#39;");
 }
 
+const HOME_APERTURE_SRC = "/images/vitrine/africa-do-sul.webp";
+
 /** Map legacy variant names → ImmersiveIntro preset ids */
 function normalizePreset(preset, variant) {
-  if (preset && INTRO_PRESETS[preset]) return preset;
-  if (variant === "short") return "catalog";
-  if (variant === "detail") return "detail";
+  const raw = preset || variant || "home";
+  if (raw === "detail" || raw === "group-detail") return "groupDetail";
+  if (raw === "experience" || raw === "experience-detail") return "experienceDetail";
+  if (raw === "short" || raw === "vitrine") return "catalog";
+  if (raw === "grupos" || raw === "groups") return "groupCatalog";
+  if (INTRO_PRESETS[raw]) return raw;
+  if (variant === "detail") return "groupDetail";
   if (variant === "groupCatalog" || variant === "grupos") return "groupCatalog";
-  if (variant === "catalog" || variant === "vitrine") return "catalog";
+  if (variant === "catalog" || variant === "vitrine" || variant === "short") return "catalog";
   if (variant === "home") return "home";
-  return preset && INTRO_PRESETS[preset] ? preset : "home";
+  return "home";
 }
 
 /** CSS modifier class for a preset */
 function presetCssMod(preset) {
   if (preset === "groupCatalog") return "group-catalog";
+  if (preset === "groupDetail") return "group-detail";
+  if (preset === "experienceDetail") return "experience-detail";
   if (preset === "catalog") return "catalog";
   return preset;
 }
 
 /**
+ * IntroProgress — one editorial hairline for every opening.
+ * Variants: subtle (home, groups, detail) · compact (catalog).
+ * It marks continuity. It is not a network meter.
+ */
+export function IntroProgress({ variant = "subtle" } = {}) {
+  const name = variant === "compact" ? "compact" : "subtle";
+  return `<span class="wt-intro-progress wt-intro-progress--${name}" data-intro-progress data-intro-progress-variant="${name}" aria-hidden="true"><span class="wt-intro-progress-fill"></span></span>`;
+}
+
+/**
  * ImmersiveIntro — shared cream opening for home / catalog / groupCatalog / detail.
  * Alias: ImmersivePageIntro.
- * @param {{ brand?: string, eyebrow?: string, title?: string, line?: string, mediaUrl?: string, mediaAlt?: string, preset?: "home"|"catalog"|"groupCatalog"|"detail", variant?: string, sessionKey?: string, cssFirst?: boolean, skipLabel?: string }} opts
+ * @param {{ brand?: string, eyebrow?: string, title?: string, line?: string, mediaUrl?: string, mediaAlt?: string, preset?: "home"|"catalog"|"groupCatalog"|"groupDetail"|"experienceDetail", variant?: string, sessionKey?: string, cssFirst?: boolean, skipLabel?: string }} opts
  */
 export function ImmersiveIntro(opts = {}) {
   const {
-    brand = "WallTravel",
+    brand = "",
     eyebrow = "",
     title = "",
     line = "",
     mediaUrl = "",
-    mediaAlt = "",
     skipLabel = "Pular introdução",
     cssFirst = false,
   } = opts;
@@ -64,36 +81,28 @@ export function ImmersiveIntro(opts = {}) {
     presetCfg.sessionKey ||
     `${IMMERSIVE_TOKENS.sessionPageIntroPrefix}${preset}`;
   const cssMod = presetCssMod(preset);
-  const homeAperture =
-    preset === "home"
-      ? `<div class="wt-home-aperture" data-intro-aperture aria-hidden="true"><img src="/images/vitrine/africa-do-sul.webp" alt="" width="1600" height="1600" decoding="async" fetchpriority="high"><span class="wt-home-aperture-grade" aria-hidden="true"></span></div>`
-      : "";
-  const homeAccent =
-    preset === "home"
-      ? `<span class="wt-page-intro-accent" data-intro-accent aria-hidden="true"></span>`
-      : "";
+  const handoff = presetCfg.handoff || "hero";
+  const grade = presetCfg.grade || "home";
+  const progress = presetCfg.progress || "subtle";
+  const src = preset === "home" ? HOME_APERTURE_SRC : mediaUrl;
+  const compact = handoff === "content" ? " wt-intro-aperture--compact" : "";
+  const aperture = src
+    ? `<div class="wt-intro-aperture wt-home-aperture${compact}" data-intro-aperture data-intro-grade="${escAttr(grade)}" aria-hidden="true"><img src="${escAttr(src)}" alt="" width="1600" height="900" decoding="async" fetchpriority="high"><span class="wt-intro-aperture-grade wt-home-aperture-grade" aria-hidden="true"></span></div>`
+    : "";
   const hiddenAttr = cssFirst ? "" : "hidden";
   const ariaHidden = cssFirst ? "false" : "true";
-  const stateAttr = preset === "home" ? ` data-intro-state="arrival"` : "";
+  const target = presetCfg.target || "";
 
-  return `<div class="wt-page-intro wt-page-intro--${escAttr(cssMod)}" data-wt-page-intro data-intro-preset="${escAttr(preset)}" data-intro-variant="${escAttr(cssMod)}" data-intro-session-key="${escAttr(sessionKey)}"${stateAttr} ${hiddenAttr} aria-hidden="${ariaHidden}" role="dialog" aria-label="Introdução WallTravel">
+  return `<div class="wt-page-intro wt-page-intro--seat wt-page-intro--${escAttr(cssMod)}" data-wt-page-intro data-intro-preset="${escAttr(preset)}" data-intro-variant="${escAttr(cssMod)}" data-intro-session-key="${escAttr(sessionKey)}" data-intro-state="arrival" data-intro-handoff="${escAttr(handoff)}" data-intro-target="${escAttr(target)}" ${hiddenAttr} aria-hidden="${ariaHidden}" role="dialog" aria-label="Introdução WallTravel">
     <div class="wt-page-intro-veil" aria-hidden="true"></div>
-    ${homeAperture}
+    ${aperture}
     <div class="wt-page-intro-stage">
       ${eyebrow ? `<p class="wt-page-intro-eyebrow">${escAttr(eyebrow)}</p>` : ""}
-      <p class="wt-page-intro-brand" data-intro-brand>${escAttr(brand)}</p>
-      ${homeAccent}
+      ${brand ? `<p class="wt-page-intro-brand" data-intro-brand>${escAttr(brand)}</p>` : ""}
       ${title ? `<h2 class="wt-page-intro-title">${escAttr(title)}</h2>` : ""}
       ${line ? `<p class="wt-page-intro-line" data-intro-line>${escAttr(line)}</p>` : ""}
-      ${
-        mediaUrl
-          ? `<div class="wt-page-intro-media" data-intro-media>
-              <img src="${escAttr(mediaUrl)}" alt="${escAttr(mediaAlt)}" width="1200" height="800" decoding="async" fetchpriority="high">
-            </div>`
-          : ""
-      }
+      ${preset === "home" ? `<p class="wt-intro-count" data-intro-count>0</p>` : IntroProgress({ variant: progress })}
     </div>
-    <button type="button" class="wt-page-intro-skip" data-intro-skip>${escAttr(skipLabel)}</button>
   </div>`;
 }
 
@@ -355,26 +364,40 @@ export function GroupDetailTemplate({
  * Detail personality intro — cream → title → date → cover → hero.
  * All strings from CMS; never hardcodes a country.
  */
+function formatIntroDates(entity) {
+  if (entity.dateLabel || entity.datesLabel) return entity.dateLabel || entity.datesLabel;
+  const start = entity.departureDate;
+  const end = entity.returnDate;
+  if (!start || !end) return entity.durationLabel || entity.departureLabel || "";
+  const s = new Date(`${start}T12:00:00`);
+  const e = new Date(`${end}T12:00:00`);
+  if (Number.isNaN(s.getTime()) || Number.isNaN(e.getTime())) {
+    return entity.durationLabel || "";
+  }
+  const months = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+  if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
+    return `${s.getDate()}–${e.getDate()} ${months[s.getMonth()]} ${s.getFullYear()}`;
+  }
+  return `${s.getDate()} ${months[s.getMonth()]} – ${e.getDate()} ${months[e.getMonth()]} ${e.getFullYear()}`;
+}
+
 export function renderDetailPersonalityIntro(entity = {}, esc = escAttr) {
-  const title = entity.name || entity.title || "";
-  const date =
-    entity.dateLabel ||
-    entity.datesLabel ||
-    entity.durationLabel ||
-    entity.departureLabel ||
-    "";
+  const preset = normalizePreset(entity.introPreset || "groupDetail");
+  const name = entity.name || entity.title || "";
   const dest = entity.destinationLabel || entity.destination || "";
   const cover = entity.coverImageUrl || entity.image || "";
-  const eyebrow = dest ? `Entrando em ${dest}` : "WallTravel";
+  const title = name || dest;
+  const line =
+    preset === "experienceDetail"
+      ? [dest, entity.durationLabel || entity.dateLabel || ""].filter(Boolean).join(" · ")
+      : formatIntroDates(entity);
 
   return ImmersiveIntro({
-    brand: "WallTravel",
-    eyebrow,
+    brand: "",
     title,
-    line: date,
+    line,
     mediaUrl: cover,
-    mediaAlt: title,
-    preset: "detail",
+    preset,
     sessionKey: `${IMMERSIVE_TOKENS.sessionPageIntroPrefix}${entity.slug || title}`,
   });
 }
@@ -382,10 +405,11 @@ export function renderDetailPersonalityIntro(entity = {}, esc = escAttr) {
 /**
  * Vitrine / catalog short intro markup.
  */
-export function renderVitrineIntro() {
+export function renderVitrineIntro(mediaUrl = "") {
   return ImmersiveIntro({
-    brand: "WallTravel",
-    line: "Vitrine de experiências",
+    brand: "",
+    title: "Vitrine de experiências",
+    mediaUrl,
     preset: "catalog",
     sessionKey: INTRO_PRESETS.catalog.sessionKey,
   });
@@ -394,10 +418,11 @@ export function renderVitrineIntro() {
 /**
  * Groups catalog intro markup.
  */
-export function renderGroupCatalogIntro() {
+export function renderGroupCatalogIntro({ mediaUrl = "" } = {}) {
   return ImmersiveIntro({
-    brand: "WallTravel",
-    line: "Viagens em grupo",
+    brand: "",
+    title: "Viagens em grupo",
+    mediaUrl,
     preset: "groupCatalog",
     sessionKey: INTRO_PRESETS.groupCatalog.sessionKey,
   });
@@ -431,9 +456,10 @@ function waitMs(ms, signal) {
   });
 }
 
-function setIntroInert(on) {
+function setIntroInert(on, selector) {
   document.querySelector(".header")?.toggleAttribute("inert", on);
-  document.querySelector(".hero")?.toggleAttribute("inert", on);
+  const target = selector ? document.querySelector(selector) : null;
+  (target || document.querySelector(".hero"))?.toggleAttribute("inert", on);
 }
 
 function finishIntro(el, key) {
@@ -457,9 +483,9 @@ function setIntroState(el, state) {
 }
 
 /** Keep the opening window locked to the real hero box. Does not restart the sequence. */
-function bindApertureToHero(aperture) {
-  const hero = document.querySelector(".hero");
-  if (!hero || !aperture) return () => {};
+function bindApertureToHero(aperture, selector) {
+  const hero = selector ? document.querySelector(selector) : null;
+  if (!hero || !aperture || aperture.classList.contains("wt-intro-aperture--compact")) return () => {};
   const sync = () => {
     const rect = hero.getBoundingClientRect();
     aperture.style.top = `${rect.top}px`;
@@ -489,6 +515,15 @@ export function playPageIntro(root = document) {
     root.querySelector?.("[data-wt-page-intro]") || document.querySelector("[data-wt-page-intro]");
   if (!el) return Promise.resolve(false);
 
+  const presetEarly = normalizePreset(
+    el.getAttribute("data-intro-preset"),
+    el.getAttribute("data-intro-variant"),
+  );
+  if (presetEarly !== "home") {
+    el.remove();
+    return Promise.resolve(false);
+  }
+
   const key = el.getAttribute("data-intro-session-key") || IMMERSIVE_TOKENS.sessionIntroKey;
   const preset = normalizePreset(
     el.getAttribute("data-intro-preset"),
@@ -498,7 +533,7 @@ export function playPageIntro(root = document) {
   const mobile = isMobileViewport();
   const reduced = prefersReducedMotion();
 
-  if (hasPlayedSessionIntro(key) || (reduced && preset !== "home")) {
+  if (hasPlayedSessionIntro(key)) {
     el.remove();
     document.documentElement.classList.remove("wt-intro-active", "wt-intro-pending");
     document.documentElement.classList.add("wt-intro-skip");
@@ -511,7 +546,7 @@ export function playPageIntro(root = document) {
   el.setAttribute("aria-hidden", "false");
   el.classList.add("is-playing");
   document.documentElement.classList.add("wt-intro-active");
-  document.documentElement.classList.remove("wt-intro-skip", "wt-intro-pending");
+  document.documentElement.classList.remove("wt-intro-skip", "wt-intro-pending", "wt-hero-live");
 
   const exitMs = cfg.exitMs || IMMERSIVE_TOKENS.durationFast;
   el.style.setProperty("--duration-intro-exit", `${exitMs}ms`);
@@ -520,36 +555,24 @@ export function playPageIntro(root = document) {
     let settled = false;
     let exiting = false;
     let handoffStarted = false;
+    let failsafe = 0;
     const ac = new AbortController();
     const { signal } = ac;
-    const unbindAperture = preset === "home" ? bindApertureToHero(el.querySelector("[data-intro-aperture]")) : () => {};
+    const handoffMode = el.getAttribute("data-intro-handoff") || cfg.handoff || "hero";
+    const target = el.getAttribute("data-intro-target") || cfg.target || "";
+    const unbindAperture = bindApertureToHero(el.querySelector("[data-intro-aperture]"), target);
 
     const settle = (played) => {
       if (settled) return;
       settled = true;
       unbindAperture();
+      if (failsafe) window.clearTimeout(failsafe);
       try {
         ac.abort();
       } catch {
         /* ignore */
       }
       resolve(played);
-    };
-
-    const smoothExit = () => {
-      if (settled || exiting) return;
-      exiting = true;
-      try {
-        ac.abort();
-      } catch {
-        /* ignore */
-      }
-      el.classList.remove("is-stage-1", "is-revealing");
-      el.classList.add("is-exiting");
-      window.setTimeout(() => {
-        finishIntro(el, key);
-        settle(true);
-      }, exitMs);
     };
 
     const paintFrame = () =>
@@ -567,153 +590,88 @@ export function playPageIntro(root = document) {
         /* ignore */
       }
       setIntroState(el, "hero");
-      document.documentElement.classList.add("wt-intro-handoff");
+      if (handoffMode === "content") {
+        el.classList.add("is-content-exit");
+        window.setTimeout(() => {
+          if (settled) return;
+          finishIntro(el, key);
+          document.documentElement.classList.add("wt-hero-live");
+          document.dispatchEvent(new CustomEvent("wt:hero-live"));
+          settle(true);
+        }, cfg.contentExitMs || 200);
+        return;
+      }
+      document.documentElement.classList.add("wt-intro-handoff", "wt-intro-receive");
       await paintFrame();
       if (settled) return;
       finishIntro(el, key);
-      const heroMs = reduced ? 180 : cfg.heroMs || 640;
+      const heroMs = reduced ? 160 : cfg.heroMs || 480;
       window.setTimeout(() => {
         document.documentElement.classList.add("wt-hero-live");
-        document.documentElement.classList.remove("wt-intro-handoff");
+        document.documentElement.classList.remove("wt-intro-handoff", "wt-intro-receive");
+        document.dispatchEvent(new CustomEvent("wt:hero-live"));
         settle(true);
       }, heroMs);
     };
 
-    const beginSkip = () => {
-      if (settled || handoffStarted) return;
-      if (preset !== "home") {
-        smoothExit();
-        return;
-      }
-      if (exiting) return;
-      exiting = true;
-      try {
-        ac.abort();
-      } catch {
-        /* ignore */
-      }
-      const skipMs = reduced ? cfg.reducedRevealMs || 280 : cfg.skipMs || 820;
-      el.style.setProperty("--duration-intro-skip", `${skipMs}ms`);
-      setIntroState(el, "skipping");
-      window.setTimeout(() => {
-        arriveHero();
-      }, skipMs + 48);
+    const paintCount = (n) => {
+      const node = el.querySelector("[data-intro-count]");
+      if (node) node.textContent = String(n);
     };
 
-    const onSkip = (e) => {
-      if (settled || handoffStarted) return;
-      if (e?.type === "keydown") {
-        const k = e.key;
-        if (k !== "Escape" && k !== "Enter" && k !== " " && k !== "Spacebar") return;
-        e.preventDefault();
-      }
-      beginSkip();
-    };
+    const run = () => {
+      const reading = reduced ? cfg.reducedReadingMs : mobile ? cfg.readingMobileMs : cfg.readingMs;
+      const reveal = reduced ? 0 : mobile ? cfg.revealMobileMs : cfg.revealMs;
+      const expansion = reduced ? 0 : mobile ? cfg.expansionMobileMs : cfg.expansionMs;
+      const total = Math.max(1, reading + reveal + expansion);
+      el.dataset.introReadingMs = String(reading);
+      el.dataset.introRevealMs = String(reveal);
+      el.dataset.introExpansionMs = String(expansion);
+      el.dataset.introTotalMs = String(total);
+      el.style.setProperty("--duration-intro-reading", `${reading}ms`);
+      el.style.setProperty("--duration-intro-reveal", `${reveal}ms`);
+      el.style.setProperty("--duration-intro-expansion", `${expansion}ms`);
+      el.style.setProperty("--easing-intro", IMMERSIVE_TOKENS.easingIntro);
+      setIntroInert(true, target);
+      setIntroState(el, "reading");
+      paintCount(0);
 
-    el.addEventListener("click", onSkip, { signal });
-    el.querySelector("[data-intro-skip]")?.addEventListener("click", (e) => {
-      e.stopPropagation();
-      onSkip(e);
-    }, { signal });
-    window.addEventListener("keydown", onSkip, { signal });
-    document.addEventListener(
-      "wheel",
-      (e) => {
-        if (Math.abs(e.deltaY) > 4 || Math.abs(e.deltaX) > 4) onSkip(e);
-      },
-      { signal, passive: true, capture: true },
-    );
-    let touchX = null;
-    let touchY = null;
-    window.addEventListener(
-      "touchstart",
-      (e) => {
-        touchX = e.changedTouches?.[0]?.clientX ?? null;
-        touchY = e.changedTouches?.[0]?.clientY ?? null;
-      },
-      { signal, passive: true },
-    );
-    window.addEventListener(
-      "touchmove",
-      (e) => {
-        if (touchX == null) return;
-        const x = e.touches?.[0]?.clientX ?? touchX;
-        const y = e.touches?.[0]?.clientY ?? touchY;
-        if (Math.abs(x - touchX) > 28 || Math.abs(y - touchY) > 28) onSkip(e);
-      },
-      { signal, passive: true },
-    );
-    window.addEventListener(
-      "touchend",
-      (e) => {
-        if (touchX == null) return;
-        const x = e.changedTouches?.[0]?.clientX ?? touchX;
-        const y = e.changedTouches?.[0]?.clientY ?? touchY;
-        const dx = x - touchX;
-        const dy = y - touchY;
-        touchX = null;
-        touchY = null;
-        if (Math.abs(dx) > 36 || Math.abs(dy) > 36) onSkip(e);
-      },
-      { signal, passive: true },
-    );
-
-    const run = async () => {
-      if (preset === "home") {
-        const reading = reduced ? cfg.reducedReadingMs : mobile ? cfg.readingMobileMs : cfg.readingMs;
-        const reveal = reduced ? 0 : mobile ? cfg.revealMobileMs : cfg.revealMs;
-        const expansion = reduced ? 0 : mobile ? cfg.expansionMobileMs : cfg.expansionMs;
-        el.dataset.introReadingMs = String(reading);
-        el.dataset.introRevealMs = String(reveal);
-        el.dataset.introExpansionMs = String(expansion);
-        el.style.setProperty("--duration-intro-reading", `${reading}ms`);
-        el.style.setProperty("--duration-intro-reveal", `${reveal}ms`);
-        el.style.setProperty("--duration-intro-expansion", `${expansion}ms`);
-        el.style.setProperty("--duration-intro-skip", `${cfg.skipMs || 820}ms`);
-        el.style.setProperty("--easing-intro", IMMERSIVE_TOKENS.easingIntro);
-        setIntroInert(true);
-
-        if (reduced) {
-          setIntroState(el, "reading");
-          const held = await waitMs(reading, signal);
-          if (settled || handoffStarted) return;
-          if (held === "aborted") return;
-          document.documentElement.classList.add("wt-intro-handoff");
-          el.classList.add("is-reduced-exit");
-          await waitMs(cfg.reducedRevealMs || 280);
-          if (settled || handoffStarted) return;
+      failsafe = window.setTimeout(() => {
+        if (!settled && !handoffStarted) {
+          paintCount(100);
           arriveHero();
+        }
+      }, total + (cfg.heroMs || 0) + 900);
+
+      const t0 = performance.now();
+      const frame = () => {
+        if (settled || handoffStarted) return;
+        const elapsed = performance.now() - t0;
+        const p = Math.min(1, elapsed / total);
+        paintCount(Math.min(100, Math.round(p * 100)));
+        if (!reduced) {
+          const state = el.dataset.introState;
+          if (elapsed >= reading + reveal && state !== "expanding" && state !== "hero") {
+            setIntroState(el, "expanding");
+          } else if (elapsed >= reading && state === "reading") {
+            setIntroState(el, "reveal");
+          }
+        }
+        if (p < 1) {
+          requestAnimationFrame(frame);
           return;
         }
-
-        setIntroState(el, "reading");
-        const readResult = await waitMs(reading, signal);
-        if (settled || handoffStarted) return;
-        if (readResult === "aborted") return;
-
-        setIntroState(el, "reveal");
-        const revealResult = await waitMs(reveal, signal);
-        if (settled || handoffStarted) return;
-        if (revealResult === "aborted") return;
-
-        setIntroState(el, "expanding");
-        const expandResult = await waitMs(expansion, signal);
-        if (settled || handoffStarted) return;
-        if (expandResult === "aborted") return;
-
-        await waitMs(48);
-        if (settled || handoffStarted) return;
+        paintCount(100);
+        if (reduced) {
+          el.classList.add("is-reduced-exit");
+          window.setTimeout(() => {
+            if (!settled && !handoffStarted) arriveHero();
+          }, cfg.reducedRevealMs || 200);
+          return;
+        }
         arriveHero();
-        return;
-      }
-
-      const total = mobile ? cfg.totalMobileMs || cfg.totalMs : cfg.totalMs;
-      el.dataset.introTotalMs = String(total);
-      el.style.setProperty("--duration-intro", `${total}ms`);
-      const result = await waitMs(total, signal);
-      if (settled) return;
-      if (result === "aborted") return;
-      smoothExit();
+      };
+      requestAnimationFrame(frame);
     };
 
     run();

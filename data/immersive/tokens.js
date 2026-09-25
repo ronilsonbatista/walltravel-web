@@ -3,47 +3,111 @@
  * Surfaces: cream / sand / green / sage — never near-black (#111 / #151515 / #16170F as fills).
  */
 
-/** Shared ImmersiveIntro presets — home · catalog · groupCatalog · detail */
+/**
+ * Shared ImmersiveIntro presets.
+ * Same easing, mask and progress. Duration and intensity change per page.
+ * home · catalog · groupCatalog · groupDetail · experienceDetail
+ */
 export const INTRO_PRESETS = Object.freeze({
   home: Object.freeze({
     id: "home",
-    /**
-     * Reading hold — tuned by watching the opening, not a fixed timer.
-     * Desktop gives the line time to be read once, calmly.
-     * Mobile is shorter so the same signature does not feel like a wait.
-     */
-    readingMs: 4000,
-    readingMobileMs: 3000,
-    revealMs: 680,
-    revealMobileMs: 480,
-    expansionMs: 2000,
-    expansionMobileMs: 1650,
-    heroMs: 640,
-    skipMs: 820,
-    reducedReadingMs: 880,
-    reducedRevealMs: 280,
-    exitMs: 480,
+    /** Desktop ~3.8s to the hero. Mobile ~3.0s. Phrase stays readable. */
+    readingMs: 2100,
+    readingMobileMs: 1650,
+    revealMs: 380,
+    revealMobileMs: 280,
+    expansionMs: 1280,
+    expansionMobileMs: 1050,
+    heroMs: 480,
+    skipMs: 520,
+    reducedReadingMs: 420,
+    reducedRevealMs: 200,
+    contentExitMs: 220,
+    exitMs: 280,
+    handoff: "hero",
+    progress: "subtle",
+    grade: "home",
+    target: ".hero",
     sessionKey: "wt_immersive_intro_played",
   }),
   catalog: Object.freeze({
     id: "catalog",
-    totalMs: 1100,
-    totalMobileMs: 900,
-    exitMs: 280,
+    readingMs: 420,
+    readingMobileMs: 340,
+    revealMs: 160,
+    revealMobileMs: 140,
+    expansionMs: 420,
+    expansionMobileMs: 340,
+    heroMs: 0,
+    skipMs: 280,
+    reducedReadingMs: 180,
+    reducedRevealMs: 160,
+    contentExitMs: 200,
+    exitMs: 200,
+    handoff: "content",
+    progress: "compact",
+    grade: "soft",
+    target: "",
     sessionKey: "wt_page_intro_vitrine",
   }),
   groupCatalog: Object.freeze({
     id: "groupCatalog",
-    totalMs: 3200,
-    totalMobileMs: 2800,
-    exitMs: 350,
+    readingMs: 980,
+    readingMobileMs: 800,
+    revealMs: 260,
+    revealMobileMs: 200,
+    expansionMs: 980,
+    expansionMobileMs: 880,
+    heroMs: 420,
+    skipMs: 420,
+    reducedReadingMs: 280,
+    reducedRevealMs: 180,
+    contentExitMs: 200,
+    exitMs: 280,
+    handoff: "hero",
+    progress: "subtle",
+    grade: "strong",
+    target: ".group-hero",
     sessionKey: "wt_page_intro_grupos",
   }),
-  detail: Object.freeze({
-    id: "detail",
-    totalMs: 3200,
-    totalMobileMs: 2800,
-    exitMs: 350,
+  groupDetail: Object.freeze({
+    id: "groupDetail",
+    readingMs: 1000,
+    readingMobileMs: 780,
+    revealMs: 280,
+    revealMobileMs: 220,
+    expansionMs: 1100,
+    expansionMobileMs: 900,
+    heroMs: 420,
+    skipMs: 420,
+    reducedReadingMs: 280,
+    reducedRevealMs: 180,
+    contentExitMs: 200,
+    exitMs: 280,
+    handoff: "hero",
+    progress: "subtle",
+    grade: "strong",
+    target: ".group-hero",
+    sessionKeyPrefix: "wt_page_intro_",
+  }),
+  experienceDetail: Object.freeze({
+    id: "experienceDetail",
+    readingMs: 760,
+    readingMobileMs: 620,
+    revealMs: 240,
+    revealMobileMs: 200,
+    expansionMs: 880,
+    expansionMobileMs: 720,
+    heroMs: 380,
+    skipMs: 380,
+    reducedReadingMs: 220,
+    reducedRevealMs: 160,
+    contentExitMs: 200,
+    exitMs: 240,
+    handoff: "hero",
+    progress: "subtle",
+    grade: "strong",
+    target: "[data-wt-immersive-hero]",
     sessionKeyPrefix: "wt_page_intro_",
   }),
 });
@@ -64,12 +128,12 @@ export const IMMERSIVE_TOKENS = Object.freeze({
   durationFast: 200,
   durationMedium: 400,
   durationSlow: 850,
-  /** @deprecated use INTRO_PRESETS.home.stage1Ms + expansionMs */
-  introDesktopMs: 12000,
+  /** @deprecated use INTRO_PRESETS.home reading + reveal + expansion */
+  introDesktopMs: 3760,
   /** @deprecated use INTRO_PRESETS.home mobile fields */
-  introMobileMs: 11600,
-  /** @deprecated use INTRO_PRESETS.catalog.totalMs */
-  introShortMs: 1100,
+  introMobileMs: 2980,
+  /** @deprecated use INTRO_PRESETS.catalog */
+  introShortMs: 1000,
   easingStandard: "cubic-bezier(0.16, 1, 0.3, 1)",
   easingEnter: "cubic-bezier(0.16, 1, 0.3, 1)",
   easingExit: "cubic-bezier(0.4, 0, 1, 1)",
@@ -83,6 +147,8 @@ export function resolveIntroPreset(nameOrVariant = "home") {
   const key = String(nameOrVariant || "home");
   if (key === "short" || key === "vitrine") return INTRO_PRESETS.catalog;
   if (key === "grupos" || key === "groups") return INTRO_PRESETS.groupCatalog;
+  if (key === "detail" || key === "group-detail") return INTRO_PRESETS.groupDetail;
+  if (key === "experience" || key === "experience-detail") return INTRO_PRESETS.experienceDetail;
   return INTRO_PRESETS[key] || INTRO_PRESETS.home;
 }
 

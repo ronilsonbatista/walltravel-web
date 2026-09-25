@@ -14,7 +14,6 @@ import {
   TravelDetailShell,
   ImmersiveHero,
   StickyConversionCTA,
-  renderDetailPersonalityIntro,
 } from "./immersive/primitives.js";
 
 function heroSlidesFromPackage(pkg) {
@@ -169,18 +168,9 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
     excludes: pkg.notIncluded || pkg.excludes || [],
   };
 
-  const introHtml = renderDetailPersonalityIntro(
-    {
-      name: pkg.name,
-      slug: pkg.slug,
-      destinationLabel: pkg.destination || category?.name,
-      durationLabel: pkg.duration,
-      coverImageUrl: pkg.image,
-      image: pkg.image,
-    },
-    esc,
-  );
+  const introHtml = "";
 
+  const highlights = packageHighlights(pkg, esc);
   const heroHtml = ImmersiveHero({
     carouselHtml: renderTravelHeroCarousel(slides, esc),
     overlay: "strong",
@@ -195,12 +185,13 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
         <p class="group-hero-sub" data-reveal>
           ${esc([pkg.destination, pkg.duration].filter(Boolean).join(" · "))}
         </p>
-        ${packageHighlights(pkg, esc)}
+        ${highlights}
       `,
   });
 
   const includesHtml = renderIncludesExcludes(includesGroup, esc);
   const bodyHtml = `
+      <div class="group-facts-after-hero">${highlights}</div>
       <div class="section-container">
         ${renderAbout(pkg, esc)}
       </div>

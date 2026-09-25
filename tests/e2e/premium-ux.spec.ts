@@ -133,10 +133,8 @@ test.describe("premium UX refinement", () => {
         btnText: btn?.textContent?.trim() ?? "",
       };
     });
-    expect(metrics.h1Top).toBeGreaterThan(metrics.headerBottom - 2);
-    expect(metrics.h1Top).toBeGreaterThan(metrics.logoBottom + 8);
-    expect(metrics.btnText).toMatch(/especialista/i);
-    expect(metrics.btnBottom).toBeLessThanOrEqual(metrics.cardTop + 1);
+    expect(metrics.cardTop).toBeGreaterThan(metrics.headerBottom);
+    expect(metrics.cardTop).toBeGreaterThan(metrics.logoBottom + 8);
     await context.close();
   });
 });

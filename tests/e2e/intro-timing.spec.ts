@@ -31,47 +31,47 @@ test.describe("immersive intro timing", () => {
     expect(bg.body).toMatch(/rgb\(\s*246,\s*241,\s*232\s*\)/);
   });
 
-  test("first session home shows Stage 1 with ~10s presence token", async ({ page }) => {
+  test("first session home reads the line without a long hold", async ({ page }) => {
     await clearHomeIntroSession(page);
     await page.goto("/");
     const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
     await expect(intro).toBeVisible({ timeout: 5000 });
     await expect(intro).toHaveAttribute("data-intro-state", "reading", { timeout: 4000 });
     const readingMs = Number(await intro.getAttribute("data-intro-reading-ms"));
-    expect(readingMs).toBeGreaterThanOrEqual(2800);
-    expect(readingMs).toBeLessThanOrEqual(6500);
-    await expect(intro.locator("[data-intro-skip]")).toBeVisible();
+    expect(readingMs).toBeGreaterThanOrEqual(1400);
+    expect(readingMs).toBeLessThanOrEqual(2500);
+    const count = intro.locator("[data-intro-count]");
+    await expect(count).toBeVisible();
+    const early = Number(await count.textContent());
+    expect(early).toBeGreaterThanOrEqual(0);
+    expect(early).toBeLessThan(35);
+    await expect(intro.locator("[data-intro-skip]")).toHaveCount(0);
     await expect(intro.locator("[data-intro-brand]")).toContainText("WallTravel");
+    await page.waitForTimeout(700);
+    const mid = Number(await count.textContent());
+    expect(mid).toBeGreaterThan(early);
+    expect(mid).toBeLessThan(100);
   });
 
-  test("click skip exits smoothly and does not replay in session", async ({ page }) => {
+  test("intro has no skip and finishes into the hero once per session", async ({ page }) => {
     await clearHomeIntroSession(page);
     await page.goto("/");
     const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
     await expect(intro).toBeVisible();
-    await intro.locator("[data-intro-skip]").click();
-    await expect(intro).toBeHidden({ timeout: 2000 });
-    await expect(page.locator("[data-wt-page-intro][data-intro-preset='home']")).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await intro.hover();
+    await page.mouse.wheel(0, 160);
+    await page.waitForTimeout(250);
+    await expect(intro).toBeVisible();
 
+    await expect(intro).toHaveCount(0, { timeout: 6000 });
     const stored = await page.evaluate((key) => sessionStorage.getItem(key), HOME_INTRO_KEY);
     expect(stored).toBe("1");
 
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
-    await expect(page.locator("[data-wt-page-intro][data-intro-preset='home']")).toHaveCount(0);
+    await page.waitForLoadState("domcontentloaded");
+    await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
     await expect(page.locator(".hero")).toBeVisible();
-  });
-
-  test("scroll/wheel skips home intro", async ({ page }) => {
-    await clearHomeIntroSession(page);
-    await page.goto("/");
-    const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
-    await expect(intro).toBeVisible();
-    await intro.hover();
-    await page.mouse.wheel(0, 140);
-    await expect(page.locator("[data-wt-page-intro][data-intro-preset='home']")).toHaveCount(0, {
-      timeout: 2000,
-    });
   });
 
   test("reduced-motion shows a short static intro then the hero", async ({ browser }) => {
@@ -86,16 +86,6 @@ test.describe("immersive intro timing", () => {
     await context.close();
   });
 
-  test("Escape accelerates home intro into the hero", async ({ page }) => {
-    await clearHomeIntroSession(page);
-    await page.goto("/");
-    const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
-    await expect(intro).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(intro).toHaveCount(0, { timeout: 2000 });
-    await expect(page.locator(".hero-slide.active")).toHaveAttribute("data-index", "0");
-  });
-
   test("hero autoplay starts only after intro ends", async ({ page }) => {
     await clearHomeIntroSession(page);
     await page.goto("/");
@@ -108,8 +98,7 @@ test.describe("immersive intro timing", () => {
     });
     const indexDuring = await page.locator(".hero-slide.active").getAttribute("data-index");
 
-    await intro.locator("[data-intro-skip]").click();
-    await expect(intro).toHaveCount(0, { timeout: 2000 });
+    await expect(intro).toHaveCount(0, { timeout: 6000 });
     await page.waitForTimeout(200);
 
     const indexAfter = await page.locator(".hero-slide.active").getAttribute("data-index");
@@ -128,54 +117,59 @@ test.describe("immersive intro timing", () => {
     await page.goto("/grupos/grecia");
     await page.waitForLoadState("networkidle");
     await expect(page.locator("[data-wt-page-intro][data-intro-preset='home']")).toHaveCount(0);
-    const any = page.locator("[data-wt-page-intro]");
-    const count = await any.count();
-    if (count > 0) {
-      await expect(any.first()).toHaveAttribute("data-intro-preset", "detail");
-    }
+    await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
     await expect(page.locator("[data-wt-group-template]")).toBeVisible();
   });
 
-  test("catalog and groupCatalog presets mount", async ({ page }) => {
+  test("vitrine, groups and experience open without an intro", async ({ page }) => {
     await page.goto("/vitrine");
-    await page.waitForLoadState("networkidle");
-    await page.evaluate(() => {
-      try {
-        sessionStorage.removeItem("wt_page_intro_vitrine");
-      } catch {
-        /* ignore */
-      }
-    });
-    await page.goto("/vitrine");
-    const catalog = page.locator("[data-wt-page-intro][data-intro-preset='catalog']");
-    await expect(catalog).toBeVisible({ timeout: 4000 });
+    await page.waitForLoadState("domcontentloaded");
+    await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
+    await expect(page.locator(".vitrine-header")).toBeVisible();
 
-    await page.evaluate(() => {
-      try {
-        sessionStorage.removeItem("wt_page_intro_grupos");
-      } catch {
-        /* ignore */
-      }
-    });
     await page.goto("/grupos");
-    const groups = page.locator("[data-wt-page-intro][data-intro-preset='groupCatalog']");
-    await expect(groups).toBeVisible({ timeout: 4000 });
+    await page.waitForLoadState("domcontentloaded");
+    await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
+    await expect(page.locator(".groups-catalog-hero")).toBeVisible();
+
+    await page.goto("/viagens/safari-africa");
+    await page.waitForLoadState("domcontentloaded");
+    await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
   });
 
-  test("mobile interaction skips immediately", async ({ browser }) => {
+  test("mobile hero photo starts at the top", async ({ browser }) => {
     const context = await browser.newContext({
       ...devices["iPhone 12"],
-      reducedMotion: "no-preference",
+      reducedMotion: "reduce",
     });
     const page = await context.newPage();
-    await clearHomeIntroSession(page);
+    await page.addInitScript((key) => {
+      try {
+        sessionStorage.setItem(key, "1");
+      } catch {
+        /* ignore */
+      }
+    }, HOME_INTRO_KEY);
     await page.goto("/");
-    const intro = page.locator("[data-wt-page-intro][data-intro-preset='home']");
-    await expect(intro).toBeVisible();
-    await intro.click();
-    await expect(page.locator("[data-wt-page-intro][data-intro-preset='home']")).toHaveCount(0, {
-      timeout: 2000,
+    await page.waitForLoadState("domcontentloaded");
+    const box = await page.evaluate(() => {
+      const hero = document.querySelector(".hero");
+      const slide = document.querySelector(".hero-slideshow");
+      const header = document.querySelector(".header");
+      return {
+        heroTop: hero?.getBoundingClientRect().top ?? 99,
+        slideTop: slide?.getBoundingClientRect().top ?? 99,
+        headerPos: header ? getComputedStyle(header).position : "",
+        cardBg: document.querySelector(".hero-slide-card")
+          ? getComputedStyle(document.querySelector(".hero-slide-card") as Element).backgroundColor
+          : "",
+        overflow: document.documentElement.scrollWidth <= window.innerWidth + 1,
+      };
     });
+    expect(box.heroTop).toBeLessThanOrEqual(1);
+    expect(box.slideTop).toBeLessThanOrEqual(1);
+    expect(box.headerPos).toBe("fixed");
+    expect(box.overflow).toBe(true);
     await context.close();
   });
 });

@@ -35,8 +35,9 @@
       font-size:clamp(2.6rem,7vw,4.25rem);line-height:1.02;letter-spacing:-0.02em;
       color:#3F4328;margin:0
     }
-    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-accent{
-      display:block;width:3.25rem;height:1px;margin:1.15rem auto 0;background:#5C5E2E;transform:scaleX(0)
+    html.wt-intro-pending #wt-home-intro-mount .wt-intro-count{
+      margin:1.65rem 0 0;font-family:"Faculty Glyphic",Georgia,serif;font-size:clamp(1.85rem,4.2vw,2.35rem);
+      letter-spacing:0.16em;color:#5C5E2E;font-variant-numeric:tabular-nums;line-height:1
     }
     html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-line{
       font-family:"Faculty Glyphic",Georgia,serif;font-weight:400;
@@ -123,18 +124,17 @@
   <div id="home-view">
   <!-- Immersive home opening — CSS-first shell (visible before JS on first session) -->
   <div id="wt-home-intro-mount">
-    <div class="wt-page-intro wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" data-intro-state="arrival" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
+    <div class="wt-page-intro wt-page-intro--seat wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" data-intro-state="arrival" data-intro-handoff="hero" data-intro-target=".hero" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
       <div class="wt-page-intro-veil" aria-hidden="true"></div>
-      <div class="wt-home-aperture" data-intro-aperture aria-hidden="true">
+      <div class="wt-intro-aperture wt-home-aperture" data-intro-aperture data-intro-grade="home" aria-hidden="true">
         <img src="/images/vitrine/africa-do-sul.webp" alt="" width="1600" height="1600" decoding="async" fetchpriority="high">
-        <span class="wt-home-aperture-grade" aria-hidden="true"></span>
+        <span class="wt-intro-aperture-grade wt-home-aperture-grade" aria-hidden="true"></span>
       </div>
       <div class="wt-page-intro-stage">
         <p class="wt-page-intro-brand" data-intro-brand>WallTravel</p>
-        <span class="wt-page-intro-accent" data-intro-accent aria-hidden="true"></span>
         <p class="wt-page-intro-line" data-intro-line>Experiências extraordinárias desenhadas com propósito.</p>
+        <p class="wt-intro-count" data-intro-count>0</p>
       </div>
-      <button type="button" class="wt-page-intro-skip" data-intro-skip>Pular introdução</button>
     </div>
   </div>
   <script>
@@ -160,43 +160,43 @@
       <div class="hero-slide" data-index="1" data-slide-id="maldivas">
         <picture>
           <source type="image/webp" data-srcset="/images/vitrine/maldivas.webp">
-          <img data-src="/images/vitrine/maldivas.jpg" alt="Bangalôs nas Maldivas" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 45%;">
+          <img data-src="/images/vitrine/maldivas.jpg" alt="Bangalôs nas Maldivas" class="hero-slide-img" width="1024" height="1024" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="2" data-slide-id="noruega-aurora-boreal">
         <picture>
           <source type="image/webp" data-srcset="/images/vitrine/noruega-aurora.webp">
-          <img data-src="/images/vitrine/noruega-aurora.jpg" alt="Aurora Boreal na Noruega" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 40%;">
+          <img data-src="/images/vitrine/noruega-aurora.jpg" alt="Aurora Boreal na Noruega" class="hero-slide-img" width="1024" height="1024" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="3" data-slide-id="europa">
         <picture>
           <source type="image/webp" data-srcset="/images/vitrine/europa.webp">
-          <img data-src="/images/vitrine/europa.jpg" alt="Costa da Europa" class="hero-slide-img" width="1600" height="967" decoding="async" style="object-position: center 42%;">
+          <img data-src="/images/vitrine/europa.jpg" alt="Costa da Europa" class="hero-slide-img" width="1600" height="967" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="4" data-slide-id="alpes">
         <picture>
           <source type="image/webp" data-srcset="/images/vitrine/alpes.webp">
-          <img data-src="/images/vitrine/alpes.jpg" alt="Picos nevados nos Alpes" class="hero-slide-img" width="1600" height="1000" decoding="async" style="object-position: center 42%;">
+          <img data-src="/images/vitrine/alpes.jpg" alt="Picos nevados nos Alpes" class="hero-slide-img" width="1600" height="1000" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="5" data-slide-id="noronha">
         <picture>
           <source type="image/webp" data-srcset="/images/vitrine/noronha.webp">
-          <img data-src="/images/vitrine/noronha.jpg" alt="Morro Dois Irmãos em Fernando de Noronha" class="hero-slide-img" width="1600" height="1000" decoding="async" style="object-position: center 45%;">
+          <img data-src="/images/vitrine/noronha.jpg" alt="Morro Dois Irmãos em Fernando de Noronha" class="hero-slide-img" width="1600" height="1000" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="6" data-slide-id="asia">
         <picture>
           <source type="image/webp" data-srcset="/images/vitrine/asia.webp">
-          <img data-src="/images/vitrine/asia.jpg" alt="Baía com formações cársticas na Ásia" class="hero-slide-img" width="1600" height="1000" decoding="async" style="object-position: center 40%;">
+          <img data-src="/images/vitrine/asia.jpg" alt="Baía com formações cársticas na Ásia" class="hero-slide-img" width="1600" height="1000" decoding="async">
         </picture>
       </div>
       <div class="hero-slide" data-index="7" data-slide-id="usa">
         <picture>
           <source type="image/webp" data-srcset="/images/vitrine/usa.webp">
-          <img data-src="/images/vitrine/usa.jpg" alt="Canyon nos Estados Unidos" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 45%;">
+          <img data-src="/images/vitrine/usa.jpg" alt="Canyon nos Estados Unidos" class="hero-slide-img" width="1024" height="1024" decoding="async">
         </picture>
       </div>
     </div>

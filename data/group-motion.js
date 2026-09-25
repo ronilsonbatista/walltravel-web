@@ -103,7 +103,21 @@ export function initGroupHeroCarousel(root) {
   prefetchSlide(1);
   slides[0].classList.add("is-active");
   syncChrome();
-  armTimer();
+  const introHolding =
+    document.documentElement.classList.contains("wt-intro-active") ||
+    document.documentElement.classList.contains("wt-intro-pending");
+  if (introHolding) {
+    paused = true;
+    const release = () => {
+      document.removeEventListener("wt:hero-live", release);
+      if (reduced) return;
+      paused = false;
+      armTimer();
+    };
+    document.addEventListener("wt:hero-live", release);
+  } else {
+    armTimer();
+  }
 
   const pause = () => {
     paused = true;

@@ -4,8 +4,6 @@ import {
   StickyConversionCTA,
   GroupDetailTemplate,
   ImmersiveHero,
-  renderDetailPersonalityIntro,
-  renderGroupCatalogIntro,
 } from "./immersive/primitives.js";
 
 function formatMoney(priceFrom, currency = "BRL") {
@@ -804,7 +802,6 @@ export function renderGroupsCatalog(groups, esc) {
     .join("");
 
   return `<div class="groups-page group-landing-ds groups-page--chapters" data-group-over-hero>
-    ${renderGroupCatalogIntro()}
     <div class="group-hero group-hero--fullbleed groups-catalog-hero">
       ${HeroCarousel({ slides: heroSlides, name: "Viagens em grupo", esc })}
       <div class="group-hero-overlay group-hero-overlay--strong"></div>
@@ -846,7 +843,7 @@ export function renderGroupDetailPage(group, esc, WA) {
   const slides = heroGallery(group);
   const waSticky = groupWaHref(group, WA, "sticky");
   const waSpecialist = groupWaHref(group, WA, "specialist");
-  const introHtml = renderDetailPersonalityIntro(group, esc);
+  const introHtml = "";
 
   if (group.comingSoon) {
     const teaserGallery = (group.gallery || []).slice(0, 4);
@@ -919,6 +916,7 @@ export function renderGroupDetailPage(group, esc, WA) {
     });
   }
 
+  const highlights = renderHighlights(group, esc);
   const heroHtml = ImmersiveHero({
     carouselHtml: HeroCarousel({ slides, name: group.name, esc }),
     overlay: "strong",
@@ -930,11 +928,12 @@ export function renderGroupDetailPage(group, esc, WA) {
         </div>
         <h1 data-reveal>${esc(group.name)}</h1>
         ${group.description || group.shortDescription ? `<p class="group-hero-sub" data-reveal>${esc(group.description || group.shortDescription)}</p>` : ""}
-        ${renderHighlights(group, esc)}
+        ${highlights}
       `,
   });
 
   const bodyHtml = `
+      <div class="group-facts-after-hero">${highlights}</div>
       ${renderManifesto(group, esc)}
       ${renderWhyGroup(group, esc)}
       ${renderPhotoMoment(group, esc, 3)}

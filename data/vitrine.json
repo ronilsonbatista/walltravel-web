@@ -9,7 +9,7 @@
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a África do Sul com a WallTravel.",
       "objectPositionDesktop": "center 35%",
-      "objectPositionMobile": "center 30%",
+      "objectPositionMobile": "center 42%",
       "overlay": "left-heavy"
     },
     {
@@ -21,7 +21,7 @@
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para Maldivas com a WallTravel.",
       "objectPositionDesktop": "center 45%",
-      "objectPositionMobile": "center 40%",
+      "objectPositionMobile": "center top",
       "overlay": "balanced"
     },
     {
@@ -33,7 +33,7 @@
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para ver a Aurora Boreal na Noruega com a WallTravel.",
       "objectPositionDesktop": "center 40%",
-      "objectPositionMobile": "center 35%",
+      "objectPositionMobile": "center 38%",
       "overlay": "bottom-heavy"
     },
     {
@@ -45,7 +45,7 @@
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para a Europa com a WallTravel.",
       "objectPositionDesktop": "center 42%",
-      "objectPositionMobile": "center 38%",
+      "objectPositionMobile": "center 34%",
       "overlay": "left-heavy"
     },
     {
@@ -57,7 +57,7 @@
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem inspirada nos Alpes com a WallTravel.",
       "objectPositionDesktop": "center 42%",
-      "objectPositionMobile": "center 38%",
+      "objectPositionMobile": "center 28%",
       "overlay": "balanced"
     },
     {
@@ -69,7 +69,7 @@
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para Fernando de Noronha com a WallTravel.",
       "objectPositionDesktop": "center 45%",
-      "objectPositionMobile": "center 42%",
+      "objectPositionMobile": "center 32%",
       "overlay": "left-heavy"
     },
     {
@@ -93,7 +93,7 @@
       "ctaLabel": "Planejar minha viagem",
       "ctaWhatsappMessage": "Olá! Gostaria de planejar uma viagem para os Estados Unidos com a WallTravel.",
       "objectPositionDesktop": "center 45%",
-      "objectPositionMobile": "center 40%",
+      "objectPositionMobile": "center 30%",
       "overlay": "balanced"
     }
   ],
