@@ -2837,16 +2837,6 @@ a {
   max-width: 1200px;
 }
 
-@media (max-width: 768px) {
-  .groups-intro-copy {
-    padding: max(6.25rem, calc(env(safe-area-inset-top, 0px) + 5rem)) 1.25rem max(2.75rem, env(safe-area-inset-bottom, 0px));
-  }
-
-  .groups-intro-title {
-    font-size: clamp(2rem, 8vw, 2.6rem);
-  }
-}
-
 .groups-intro-title {
   color: #fff;
   font-size: clamp(2.6rem, 6vw, 4rem);
@@ -4587,8 +4577,10 @@ a {
   .group-chapter {
     grid-template-columns: 1fr;
     aspect-ratio: 3 / 4;
-    min-height: 480px;
+    min-height: 0;
     max-height: none;
+    width: 100%;
+    max-width: 100%;
   }
 
   .group-chapter--right .group-chapter-media,
@@ -4628,8 +4620,17 @@ a {
 }
 
 @media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   .groups-intro-copy {
-    padding: 6rem 1.25rem 2.5rem;
+    padding: max(6rem, calc(env(safe-area-inset-top, 0px) + 5rem)) 1.25rem max(2.5rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .groups-intro-title {
+    font-size: clamp(2rem, 8vw, 2.6rem);
   }
 
   .groups-catalog-grid,

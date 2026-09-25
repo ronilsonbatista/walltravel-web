@@ -85,7 +85,11 @@ test.describe("premium UX refinement", () => {
     const context = await browser.newContext({ ...devices["iPhone 12"], reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
+    await page.waitForFunction(() => {
+      const nav = document.getElementById("nav-menu");
+      return !!nav && window.matchMedia("(max-width: 768px)").matches && getComputedStyle(nav).visibility === "hidden";
+    });
     const leak = await page.evaluate(() => {
       const nav = document.getElementById("nav-menu");
       if (!nav || nav.classList.contains("active")) return { ok: false, reason: "menu missing or open" };
@@ -112,7 +116,7 @@ test.describe("premium UX refinement", () => {
     const context = await browser.newContext({ ...devices["iPhone 12"], reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
     const metrics = await page.evaluate(() => {
       const h1 = document.querySelector(".hero-title");
       const header = document.querySelector(".header");
