@@ -243,9 +243,10 @@ export function bindWhatsappTracking(root = document) {
   );
 }
 
-export function bindAnalyticsPageHooks(root = document) {
-  trackStorefrontEvent("page_view", { path: window.location.pathname });
-
+export function bindAnalyticsPageHooks(root = document, opts = {}) {
+  if (!opts.deferPageView) {
+    trackStorefrontEvent("page_view", { path: window.location.pathname });
+  }
   root.addEventListener(
     "focusin",
     (e) => {

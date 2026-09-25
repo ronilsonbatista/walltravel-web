@@ -2,10 +2,55 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
   <title>WallTravel — Experiências Incríveis</title>
   <meta name="description" content="WallTravel – Descubra destinos incríveis e viva experiências de viagem personalizadas. Veja diferenciais exclusivos, depoimentos reais de clientes e planeje sua próxima aventura com quem entende de viagem.">
+
+  <!-- First paint: cream shell before stylesheet (no white flash) -->
+  <style id="wt-critical-cream">
+    html{background-color:#F6F1E8;color:#16170F}
+    body{background-color:#F6F1E8;margin:0}
+    html.wt-intro-skip #wt-home-intro-mount [data-wt-page-intro]{display:none!important}
+    html.wt-intro-pending #wt-home-intro-mount [data-wt-page-intro]{
+      position:fixed;inset:0;z-index:9000;display:grid;place-items:center;
+      background:#F6F1E8;color:#16170F
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-veil{
+      position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse at 30% 20%,rgba(232,221,200,.7),transparent 55%),
+        radial-gradient(ellipse at 80% 80%,rgba(122,124,94,.14),transparent 50%),
+        #F6F1E8
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-stage{
+      position:relative;z-index:2;text-align:center;max-width:min(36rem,90vw);padding:2rem 1.25rem
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-brand{
+      font-family:Georgia,serif;font-size:clamp(2.4rem,7vw,3.75rem);line-height:1.05;color:#3F4328;margin:0
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-line{
+      margin:1rem auto 0;max-width:28rem;color:#5C5E54;font-weight:300;line-height:1.55
+    }
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-organic{display:none}
+    html.wt-intro-pending #wt-home-intro-mount .wt-page-intro-skip{opacity:0;pointer-events:none}
+    html.wt-intro-pending,html.wt-intro-pending body{overflow:hidden}
+  </style>
+  <script>
+    (function () {
+      var path = location.pathname || "/";
+      var isHome = path === "/" || path === "/index.html";
+      var skip = !isHome;
+      try {
+        if (sessionStorage.getItem("wt_immersive_intro_played") === "1") skip = true;
+      } catch (e) {}
+      try {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) skip = true;
+      } catch (e2) {}
+      document.documentElement.classList.add(skip ? "wt-intro-skip" : "wt-intro-pending");
+      document.documentElement.style.backgroundColor = "#F6F1E8";
+    })();
+  </script>
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -21,11 +66,12 @@
   
   <!-- Icons -->
   <link rel="icon" href="/assets/01_logos/01_vetor/01_simbolo/Verde escuro.svg" type="image/svg+xml">
-  
+
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="/index.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Ir para o conteúdo</a>
 
   <!-- ==========================================================================
        HEADER / NAVIGATION
@@ -36,63 +82,104 @@
         <img src="/assets/01_logos/01_vetor/02_logotipo/Verde escuro.svg" alt="WallTravel Logo" class="logo-svg">
       </a>
       
-      <button class="menu-btn" id="menu-toggle" aria-label="Abrir Menu">
+      <button class="menu-btn" id="menu-toggle" type="button" aria-label="Abrir menu" aria-controls="nav-menu" aria-expanded="false">
         <span class="menu-btn-bar"></span>
         <span class="menu-btn-bar"></span>
         <span class="menu-btn-bar"></span>
       </button>
 
-      <nav class="nav-menu" id="nav-menu">
-        <ul class="nav-menu" style="position: static; background: none; border: none; height: auto; padding: 0; width: auto; flex-direction: row;">
+      <nav class="nav-menu" id="nav-menu" aria-label="Principal">
+        <ul class="nav-menu-list">
           <li><a href="/#destinos-experiencias" class="nav-link">Destinos</a></li>
           <li><a href="/grupos" class="nav-link">Viagens em grupo</a></li>
           <li><a href="/#diferenciais" class="nav-link">Diferenciais</a></li>
           <li><a href="/#sobre" class="nav-link">Sobre nós</a></li>
-          <li><a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20minha%20próxima%20viagem%20personalizada%20com%20a%20WallTravel." target="_blank" rel="noopener" class="nav-cta">Fale com um especialista</a></li>
+          <li><a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="nav" target="_blank" rel="noopener" class="nav-cta">Fale com um especialista</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
+  <div id="main-content" tabindex="-1">
   <div id="home-view">
+  <!-- Immersive home opening — CSS-first shell (visible before JS on first session) -->
+  <div id="wt-home-intro-mount">
+    <div class="wt-page-intro wt-page-intro--home" data-wt-page-intro data-intro-preset="home" data-intro-variant="home" data-intro-session-key="wt_immersive_intro_played" aria-hidden="false" role="dialog" aria-label="Introdução WallTravel">
+      <div class="wt-page-intro-veil" aria-hidden="true"></div>
+      <div class="wt-page-intro-organic" aria-hidden="true"><span class="wt-page-intro-organic-cutout" data-intro-organic-cutout></span></div>
+      <div class="wt-page-intro-stage">
+        <p class="wt-page-intro-brand" data-intro-brand>WallTravel</p>
+        <p class="wt-page-intro-line" data-intro-line>Experiências extraordinárias desenhadas com propósito.</p>
+      </div>
+      <button type="button" class="wt-page-intro-skip" data-intro-skip>Pular introdução</button>
+    </div>
+  </div>
+  <script>
+    (function () {
+      if (!document.documentElement.classList.contains("wt-intro-skip")) return;
+      var mount = document.getElementById("wt-home-intro-mount");
+      if (mount) mount.replaceChildren();
+    })();
+  </script>
 
   <!-- ==========================================================================
        HERO / SLIDESHOW SECTION (CINEMATOGRAPHIC FULLSCREEN)
        ========================================================================== -->
-  <section class="hero" id="destinos">
+  <section class="hero" id="destinos" data-hero-overlay="left-heavy">
     <!-- Fullscreen Slideshow Background -->
     <div class="hero-slideshow" id="hero-slideshow">
-      <div class="hero-slide active" data-index="0">
-        <img src="/images/vitrine/africa.jpg" alt="Safari na África" class="hero-slide-img" fetchpriority="high">
+      <div class="hero-slide active" data-index="0" data-slide-id="africa-do-sul">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/africa-do-sul.webp">
+          <img data-src="/images/vitrine/africa-do-sul.jpg" alt="Safari na África do Sul" class="hero-slide-img" width="1600" height="1600" decoding="async" fetchpriority="high" style="object-position: center 35%;">
+        </picture>
       </div>
-      <div class="hero-slide" data-index="1">
-        <img src="/images/vitrine/maldivas.jpg" alt="Bangalôs nas Maldivas" class="hero-slide-img" loading="lazy">
+      <div class="hero-slide" data-index="1" data-slide-id="maldivas">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/maldivas.webp">
+          <img data-src="/images/vitrine/maldivas.jpg" alt="Bangalôs nas Maldivas" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 45%;">
+        </picture>
       </div>
-      <div class="hero-slide" data-index="2">
-        <img src="/images/vitrine/noruega-aurora.jpg" alt="Aurora Boreal na Noruega" class="hero-slide-img" loading="lazy">
+      <div class="hero-slide" data-index="2" data-slide-id="noruega-aurora-boreal">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/noruega-aurora.webp">
+          <img data-src="/images/vitrine/noruega-aurora.jpg" alt="Aurora Boreal na Noruega" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 40%;">
+        </picture>
       </div>
-      <div class="hero-slide" data-index="3">
-        <img src="/images/vitrine/europa.jpg" alt="Costa da Europa" class="hero-slide-img" loading="lazy">
+      <div class="hero-slide" data-index="3" data-slide-id="europa">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/europa.webp">
+          <img data-src="/images/vitrine/europa.jpg" alt="Costa da Europa" class="hero-slide-img" width="1600" height="967" decoding="async" style="object-position: center 42%;">
+        </picture>
       </div>
-      <div class="hero-slide" data-index="4">
-        <img src="/images/vitrine/nordeste.jpg" alt="Praia do Nordeste" class="hero-slide-img" loading="lazy">
+      <div class="hero-slide" data-index="4" data-slide-id="alpes">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/alpes.webp">
+          <img data-src="/images/vitrine/alpes.jpg" alt="Picos nevados nos Alpes" class="hero-slide-img" width="1600" height="1000" decoding="async" style="object-position: center 42%;">
+        </picture>
       </div>
-      <div class="hero-slide" data-index="5">
-        <img src="/images/vitrine/jalapao.jpg" alt="Fervedouros no Jalapão" class="hero-slide-img" loading="lazy">
+      <div class="hero-slide" data-index="5" data-slide-id="noronha">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/noronha.webp">
+          <img data-src="/images/vitrine/noronha.jpg" alt="Morro Dois Irmãos em Fernando de Noronha" class="hero-slide-img" width="1600" height="1000" decoding="async" style="object-position: center 45%;">
+        </picture>
       </div>
-      <div class="hero-slide" data-index="6">
-        <img src="/images/vitrine/noronha.jpg" alt="Vista de Fernando de Noronha" class="hero-slide-img" loading="lazy">
+      <div class="hero-slide" data-index="6" data-slide-id="asia">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/asia.webp">
+          <img data-src="/images/vitrine/asia.jpg" alt="Baía com formações cársticas na Ásia" class="hero-slide-img" width="1600" height="1000" decoding="async" style="object-position: center 40%;">
+        </picture>
       </div>
-      <div class="hero-slide" data-index="7">
-        <img src="/images/vitrine/asia.jpg" alt="Templo na Ásia" class="hero-slide-img" loading="lazy">
-      </div>
-      <div class="hero-slide" data-index="8">
-        <img src="/images/vitrine/usa.jpg" alt="Canyon nos Estados Unidos" class="hero-slide-img" loading="lazy">
+      <div class="hero-slide" data-index="7" data-slide-id="usa">
+        <picture>
+          <source type="image/webp" data-srcset="/images/vitrine/usa.webp">
+          <img data-src="/images/vitrine/usa.jpg" alt="Canyon nos Estados Unidos" class="hero-slide-img" width="1024" height="1024" decoding="async" style="object-position: center 45%;">
+        </picture>
       </div>
     </div>
 
-    <!-- Linear Gradient Protection Overlay -->
-    <div class="hero-overlay"></div>
+    <!-- Per-slide overlay (strength driven by data-hero-overlay on .hero) -->
+    <div class="hero-overlay" id="hero-overlay" aria-hidden="true"></div>
 
     <!-- Main Layout Container -->
     <div class="hero-container">
@@ -104,8 +191,7 @@
         <p class="hero-desc">Viajar vai além de visitar destinos: é vivenciar momentos extraordinários.</p>
         
         <div class="hero-cta-wrapper">
-          <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20minha%20próxima%20viagem%20personalizada%20com%20a%20WallTravel." target="_blank" rel="noopener" class="btn-primary" aria-label="Falar com especialista no WhatsApp">Fale com um especialista</a>
-          <a href="/#destinos-experiencias" class="btn-outline">Conhecer Destinos</a>
+          <a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="hero" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp" aria-label="Falar com especialista no WhatsApp">Fale com um especialista</a>
         </div>
       </div>
 
@@ -116,7 +202,7 @@
           <h2 class="slide-card-title" id="slide-card-title">África do Sul</h2>
           <p class="slide-card-desc" id="slide-card-desc">Safáris sob medida e hospedagens de alto luxo integradas com a natureza selvagem.</p>
         </div>
-        <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20uma%20viagem%20para%20a%20África%20com%20a%20WallTravel." target="_blank" rel="noopener" class="slide-card-cta" id="slide-card-cta" aria-label="Planejar viagem no WhatsApp">
+        <a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="hero-slide" data-wa-entity="África do Sul" target="_blank" rel="noopener" class="slide-card-cta" id="slide-card-cta" aria-label="Planejar viagem no WhatsApp">
           Planejar minha viagem
           <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21 12l-8.15-8.15-1.42 1.42 5.43 5.43H5v2z"/></svg>
         </a>
@@ -136,7 +222,7 @@
 
     <!-- Barra de Progresso e Número do Slide (Base) -->
     <div class="hero-progress-wrapper">
-      <span class="slide-number-indicator" id="slide-number-indicator">01 / 09</span>
+      <span class="slide-number-indicator" id="slide-number-indicator">01 / 08</span>
       <div class="hero-progress-nav" id="hero-progress-nav">
         <div class="progress-bar-track active" data-index="0"><div class="progress-bar-fill"></div></div>
         <div class="progress-bar-track" data-index="1"><div class="progress-bar-fill"></div></div>
@@ -146,34 +232,29 @@
         <div class="progress-bar-track" data-index="5"><div class="progress-bar-fill"></div></div>
         <div class="progress-bar-track" data-index="6"><div class="progress-bar-fill"></div></div>
         <div class="progress-bar-track" data-index="7"><div class="progress-bar-fill"></div></div>
-        <div class="progress-bar-track" data-index="8"><div class="progress-bar-fill"></div></div>
       </div>
     </div>
   </section>
 
   <!-- ==========================================================================
-       SECTION 1: DESTINOS & EXPERIÊNCIAS (PREVIA VITRINE)
+       SECTION 1: DESTINATION EXPLORER (3–4 featured — not full catalog)
        ========================================================================== -->
-  <section class="section section-alt fade-in-section" id="destinos-experiencias">
+  <section class="section section-rhythm-a fade-in-section" id="destinos-experiencias">
     <div class="section-container">
       <div class="section-header">
-        <span class="section-tag">Curadoria Singulares</span>
-        <h2 class="section-title">Destinos & Experiências</h2>
-        <p style="margin-top: 1rem; font-size: 1.05rem; color: var(--color-text-muted);">Vivências sob medida desenhadas por especialistas.</p>
+        <span class="section-tag">Curadoria WallTravel</span>
+        <h2 class="section-title">Destinos em destaque</h2>
+        <p class="section-lede">Uma seleção editorial — sinta o destino antes de explorar a vitrine completa.</p>
       </div>
 
-      <div class="destinos-grid" id="destinos-grid" aria-live="polite"></div>
-
-      <div style="text-align: center; margin-top: 4rem;">
-        <a href="/vitrine" class="btn-primary">Ver vitrine completa</a>
-      </div>
+      <div id="destinos-explorer" aria-live="polite"></div>
     </div>
   </section>
 
   <!-- ==========================================================================
-       SECTION 1: INSTITUCIONAL
+       SECTION 1: INSTITUCIONAL / CURADORIA
        ========================================================================== -->
-  <section class="section section-alt fade-in-section" id="institucional">
+  <section class="section section-rhythm-b fade-in-section" id="institucional">
     <div class="section-container">
       <div class="about-intro">
         <!-- Subtle Background Monogram -->
@@ -189,7 +270,7 @@
   <!-- ==========================================================================
        SECTION 2: SUA VIAGEM PERSONALIZADA (CARDS DE SERVIÇOS)
        ========================================================================== -->
-  <section class="section fade-in-section" id="personalizacao">
+  <section class="section section-rhythm-c fade-in-section" id="personalizacao">
     <div class="section-container">
       <div class="section-header">
         <span class="section-tag">Assessoria sob medida</span>
@@ -201,7 +282,10 @@
         <!-- Card 1: Aluguel de veículos -->
         <div class="service-card">
           <div class="service-card-img-wrapper">
-            <img src="/assets/images/service_cars.png" alt="Carro esportivo na Itália" loading="lazy">
+            <picture>
+              <source type="image/webp" srcset="/assets/images/service_cars.webp">
+              <img src="/assets/images/service_cars.jpg" alt="Carro esportivo na Itália" width="1024" height="1024" loading="lazy" decoding="async">
+            </picture>
             <div class="service-card-overlay"></div>
           </div>
           <div class="service-card-content">
@@ -210,7 +294,7 @@
               <h3 class="service-card-title">Aluguel de veículos</h3>
               <p class="service-card-desc">Com a WallTravel, você sonha e nós realizamos. Alugue veículos premium para suas viagens como: Porsche, Ferraris, etc...</p>
             </div>
-            <a href="https://wa.me/5521997138461?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20Aluguel%20de%20ve%C3%ADculos%20com%20a%20WallTravel." target="_blank" rel="noopener" class="service-card-cta">
+            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Aluguel de veículos" data-wa-message="Olá! Gostaria de saber mais sobre Aluguel de veículos com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
               Quero Alugar
               <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
             </a>
@@ -220,7 +304,10 @@
         <!-- Card 2: Aluguel de Barcos -->
         <div class="service-card">
           <div class="service-card-img-wrapper">
-            <img src="/assets/images/service_boats.png" alt="Iate no mar Mediterrâneo" loading="lazy">
+            <picture>
+              <source type="image/webp" srcset="/assets/images/service_boats.webp">
+              <img src="/assets/images/service_boats.jpg" alt="Iate no mar Mediterrâneo" width="1024" height="1024" loading="lazy" decoding="async">
+            </picture>
             <div class="service-card-overlay"></div>
           </div>
           <div class="service-card-content">
@@ -229,7 +316,7 @@
               <h3 class="service-card-title">Aluguéis de barcos</h3>
               <p class="service-card-desc">Alugue barcos e lanchas. Temos diversos parceiros pelo mundo para oferecer a melhor experiência para sua viagem.</p>
             </div>
-            <a href="https://wa.me/5521997138461?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20Aluguel%20de%20barcos%20com%20a%20WallTravel." target="_blank" rel="noopener" class="service-card-cta">
+            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Aluguel de barcos" data-wa-message="Olá! Gostaria de saber mais sobre Aluguel de barcos com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
               Quero Alugar
               <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
             </a>
@@ -239,7 +326,10 @@
         <!-- Card 3: Roteiros Personalizados -->
         <div class="service-card">
           <div class="service-card-img-wrapper">
-            <img src="/assets/images/service_itinerary.png" alt="Diário de viagem e mapas" loading="lazy">
+            <picture>
+              <source type="image/webp" srcset="/assets/images/service_itinerary.webp">
+              <img src="/assets/images/service_itinerary.jpg" alt="Diário de viagem e mapas" width="1024" height="1024" loading="lazy" decoding="async">
+            </picture>
             <div class="service-card-overlay"></div>
           </div>
           <div class="service-card-content">
@@ -248,7 +338,7 @@
               <h3 class="service-card-title">Roteiros Personalizados</h3>
               <p class="service-card-desc">Temos a experiência de encontrar os melhores roteiros conforme sua necessidade de tempo, orçamento e estilo.</p>
             </div>
-            <a href="https://wa.me/5521997138461?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20Roteiros%20Personalizados%20com%20a%20WallTravel." target="_blank" rel="noopener" class="service-card-cta">
+            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Roteiros Personalizados" data-wa-message="Olá! Gostaria de saber mais sobre Roteiros Personalizados com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
               Criar Roteiro
               <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
             </a>
@@ -262,11 +352,11 @@
   <!-- ==========================================================================
        SECTION 3: POR QUE ESCOLHER A WALLTRAVEL (DIFERENCIAIS)
        ========================================================================== -->
-  <section class="section section-alt fade-in-section" id="diferenciais">
+  <section class="section section-rhythm-a fade-in-section" id="diferenciais">
     <div class="section-container">
       <div class="section-header">
         <span class="section-tag">Diferenciais Exclusivos</span>
-        <h2 class="section-title">Por que escolher a Walltravel?</h2>
+        <h2 class="section-title">Por que escolher a WallTravel?</h2>
       </div>
 
       <div class="features-grid">
@@ -334,14 +424,14 @@
   <!-- ==========================================================================
        SECTION 4: BLOCO DE EXPERIÊNCIA PREMIUM
        ========================================================================== -->
-  <section class="section fade-in-section">
+  <section class="section section-rhythm-d fade-in-section" id="curadoria-premium">
     <div class="section-container">
       <div class="premium-block">
         <div class="premium-block-content">
           <span class="section-tag" style="margin-bottom: 1rem; display: block;">Curadoria de luxo</span>
           <h2 class="premium-block-title">Levamos vocês para qualquer lugar do mundo.</h2>
           <p class="premium-block-desc">Tenha uma experiência premium e super personalizada com a Walltravel. Cuidamos desde o começo ao fim de sua viagem.</p>
-          <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20conversar%20sobre%20uma%20viagem%20premium%20com%20a%20WallTravel." target="_blank" rel="noopener" class="btn-primary">Planejar Agora</a>
+          <a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="premium" data-wa-message="Olá! Gostaria de conversar sobre uma viagem premium com a WallTravel." target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp">Planejar Agora</a>
         </div>
         <div class="premium-block-visual">
           <img src="/assets/01_logos/01_vetor/03_monograma/beje.svg" alt="Monograma W" class="premium-monogram-svg">
@@ -353,22 +443,25 @@
   <!-- ==========================================================================
        SECTION 4.5: LUA DE MEL (HOME HIGHLIGHT)
        ========================================================================== -->
-  <section class="section fade-in-section" id="honeymoon-highlight" style="background-color: var(--bg-card); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+  <section class="section section-rhythm-b fade-in-section" id="honeymoon-highlight">
     <div class="section-container">
       <div class="honeymoon-layout">
         <!-- Left: Image -->
         <div class="honeymoon-img-wrapper">
-          <img src="/images/vitrine/lua-de-mel.jpg" alt="Lua de Mel Premium" loading="lazy">
+          <picture>
+            <source type="image/webp" srcset="/images/vitrine/lua-de-mel.webp">
+            <img src="/images/vitrine/lua-de-mel.jpg" alt="Lua de Mel Premium" width="1024" height="1024" loading="lazy" decoding="async">
+          </picture>
         </div>
         <!-- Right: Text & Info -->
         <div class="honeymoon-content">
           <span class="section-tag">Momentos Únicos</span>
           <h2 class="section-title" style="margin-bottom: 1.5rem;">Lua de mel sob medida</h2>
           <p class="honeymoon-subtitle-text" style="font-size: 1.1rem; color: var(--color-primary); margin-bottom: 1.2rem; font-weight: 400;">
-            Experiências românticas, exclusivas e desenhadas para o casal.
+            Privacidade, ritmo do casal e detalhes que só aparecem quando alguém cuida de verdade.
           </p>
           <p class="honeymoon-desc-text" style="margin-bottom: 2.2rem; font-size: 0.95rem;">
-            Da escolha do destino aos detalhes da viagem, a WallTravel cuida de cada etapa para criar uma lua de mel personalizada, leve, inesquecível e com mimos selecionados.
+            Da escolha do destino aos mimos no quarto, a WallTravel desenha uma lua de mel leve e inesquecível — sem pacote genérico.
           </p>
           <div class="honeymoon-highlights">
             <div class="honeymoon-highlight-card">
@@ -388,7 +481,7 @@
               <p>Experiências exclusivas</p>
             </div>
           </div>
-          <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20uma%20viagem%20de%20lua%20de%20mel%20com%20a%20WallTravel." target="_blank" rel="noopener" class="btn-primary" style="margin-top: 1rem;">
+          <a href="#" data-wa-cta data-wa-page-type="HONEYMOON" data-wa-placement="honeymoon" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp" style="margin-top: 1rem;">
             Planejar minha lua de mel
           </a>
         </div>
@@ -399,7 +492,7 @@
   <!-- ==========================================================================
        SECTION 5: DEPOIMENTOS (TESTIMONIALS)
        ========================================================================== -->
-  <section class="section section-alt fade-in-section">
+  <section class="section section-rhythm-c fade-in-section" id="prova-social">
     <div class="section-container">
       <div class="section-header">
         <span class="section-tag">Depoimentos</span>
@@ -460,37 +553,22 @@
   <!-- ==========================================================================
        SECTION 6: EQUIPE / SOBRE NÓS
        ========================================================================== -->
-  <section class="section fade-in-section" id="sobre">
+  <section class="section section-rhythm-a fade-in-section" id="sobre">
     <div class="section-container">
-      <div class="team-container">
-        
-        <!-- Left: Stat visual structure -->
-        <div class="team-visual">
-          <div class="team-img-wrapper" style="grid-column: span 2;">
-            <img src="/images/vitrine/europa.jpg" alt="Dubrovnik, Croácia" loading="lazy">
-          </div>
-          <div class="team-img-wrapper">
-            <img src="/images/vitrine/noronha.jpg" alt="Fernando de Noronha" loading="lazy">
-          </div>
-          <div class="team-img-wrapper">
-            <img src="/images/vitrine/caribe.jpg" alt="Curaçao, Caribe" loading="lazy">
-          </div>
-        </div>
-
-        <!-- Right: Text Content -->
+      <div class="team-container team-container--editorial">
         <div class="team-content">
           <span class="section-tag" style="margin-bottom: 1rem; display: block;">Sobre nós</span>
           <h2 class="section-title" style="margin-bottom: 2rem;">Quem está por trás das suas experiências únicas?</h2>
           
           <p class="team-lead">Somos <strong>Wallace, Weslley e Ronilson</strong> - três apaixonados por viagens que transformaram essa paixão em uma missão: criar experiências inesquecíveis para cada cliente.</p>
           
-          <p class="team-body-text">Juntos já visitamos mais de 32 países, moramos no exterior e entendemos que cada viajante é único. Por isso, criamos apenas roteiros personalizados, com o acompanhamento mais completo do mercado.</p>
+          <p class="team-body-text">Juntos já visitamos mais de 35 países, moramos no exterior e entendemos que cada viajante é único. Por isso, criamos apenas roteiros personalizados, com o acompanhamento mais completo do mercado.</p>
           
           <p class="team-body-text">Nossa experiência prática nos destinos + atendimento humanizado 24h = sua viagem dos sonhos sem preocupações.</p>
           
           <div class="team-stats">
             <div class="stat-item">
-              <h3>+32</h3>
+              <h3>+35</h3>
               <p>Países visitados</p>
             </div>
             <div class="stat-item">
@@ -499,19 +577,7 @@
             </div>
           </div>
         </div>
-
       </div>
-    </div>
-  </section>
-
-  <!-- ==========================================================================
-       CALL TO ACTION FINAL
-       ========================================================================== -->
-  <section class="cta-final fade-in-section">
-    <div class="cta-final-container">
-      <h2 class="cta-final-title">Escolha sua próxima viagem.</h2>
-      <p class="cta-final-desc">Fale com nossos especialistas e receba um roteiro sob medida.</p>
-      <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20minha%20próxima%20viagem%20personalizada%20com%20a%20WallTravel." target="_blank" rel="noopener" class="btn-primary">Fale com um especialista</a>
     </div>
   </section>
 
@@ -522,6 +588,7 @@
   <div id="category-view" class="page-view" style="display: none;"></div>
   <div id="package-view" class="page-view" style="display: none;"></div>
   <div id="groups-view" class="page-view" style="display: none;"></div>
+  </div> <!-- Fim de #main-content -->
 
   <!-- ==========================================================================
        FOOTER
@@ -534,7 +601,7 @@
         <a href="/" class="logo-link"><img src="/assets/01_logos/01_vetor/02_logotipo/Verde escuro.svg" alt="WallTravel Logo" class="footer-logo"></a>
         <p>Curadoria e assessoria para viagens de alto padrão. Roteiros desenhados exclusivamente para o seu perfil.</p>
         <p style="font-size: 0.8rem; color: var(--color-text-muted);">
-          contato@walltravel.com.br
+          <a href="mailto:agencia@walltravel.com.br">agencia@walltravel.com.br</a>
         </p>
       </div>
 
@@ -553,7 +620,7 @@
         <ul class="footer-links">
           <li><a href="/#sobre">Sobre nós</a></li>
           <li><a href="/#diferenciais">Diferenciais</a></li>
-          <li><a href="https://wa.me/5521997138461?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20WallTravel." target="_blank" rel="noopener">Contato</a></li>
+          <li><a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="footer-contato" target="_blank" rel="noopener">Contato</a></li>
         </ul>
       </div>
 
@@ -562,7 +629,7 @@
         <h4>Redes</h4>
         <ul class="footer-links">
           <li><a href="https://www.instagram.com/walltravel_/" target="_blank" rel="noopener">Instagram</a></li>
-          <li><a href="https://wa.me/5521997138461?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20WallTravel." target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="footer-whatsapp" target="_blank" rel="noopener">WhatsApp</a></li>
         </ul>
       </div>
 
@@ -576,13 +643,13 @@
       </div>
       <div class="footer-socials">
         <a href="https://www.instagram.com/walltravel_/" target="_blank" rel="noopener" class="footer-social-link">Instagram</a>
-        <a href="https://wa.me/5521997138461?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20WallTravel." target="_blank" rel="noopener" class="footer-social-link">WhatsApp</a>
+        <a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="footer-social" target="_blank" rel="noopener" class="footer-social-link">WhatsApp</a>
       </div>
     </div>
   </footer>
 
   <!-- Floating WhatsApp Button -->
-  <a href="https://wa.me/5521997138461?text=Olá!%20Gostaria%20de%20planejar%20minha%20próxima%20viagem%20personalizada%20com%20a%20WallTravel." target="_blank" rel="noopener" class="whatsapp-float" id="whatsapp-float" aria-label="Falar com especialista no WhatsApp">
+  <a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="float" target="_blank" rel="noopener" class="whatsapp-float" id="whatsapp-float" aria-label="Falar com especialista no WhatsApp" data-storefront-cta="whatsapp">
     <svg viewBox="0 0 24 24" class="whatsapp-float-icon">
       <path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.88 14c-.24.69-1.23 1.26-1.7 1.32-.47.06-.94.24-3.04-.6-2.52-1.01-4.14-3.57-4.26-3.73-.12-.17-.99-1.31-.99-2.5 0-1.19.62-1.77.84-2.01.22-.24.47-.3.63-.3.16 0 .32.01.46.01.15 0 .35-.06.55.42.2.49.69 1.68.75 1.8.06.12.1.26.02.42-.08.17-.12.27-.24.41-.12.14-.26.32-.37.43-.13.13-.26.27-.11.53.15.26.67 1.1 1.43 1.78.98.88 1.81 1.15 2.07 1.28.26.13.41.11.56-.06.15-.17.65-.75.82-1.01.17-.26.34-.22.57-.14.24.08 1.5.71 1.76.84.26.13.43.2.49.31.06.12.06.69-.18 1.38z"/>
     </svg>
