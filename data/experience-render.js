@@ -185,7 +185,6 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
         <p class="group-hero-sub" data-reveal>
           ${esc([pkg.destination, pkg.duration].filter(Boolean).join(" · "))}
         </p>
-        ${highlights}
       `,
   });
 

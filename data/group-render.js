@@ -174,8 +174,8 @@ export function renderWhyGroup(group, esc) {
   return `<section class="group-band group-band--light group-why-band" id="group-why" data-reveal>
     <div class="section-container group-band-inner">
       <div class="group-why-head">
-        <span class="section-tag">Por que em grupo</span>
-        <h2 class="group-band-title">Por que viajar com a WallTravel</h2>
+        <span class="section-tag">Diferenciais</span>
+        <h2 class="group-band-title">Por que essa expedição é diferente</h2>
       </div>
       <div class="group-why-visual">
         ${group.whyGroup
@@ -198,6 +198,43 @@ export function renderWhyGroup(group, esc) {
           })
           .join("")}
       </div>
+    </div>
+  </section>`;
+}
+
+function renderCapacitySpotlight(group, esc) {
+  if (group.groupSize == null) return "";
+  return `<section class="group-band group-band--olive group-capacity-band" data-reveal>
+    <div class="section-container group-band-inner group-capacity-inner">
+      <p class="group-capacity-kicker">Grupo limitado</p>
+      <h2 class="group-capacity-title">Apenas ${esc(String(group.groupSize))} viajantes</h2>
+      <p class="group-capacity-text">Pequeno de verdade — espaço para presença, sem virar excursão.</p>
+    </div>
+  </section>`;
+}
+
+function renderCorfuMoment(group, esc) {
+  const slug = String(group.slug || "");
+  if (!/grecia/i.test(slug) && !/corfu/i.test(group.destinationLabel || "")) return "";
+  const corfuImg =
+    (group.gallery || []).find((src) => /corfu/i.test(String(src))) ||
+    group.coverImageUrl ||
+    "";
+  return `<section class="group-band group-band--cream group-corfu-band" data-reveal>
+    <div class="section-container group-corfu-layout">
+      <div class="group-corfu-copy">
+        <span class="section-tag">Corfu</span>
+        <h2 class="group-band-title">O trecho que diferencia esta rota</h2>
+        <p class="group-editorial group-editorial--lead">Atenas, Mykonos e Santorini encontram Corfu — três noites no Jônico, fora do circuito usual.</p>
+        <p class="group-editorial">Praias de água clara, falésias verdes e o centro veneziano. É o que torna esta expedição distinta.</p>
+      </div>
+      ${
+        corfuImg
+          ? `<figure class="group-corfu-media">
+              <img src="${esc(corfuImg)}" alt="Corfu" loading="lazy" onerror="this.closest('figure')?.remove()">
+            </figure>`
+          : ""
+      }
     </div>
   </section>`;
 }
@@ -969,7 +1006,7 @@ export function renderGroupDetailPage(group, esc, WA) {
     });
   }
 
-  const highlights = renderHighlights(group, esc);
+  const dates = formatTripDates(group.departureDate, group.returnDate);
   const heroHtml = ImmersiveHero({
     carouselHtml: HeroCarousel({ slides, name: group.name, esc }),
     overlay: "strong",
@@ -980,15 +1017,22 @@ export function renderGroupDetailPage(group, esc, WA) {
           <span class="breadcrumb-active">${esc(group.name)}</span>
         </div>
         <h1 data-reveal>${esc(group.name)}</h1>
-        ${group.description || group.shortDescription ? `<p class="group-hero-sub" data-reveal>${esc(group.description || group.shortDescription)}</p>` : ""}
-        ${highlights}
+        ${dates ? `<p class="group-hero-dates" data-reveal>${esc(dates)}</p>` : ""}
+        ${group.durationLabel ? `<p class="group-hero-duration" data-reveal>${esc(group.durationLabel)}</p>` : ""}
+        ${group.destinationLabel ? `<p class="group-hero-dest" data-reveal>${esc(group.destinationLabel)}</p>` : ""}
+        ${
+          group.groupSize != null
+            ? `<p class="group-hero-capacity" data-reveal>Apenas ${esc(String(group.groupSize))} viajantes</p>`
+            : ""
+        }
       `,
   });
 
   const bodyHtml = `
-      <div class="group-facts-after-hero">${highlights}</div>
+      ${renderCapacitySpotlight(group, esc)}
       ${renderManifesto(group, esc)}
       ${renderWhyGroup(group, esc)}
+      ${renderCorfuMoment(group, esc)}
       ${renderPhotoMoment(group, esc, 3)}
       <div class="section-container">
         ${JourneyTimeline(group, esc)}

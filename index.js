@@ -145,7 +145,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // DYNAMIC SEO META-TAGS HELPER
   // ==========================================================================
   const updateSEO = (title, description, ogImage) => {
-    document.title = `${title} | WallTravel`;
+    const cleanTitle = String(title || "")
+      .replace(/\s*\|\s*WallTravel\s*$/i, "")
+      .trim() || "WallTravel";
+    document.title = `${cleanTitle} | WallTravel`;
     
     // Meta Description
     let descMeta = document.querySelector('meta[name="description"]');
@@ -158,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // OG Title
     let ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.content = title;
+    if (ogTitle) ogTitle.content = cleanTitle;
     
     // OG Description
     let ogDesc = document.querySelector('meta[property="og:description"]');
@@ -623,7 +626,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       updateSEO(
         "WallTravel — Experiências Incríveis",
-        "WallTravel – Destinos e viagens desenhadas para o seu ritmo. Planeje a próxima aventura com quem acompanha cada detalhe."
+        "WallTravel – Viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa."
       );
     } else {
       clearInterval(autoplayInterval);
@@ -773,9 +776,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const renderVitrine = () => {
     const categories = getCategories();
     const packages = typeof getPackages === "function" ? getPackages() : [];
-    const tripCount = Array.isArray(packages)
-      ? packages.length
-      : categories.reduce((sum, cat) => sum + (Number(cat.packageCount) || 0), 0);
+    const fromPackages = Array.isArray(packages) ? packages.length : 0;
+    const fromCategories = categories.reduce((sum, cat) => sum + (Number(cat.packageCount) || 0), 0);
+    const tripCount = fromPackages > 0 ? fromPackages : fromCategories;
     trackStorefrontEvent("vitrine_view", { source: getStorefrontSource() });
     
     updateSEO(
@@ -784,8 +787,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     const leadImage = categories.find((cat) => cat.image)?.image || "/images/vitrine/europa.webp";
-    const summaryChips = categories
-      .filter((cat) => (cat.packageCount || 0) > 0 || cat.image)
+    const activeCategories = categories.filter((cat) => (Number(cat.packageCount) || 0) > 0);
+    const summaryChips = activeCategories
       .slice(0, 8)
       .map(
         (cat) =>
@@ -798,21 +801,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         <img src="${esc(leadImage)}" alt="" width="1600" height="900" decoding="async">
         <figcaption>
           <h1>Vitrine de viagens</h1>
-          <p>Catálogo editorial de destinos e jornadas WallTravel.</p>
+          <p>Viagens selecionadas pela WallTravel — por destino e estilo. Personalizáveis com um especialista.</p>
         </figcaption>
       </figure>
       <div class="vitrine-header wt-vitrine-header" data-reveal>
         <div class="breadcrumb">
           <a href="/">Início</a>
           <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-active">Vitrine de viagens</span>
+          <span class="breadcrumb-active">Vitrine</span>
         </div>
-        <span class="category-meta-info">Curadoria WallTravel</span>
-        <h1 class="section-title" style="margin-bottom: 1rem;">Vitrine de viagens</h1>
-        <p class="wt-vitrine-lede">Explore viagens por destino e estilo. A conversão é falar com um especialista — sem carrinho e sem checkout.</p>
+        <p class="wt-vitrine-lede">Explore o que já está disponível. Se não encontrar o que imagina, falamos e montamos sob medida.</p>
         <div class="wt-vitrine-summary" aria-label="Resumo da vitrine">
-          <p class="wt-vitrine-summary-count"><strong>${tripCount}</strong> ${tripCount === 1 ? "viagem disponível" : "viagens disponíveis"}</p>
-          <div class="wt-vitrine-chips">${summaryChips}</div>
+          ${
+            tripCount > 0
+              ? `<p class="wt-vitrine-summary-count">
+            <strong>${tripCount}</strong>
+            <span class="wt-vitrine-summary-label">${tripCount === 1 ? "viagem para explorar" : "viagens para explorar"}</span>
+          </p>`
+              : `<p class="wt-vitrine-summary-count">
+            <span class="wt-vitrine-summary-label">Seleção WallTravel — fale com um especialista para explorar o que está disponível agora.</span>
+          </p>`
+          }
+          ${summaryChips ? `<div class="wt-vitrine-chips">${summaryChips}</div>` : ""}
         </div>
       </div>
       
@@ -822,8 +832,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       <section class="wt-vitrine-bespoke" data-reveal>
         <div class="wt-vitrine-bespoke-inner">
-          <h2>Não encontrou a viagem que procura?</h2>
-          <p>Conte para a gente o que você está planejando. Um especialista WallTravel pode criar uma viagem sob medida para você.</p>
+          <h2>Não encontrou o que procura?</h2>
+          <p>Conte o que você imagina. Um especialista WallTravel monta a viagem com você.</p>
           <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'vitrine-bespoke', source: 'vitrine-empty-intent' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">Falar com um especialista</a>
         </div>
       </section>
