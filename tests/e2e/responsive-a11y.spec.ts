@@ -93,7 +93,7 @@ test("grupos catalog uses journey chapters not package card grid", async ({ page
   await page.waitForLoadState("networkidle");
   await expect(page.locator(".groups-chapters .group-chapter")).toHaveCount(3);
   await expect(page.locator(".groups-catalog-grid .group-card")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: /viagens em grupo/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /expedições em grupo/i })).toBeVisible();
 });
 
 test("greece conversion journey order and investment price", async ({ page }) => {
@@ -156,11 +156,11 @@ test("coming soon pages show atmosphere gallery without invented price", async (
   await expect(page.locator(".group-coming-banner")).toBeVisible();
 });
 
-test("home hero has single specialty CTA and no coleções language", async ({ page }) => {
+test("home hero has specialty CTAs and no coleções language", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
-  await expect(page.locator(".hero-cta-wrapper .btn-primary")).toContainText(/fale com um especialista/i);
-  await expect(page.locator(".hero-cta-wrapper .btn-outline")).toHaveCount(0);
+  await expect(page.locator(".hero-cta-wrapper .btn-primary")).toContainText(/explorar viagens/i);
+  await expect(page.locator(".hero-cta-wrapper .btn-outline")).toContainText(/falar com especialista/i);
   await expect(page.locator("body")).not.toContainText(/coleções/i);
   await expect(page.locator("#sobre")).toContainText(/\+35/);
   await expect(page.locator(".cta-final")).toHaveCount(0);
