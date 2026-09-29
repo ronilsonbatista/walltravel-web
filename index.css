@@ -107,10 +107,60 @@ textarea:focus-visible,
   --surface-card: var(--bg-card);
   --overlay-hero: linear-gradient(
     to top,
-    rgba(63, 67, 40, 0.92) 0%,
-    rgba(63, 67, 40, 0.52) 42%,
+    rgba(63, 67, 40, 0.62) 0%,
+    rgba(63, 67, 40, 0.28) 38%,
+    rgba(63, 67, 40, 0.1) 68%,
+    transparent 100%
+  );
+  --overlay-hero-left: linear-gradient(
+      to right,
+      rgba(63, 67, 40, 0.72) 18%,
+      rgba(63, 67, 40, 0.34) 48%,
+      rgba(63, 67, 40, 0.12) 78%,
+      rgba(63, 67, 40, 0.06) 100%
+    ),
+    linear-gradient(to top, rgba(63, 67, 40, 0.28) 0%, transparent 52%);
+  --overlay-hero-balanced: linear-gradient(
+      to right,
+      rgba(63, 67, 40, 0.34) 0%,
+      rgba(63, 67, 40, 0.1) 48%,
+      rgba(63, 67, 40, 0.14) 100%
+    ),
+    linear-gradient(to top, rgba(63, 67, 40, 0.22) 0%, transparent 46%);
+  --overlay-hero-bottom: linear-gradient(
+    to top,
+    rgba(63, 67, 40, 0.68) 0%,
+    rgba(63, 67, 40, 0.32) 36%,
+    rgba(63, 67, 40, 0.1) 68%,
+    transparent 100%
+  );
+  --overlay-hero-mobile: linear-gradient(
+    to top,
+    rgba(63, 67, 40, 0.48) 0%,
+    rgba(63, 67, 40, 0.14) 28%,
+    rgba(63, 67, 40, 0.03) 48%,
+    transparent 62%
+  );
+  --overlay-group-strong: linear-gradient(
+      to right,
+      rgba(63, 67, 40, 0.7) 10%,
+      rgba(63, 67, 40, 0.36) 46%,
+      rgba(63, 67, 40, 0.12) 78%,
+      rgba(63, 67, 40, 0.05) 100%
+    ),
+    linear-gradient(to top, rgba(63, 67, 40, 0.48) 0%, rgba(63, 67, 40, 0.16) 42%, transparent 70%);
+  --overlay-mast-caption: linear-gradient(to top, rgba(63, 67, 40, 0.42), transparent);
+  --overlay-premium: linear-gradient(
+    to right,
+    rgba(63, 67, 40, 0.78) 36%,
     rgba(63, 67, 40, 0.28) 100%
   );
+
+  /* Media system — card images share one editorial ratio */
+  --media-ratio-card: 16 / 10;
+  --media-ratio-portrait: 4 / 5;
+  --media-ratio-square: 1 / 1;
+  --media-radius: var(--border-radius);
 
   /* Motion tokens — soft cubic editorial (no bounce) */
   --easing-intro: cubic-bezier(0.22, 1, 0.36, 1);
@@ -168,6 +218,37 @@ textarea:focus-visible,
   .section-header {
     max-width: 40rem;
   }
+}
+
+/* ==========================================================================
+   Media system — shared aspect frames for cards & editorial images
+   New card imagery should use .wt-media-frame (or the card wrappers below).
+   ========================================================================== */
+.wt-media-frame {
+  width: 100%;
+  aspect-ratio: var(--media-ratio-card);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: var(--media-radius);
+}
+
+.wt-media-frame--portrait {
+  aspect-ratio: var(--media-ratio-portrait);
+}
+
+.wt-media-frame--square {
+  aspect-ratio: var(--media-ratio-square);
+}
+
+.wt-media-frame img,
+.wt-media-frame picture,
+.wt-media-frame picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 /* Reset & Base Styles */
@@ -492,40 +573,20 @@ a {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(63, 67, 40, 0.88) 28%, rgba(63, 67, 40, 0.42) 62%, rgba(63, 67, 40, 0.45) 100%),
-              linear-gradient(to top, rgba(63, 67, 40, 0.48) 0%, transparent 42%);
+  background: var(--overlay-hero-left);
   z-index: 3;
 }
 
 .hero[data-hero-overlay="left-heavy"] .hero-overlay {
-  background: linear-gradient(
-      to right,
-      rgba(63, 67, 40, 0.92) 22%,
-      rgba(63, 67, 40, 0.55) 52%,
-      rgba(63, 67, 40, 0.28) 78%,
-      rgba(63, 67, 40, 0.18) 100%
-    ),
-    linear-gradient(to top, rgba(63, 67, 40, 0.42) 0%, transparent 48%);
+  background: var(--overlay-hero-left);
 }
 
 .hero[data-hero-overlay="balanced"] .hero-overlay {
-  background: linear-gradient(
-      to right,
-      rgba(63, 67, 40, 0.5) 0%,
-      rgba(63, 67, 40, 0.16) 46%,
-      rgba(63, 67, 40, 0.22) 100%
-    ),
-    linear-gradient(to top, rgba(63, 67, 40, 0.32) 0%, transparent 42%);
+  background: var(--overlay-hero-balanced);
 }
 
 .hero[data-hero-overlay="bottom-heavy"] .hero-overlay {
-  background: linear-gradient(
-    to top,
-    rgba(63, 67, 40, 0.92) 0%,
-    rgba(63, 67, 40, 0.55) 38%,
-    rgba(63, 67, 40, 0.22) 70%,
-    rgba(63, 67, 40, 0.12) 100%
-  );
+  background: var(--overlay-hero-bottom);
 }
 
 .hero-container {
@@ -868,22 +929,28 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 390px;
+  height: auto;
+  min-height: 0;
   transition: var(--transition-smooth);
   cursor: pointer;
 }
 
 .destino-card-img-wrapper {
   width: 100%;
-  height: 64%;
+  aspect-ratio: var(--media-ratio-card);
+  height: auto;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
+  border-radius: var(--media-radius) var(--media-radius) 0 0;
 }
 
 .destino-card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
   transition: var(--transition-smooth);
 }
 
@@ -977,29 +1044,35 @@ a {
   border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
-  height: 480px;
+  height: auto;
+  min-height: 0;
   overflow: hidden;
   transition: var(--transition-smooth);
 }
 
 .service-card-img-wrapper {
   width: 100%;
-  height: 48%;
+  aspect-ratio: var(--media-ratio-card);
+  height: auto;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 }
 
 .service-card-img-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
   transition: var(--transition-smooth);
 }
 
 .service-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, rgba(22, 23, 15, 0.25) 100%);
+  background: linear-gradient(to bottom, transparent 55%, rgba(63, 67, 40, 0.18) 100%);
+  pointer-events: none;
 }
 
 .service-card-content {
@@ -1113,7 +1186,7 @@ a {
 
 /* Section 5: Premium Aspirational Block — controlled WallTravel green (never near-black) */
 .premium-block {
-  background-image: linear-gradient(to right, rgba(63, 67, 40, 0.94) 40%, rgba(63, 67, 40, 0.35) 100%), url('assets/images/bg_aspirational.jpg');
+  background-image: var(--overlay-premium), url('assets/images/bg_aspirational.jpg');
   background-size: cover;
   background-position: center;
   border: 1px solid color-mix(in srgb, var(--surface-olive) 35%, transparent);
@@ -1268,8 +1341,8 @@ a {
 }
 
 .team-img-wrapper {
-  aspect-ratio: 0.8;
-  border-radius: var(--border-radius);
+  aspect-ratio: var(--media-ratio-portrait);
+  border-radius: var(--media-radius);
   overflow: hidden;
   border: 1px solid var(--border-color);
 }
@@ -1559,10 +1632,6 @@ a {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
-  
-  .service-card {
-    height: 420px;
-  }
 
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1697,13 +1766,7 @@ a {
   .hero[data-hero-overlay="left-heavy"] .hero-overlay,
   .hero[data-hero-overlay="balanced"] .hero-overlay,
   .hero[data-hero-overlay="bottom-heavy"] .hero-overlay {
-    background: linear-gradient(
-      to top,
-      rgba(63, 67, 40, 0.58) 0%,
-      rgba(63, 67, 40, 0.18) 20%,
-      rgba(63, 67, 40, 0.04) 42%,
-      transparent 58%
-    );
+    background: var(--overlay-hero-mobile);
   }
 
   .hero-slide[data-slide-id="africa-do-sul"] .hero-slide-img { object-position: center 42%; }
@@ -1823,17 +1886,13 @@ a {
   .destino-card {
     flex: 0 0 250px;
     scroll-snap-align: center;
-    height: 340px;
+    height: auto;
   }
 
   /* Services Grid to single column */
   .services-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
-  }
-
-  .service-card {
-    height: 450px;
   }
 
   /* Features Grid to single column */
@@ -1844,7 +1903,12 @@ a {
 
   /* Premium block stacking — olive, never near-black */
   .premium-block {
-    background-image: linear-gradient(to bottom, rgba(63, 67, 40, 0.96) 55%, rgba(63, 67, 40, 0.5) 100%), url('assets/images/bg_aspirational.jpg');
+    background-image: linear-gradient(
+        to bottom,
+        rgba(63, 67, 40, 0.72) 48%,
+        rgba(63, 67, 40, 0.32) 100%
+      ),
+      url('assets/images/bg_aspirational.jpg');
     background-position: center;
     flex-direction: column;
     padding: 4rem 2rem;
@@ -1991,7 +2055,8 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 420px;
+  height: auto;
+  min-height: 0;
   transition: transform var(--duration-medium, 400ms) var(--easing-enter, cubic-bezier(0.22, 1, 0.36, 1)),
     border-color var(--duration-fast, 200ms) ease,
     box-shadow var(--duration-medium, 400ms) ease;
@@ -1999,16 +2064,19 @@ a {
 
 .category-card-img-wrapper {
   width: 100%;
-  height: 55%;
+  aspect-ratio: var(--media-ratio-card);
+  height: auto;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 }
 
 .category-card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 40%;
+  object-position: center 42%;
+  display: block;
   transition: transform var(--duration-slow, 800ms) var(--easing-enter, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
@@ -2096,21 +2164,26 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 480px;
+  height: auto;
+  min-height: 0;
   transition: var(--transition-smooth);
 }
 
 .package-card-img-wrapper {
   width: 100%;
-  height: 50%;
+  aspect-ratio: var(--media-ratio-card);
+  height: auto;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 }
 
 .package-card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
   transition: var(--transition-smooth);
 }
 
@@ -2230,7 +2303,7 @@ a {
 .package-detail-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(22, 23, 15, 0.9) 15%, rgba(22, 23, 15, 0.4) 60%, transparent 100%);
+  background: var(--overlay-hero-bottom);
   z-index: 2;
 }
 
@@ -2308,8 +2381,8 @@ a {
 }
 
 .gallery-item {
-  aspect-ratio: 1.4;
-  border-radius: var(--border-radius);
+  aspect-ratio: var(--media-ratio-card);
+  border-radius: var(--media-radius);
   overflow: hidden;
   border: 1px solid var(--border-color);
   cursor: pointer;
@@ -2528,8 +2601,8 @@ a {
 
 .honeymoon-img-wrapper {
   flex: 1;
-  aspect-ratio: 1.1;
-  border-radius: var(--border-radius);
+  aspect-ratio: var(--media-ratio-card);
+  border-radius: var(--media-radius);
   overflow: hidden;
   border: 1px solid var(--border-color);
   box-shadow: 0 10px 30px rgba(22, 23, 15, 0.02);
@@ -2654,8 +2727,8 @@ a {
 }
 
 .category-hero-right {
-  aspect-ratio: 1.5;
-  border-radius: var(--border-radius);
+  aspect-ratio: var(--media-ratio-card);
+  border-radius: var(--media-radius);
   overflow: hidden;
   border: 1px solid var(--border-color);
   box-shadow: 0 12px 35px rgba(22, 23, 15, 0.02);
@@ -2774,7 +2847,7 @@ a {
     right: 0;
     bottom: 0;
     padding: 2.5rem var(--page-gutter) 1.5rem;
-    background: linear-gradient(to top, rgba(63, 67, 40, 0.5), transparent);
+    background: var(--overlay-mast-caption);
     color: #F6F1E8;
     text-align: left;
   }
@@ -2797,12 +2870,7 @@ a {
   }
 
   .group-hero-overlay--strong {
-    background: linear-gradient(
-      to top,
-      rgba(63, 67, 40, 0.58) 0%,
-      rgba(63, 67, 40, 0.16) 32%,
-      transparent 58%
-    );
+    background: var(--overlay-hero-mobile);
   }
 
   .group-hero .breadcrumb {
@@ -2925,8 +2993,8 @@ a {
   .package-detail-gallery-carousel .gallery-item {
     flex: 0 0 78%;
     scroll-snap-align: center;
-    aspect-ratio: 1.4;
-    border-radius: var(--border-radius);
+    aspect-ratio: var(--media-ratio-card);
+    border-radius: var(--media-radius);
     height: auto;
   }
 
@@ -3072,12 +3140,7 @@ a {
 .groups-intro-hero-veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(63, 67, 40, 0.92) 0%,
-    rgba(63, 67, 40, 0.45) 48%,
-    rgba(63, 67, 40, 0.25) 100%
-  );
+  background: var(--overlay-hero-bottom);
   z-index: 1;
 }
 
@@ -3127,7 +3190,7 @@ a {
   position: relative;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: var(--media-ratio-card);
   min-height: 440px;
   max-height: 620px;
   color: var(--text-inverse);
@@ -3199,8 +3262,7 @@ a {
   justify-content: flex-end;
   gap: 0.55rem;
   padding: clamp(2rem, 5vw, 3.75rem);
-  background:
-    linear-gradient(160deg, rgba(63, 67, 40, 0.92) 0%, rgba(63, 67, 40, 0.96) 100%);
+  background: color-mix(in srgb, var(--surface-olive) 92%, transparent);
 }
 
 .group-chapter-badge {
@@ -3378,7 +3440,7 @@ a {
 }
 
 .group-card-img-wrap {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: var(--media-ratio-card);
   overflow: hidden;
   background: var(--bg-color-alt);
 }
@@ -3487,15 +3549,7 @@ a {
 }
 
 .group-hero-overlay--strong {
-  background:
-    linear-gradient(
-      to right,
-      rgba(63, 67, 40, 0.88) 12%,
-      rgba(63, 67, 40, 0.52) 48%,
-      rgba(63, 67, 40, 0.22) 78%,
-      rgba(63, 67, 40, 0.12) 100%
-    ),
-    linear-gradient(to top, rgba(63, 67, 40, 0.72) 0%, rgba(63, 67, 40, 0.28) 42%, transparent 68%);
+  background: var(--overlay-group-strong);
 }
 
 .group-facts-after-hero {
@@ -3505,12 +3559,7 @@ a {
 @media (max-width: 768px) {
   .group-hero-overlay,
   .group-hero-overlay--strong {
-    background: linear-gradient(
-      to top,
-      rgba(63, 67, 40, 0.78) 0%,
-      rgba(63, 67, 40, 0.28) 34%,
-      transparent 62%
-    );
+    background: var(--overlay-hero-mobile);
   }
 
   .group-detail .group-hero .group-highlights {
@@ -4142,7 +4191,7 @@ a {
 
 .group-journey-panel-photo {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: var(--media-ratio-card);
   object-fit: cover;
   margin-bottom: 1rem;
   display: block;
@@ -4185,7 +4234,7 @@ a {
 }
 
 .group-hotel-media {
-  aspect-ratio: 4/3;
+  aspect-ratio: var(--media-ratio-card);
   overflow: hidden;
   background: var(--bg-color-alt);
   margin-bottom: 0.85rem;
@@ -4258,12 +4307,12 @@ a {
 }
 
 .group-gallery-item--tall img {
-  aspect-ratio: 3/4;
+  aspect-ratio: var(--media-ratio-portrait);
 }
 
 .group-gallery-item img {
   width: 100%;
-  aspect-ratio: 4/3;
+  aspect-ratio: var(--media-ratio-card);
   object-fit: cover;
   display: block;
   transition: transform 220ms ease;
@@ -4671,14 +4720,14 @@ a {
 
 .group-teaser-gallery-item {
   margin: 0;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: var(--media-ratio-portrait);
   overflow: hidden;
   background: var(--bg-color-alt);
 }
 
 .group-teaser-gallery-item:first-child {
   grid-column: span 2;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--media-ratio-card);
 }
 
 .group-teaser-gallery-item img {
@@ -5017,7 +5066,7 @@ a {
   .group-chapter-media {
     min-height: 0;
     height: auto;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: var(--media-ratio-portrait);
   }
 
   .group-chapter-media picture,
@@ -5419,14 +5468,7 @@ html[data-intro-state="reading"] .wt-page-intro--home .wt-page-intro-veil {
   position: absolute;
   inset: 0;
   opacity: 0;
-  background: linear-gradient(
-      to right,
-      rgba(63, 67, 40, 0.92) 22%,
-      rgba(63, 67, 40, 0.55) 52%,
-      rgba(63, 67, 40, 0.28) 78%,
-      rgba(63, 67, 40, 0.18) 100%
-    ),
-    linear-gradient(to top, rgba(63, 67, 40, 0.42) 0%, transparent 48%);
+  background: var(--overlay-hero-left);
   transition: opacity calc(var(--duration-intro-expansion, 2000ms) * 0.55) var(--easing-intro, cubic-bezier(0.22, 1, 0.36, 1));
   transition-delay: calc(var(--duration-intro-expansion, 2000ms) * 0.28);
 }
@@ -5493,19 +5535,11 @@ html[data-intro-state="skipping"] .wt-page-intro.is-playing .wt-page-intro-skip 
 }
 
 .wt-intro-aperture[data-intro-grade="strong"] .wt-home-aperture-grade {
-  background:
-    linear-gradient(
-      to right,
-      rgba(63, 67, 40, 0.88) 12%,
-      rgba(63, 67, 40, 0.52) 48%,
-      rgba(63, 67, 40, 0.22) 78%,
-      rgba(63, 67, 40, 0.12) 100%
-    ),
-    linear-gradient(to top, rgba(63, 67, 40, 0.72) 0%, rgba(63, 67, 40, 0.28) 42%, transparent 68%);
+  background: var(--overlay-group-strong);
 }
 
 .wt-intro-aperture[data-intro-grade="soft"] .wt-home-aperture-grade {
-  background: linear-gradient(to top, rgba(63, 67, 40, 0.22), transparent 62%);
+  background: linear-gradient(to top, rgba(63, 67, 40, 0.18), transparent 62%);
 }
 
 html[data-intro-state="reveal"] .wt-page-intro--catalog .wt-page-intro-stage,
@@ -6262,7 +6296,7 @@ html.wt-intro-done:not(.wt-hero-live) .group-hero-slide.is-active .group-hero-im
 
 .wt-vitrine-grid .category-card-img-wrapper {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--media-ratio-card);
   overflow: hidden;
 }
 
