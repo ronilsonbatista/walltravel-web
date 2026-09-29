@@ -31,6 +31,9 @@ test.describe("recovery compliance", () => {
     await page.goto("/grupos");
     await expect(page.locator(".group-chapter-cta").first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator(".group-chapter").first().locator(".group-chapter-cta")).toHaveText(/Ver detalhes/i);
+    await expect(page.locator(".group-chapter").first().locator(".group-chapter-dates")).toContainText(/setembro de 2027/i);
+    await expect(page.locator(".group-chapter").first().locator(".group-chapter-capacity")).toContainText(/Grupo de apenas 10 pessoas/i);
+    await expect(page.locator(".group-chapter").first().locator(".group-chapter-price-unit")).toContainText(/por pessoa/i);
     const src = await page.locator(".group-chapter").first().locator("img").first().getAttribute("src");
     expect(src).toContain("grecia-santorini");
     expect(src).not.toContain("hero-santorini.webp");

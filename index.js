@@ -677,7 +677,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
       }
     }
+    syncFloatWhatsApp(path);
   };
+
+  function syncFloatWhatsApp(path) {
+    const float = document.getElementById("whatsapp-float");
+    if (!float) return;
+    let pageType = "HOME";
+    let placement = "float";
+    let entityName = "";
+
+    if (path.startsWith("/grupos/") && path !== "/grupos/") {
+      pageType = "GROUP";
+      entityName =
+        document.querySelector("[data-wt-group-template] h1")?.textContent?.trim() ||
+        path.split("/").filter(Boolean).pop() ||
+        "";
+    } else if (path === "/grupos" || path === "/grupos/") {
+      pageType = "GROUP";
+      entityName = "viagens em grupo";
+    } else if (path.startsWith("/viagens/") || path.startsWith("/pacote/")) {
+      pageType = "VITRINE";
+      placement = "product";
+      entityName =
+        document.querySelector("#package-view h1, .group-detail h1")?.textContent?.trim() ||
+        "";
+    } else if (path.startsWith("/vitrine/")) {
+      pageType = "VITRINE";
+      placement = "category";
+      entityName =
+        document.querySelector("#category-view h1, .category-hero-left h1")?.textContent?.trim() ||
+        "";
+    } else if (path.startsWith("/vitrine")) {
+      pageType = "VITRINE";
+    }
+
+    float.setAttribute("data-wa-page-type", pageType);
+    float.setAttribute("data-wa-placement", placement);
+    if (entityName) float.setAttribute("data-wa-entity", entityName);
+    else float.removeAttribute("data-wa-entity");
+    float.removeAttribute("data-wa-message");
+    hydrateWhatsAppCTAs(float);
+  }
 
   // Click interceptor for SPA navigation
   document.addEventListener('click', (e) => {

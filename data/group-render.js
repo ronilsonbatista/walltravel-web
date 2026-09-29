@@ -14,6 +14,36 @@ function formatMoney(priceFrom, currency = "BRL") {
   return `${sym} ${n.toLocaleString("pt-BR")}`;
 }
 
+const MONTHS_PT = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+];
+
+/** Official trip window, e.g. "12 a 24 de setembro de 2027". */
+function formatTripDates(departureDate, returnDate) {
+  if (!departureDate || !returnDate) return null;
+  const dep = new Date(`${departureDate}T12:00:00`);
+  const ret = new Date(`${returnDate}T12:00:00`);
+  if (Number.isNaN(dep.getTime()) || Number.isNaN(ret.getTime())) return null;
+  if (
+    dep.getFullYear() === ret.getFullYear() &&
+    dep.getMonth() === ret.getMonth()
+  ) {
+    return `${dep.getDate()} a ${ret.getDate()} de ${MONTHS_PT[dep.getMonth()]} de ${dep.getFullYear()}`;
+  }
+  return `${dep.getDate()} de ${MONTHS_PT[dep.getMonth()]} a ${ret.getDate()} de ${MONTHS_PT[ret.getMonth()]} de ${ret.getFullYear()}`;
+}
+
 /** Thin wrapper — prefer buildWhatsAppCTA with pageType/entity when possible. */
 function waLink(WA, message, opts = {}) {
   return buildWhatsAppCTA({
@@ -653,7 +683,7 @@ export function renderTravelGallery(gallery, name, esc) {
   return renderGalleryCinematic({ gallery, name }, esc);
 }
 
-export { formatMoney, waLink, renderHeroCarouselV2, HeroCarousel };
+export { formatMoney, formatTripDates, waLink, renderHeroCarouselV2, HeroCarousel };
 
 export function renderBomSaber(group, esc) {
   if (!group.bomSaber?.length) return "";
@@ -745,12 +775,8 @@ export function renderGroupsCatalog(groups, esc) {
   const chapters = groups
     .map((g, i) => {
       const price = formatMoney(g.priceFrom, g.currency);
+      const dates = formatTripDates(g.departureDate, g.returnDate);
       const side = i % 2 === 0 ? "left" : "right";
-      const status = g.comingSoon
-        ? '<span class="group-chapter-badge">Em breve</span>'
-        : g.durationLabel
-          ? `<span class="group-chapter-badge group-chapter-badge--live">${esc(g.durationLabel)}</span>`
-          : "";
       const imgs = [g.coverImageUrl, ...(g.gallery || [])].filter(Boolean);
       const unique = [...new Set(imgs)].slice(0, 3);
       const cover = unique[0] || "";
@@ -780,27 +806,42 @@ export function renderGroupsCatalog(groups, esc) {
             </div>`
           : `<div class="group-chapter-media group-chapter-media--empty" aria-hidden="true"></div>`;
 
+      const capacity =
+        g.groupSize && !g.comingSoon
+          ? `<p class="group-chapter-capacity">Grupo de apenas ${esc(String(g.groupSize))} pessoas</p>`
+          : "";
+
       return `<a href="/grupos/${esc(g.slug)}" class="group-chapter group-chapter--${side}" data-reveal data-reveal-delay="${i * 80}">
         ${media}
         <div class="group-chapter-veil"></div>
         <div class="group-chapter-copy">
-          ${status}
-          <p class="group-chapter-kicker">${esc(g.destinationLabel || "Expedição WallTravel")}</p>
+          ${g.comingSoon ? '<span class="group-chapter-badge">Em breve</span>' : ""}
           <h2 class="group-chapter-title">${esc(g.name)}</h2>
+          ${dates && !g.comingSoon ? `<p class="group-chapter-dates">${esc(dates)}</p>` : ""}
+          ${
+            g.durationLabel && !g.comingSoon
+              ? `<p class="group-chapter-duration">${esc(g.durationLabel)}</p>`
+              : ""
+          }
+          <p class="group-chapter-kicker">${esc(g.destinationLabel || "Expedição WallTravel")}</p>
           ${
             !g.comingSoon && g.shortDescription
               ? `<p class="group-chapter-desc">${esc(g.shortDescription)}</p>`
               : ""
           }
-          <div class="group-chapter-meta">
+          <div class="group-chapter-commerce">
             ${
               price && !g.comingSoon
-                ? `<p class="group-chapter-price"><span>A partir de</span><strong>${esc(price)}</strong></p>`
+                ? `<p class="group-chapter-price">
+                    <span class="group-chapter-price-label">A partir de</span>
+                    <strong>${esc(price)}</strong>
+                    <span class="group-chapter-price-unit">por pessoa</span>
+                  </p>`
                 : g.comingSoon
                   ? `<p class="group-chapter-price group-chapter-price--soon">Datas e investimento em breve</p>`
                   : ""
             }
-            ${g.groupSize && !g.comingSoon ? `<p class="group-chapter-scarcity">Grupo de ${esc(String(g.groupSize))}</p>` : ""}
+            ${capacity}
           </div>
           <span class="group-chapter-cta${g.comingSoon ? " group-chapter-cta--soon" : ""}">${g.comingSoon ? "Quero ser avisado" : "Ver detalhes"}</span>
         </div>
@@ -965,7 +1006,7 @@ export function renderGroupDetailPage(group, esc, WA) {
 
   const stickyHtml = StickyConversionCTA({
     priceHtml: price
-      ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>`
+      ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span><span class="sticky-bottom-price-unit">por pessoa</span>`
       : `<span class="sticky-bottom-price">Fale conosco</span>`,
     ctaHref: waSticky,
     ctaLabel: group.ctaLabel || "WhatsApp",
