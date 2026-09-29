@@ -30,7 +30,7 @@ test.describe("recovery compliance", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/grupos");
     await expect(page.locator(".group-chapter-cta").first()).toBeVisible({ timeout: 15000 });
-    await expect(page.locator(".group-chapter").first().locator(".group-chapter-cta")).toHaveText(/Ver detalhes/i);
+    await expect(page.locator(".group-chapter").first().locator(".group-chapter-cta")).toHaveText(/Ver expedição/i);
     await expect(page.locator(".group-chapter").first().locator(".group-chapter-dates")).toContainText(/setembro de 2027/i);
     await expect(page.locator(".group-chapter").first().locator(".group-chapter-capacity")).toContainText(/Grupo de apenas 10 pessoas/i);
     await expect(page.locator(".group-chapter").first().locator(".group-chapter-price-unit")).toContainText(/por pessoa/i);

@@ -81,6 +81,7 @@ export const getCategoryBySlug = (slug) =>
   categories.find((c) => c.slug === slug);
 
 // Packages / experiences
+export const getPackages = () => packages;
 export const getPackagesByCategory = (categorySlug) => {
   return packages.filter(
     (p) =>

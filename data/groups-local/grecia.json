@@ -1,7 +1,7 @@
 {
   "slug": "grecia",
   "name": "Grécia 2027",
-  "shortDescription": "Atenas, Mykonos, Santorini e Corfu em treze dias, num grupo de apenas 10 pessoas, com tudo privativo, guia em português e o líder da expedição junto do início ao fim.",
+  "shortDescription": "Uma expedição por Atenas, Mykonos, Santorini e Corfu para apenas 10 viajantes, com acompanhamento WallTravel durante toda a jornada.",
   "destinationLabel": "Atenas · Mykonos · Santorini · Corfu",
   "durationLabel": "13 dias · 12 noites",
   "departureDate": "2027-09-12",
@@ -265,28 +265,15 @@
   ],
   "paymentMethods": [
     {
-      "title": "Pix",
-      "description": "À vista, com confirmação na hora."
+      "title": "Cartão à vista",
+      "description": "Pagamento integral no cartão."
     },
     {
       "title": "Cartão de crédito",
       "description": "Entrada + saldo em até 10x, com juros."
-    },
-    {
-      "title": "Cartão de débito",
-      "description": "À vista."
     }
   ],
-  "optionals": [
-    {
-      "title": "Barco rápido entre as ilhas",
-      "description": "Troca do ferry por barco rápido nos trechos Pireu–Mykonos e Mykonos–Santorini, por trecho."
-    },
-    {
-      "title": "Catamarã em Santorini",
-      "description": "Passeio pela caldeira com refeição a bordo e traslado, no dia livre."
-    }
-  ],
+  "optionals": [],
   "includes": [
     "12 noites em hotéis 4 estrelas com café da manhã: 3 em Atenas, 3 em Mykonos, 3 em Santorini e 3 em Corfu",
     "Recepção no aeroporto de Atenas e todos os traslados privativos entre aeroportos, portos e hotéis",
@@ -336,7 +323,7 @@
     },
     {
       "question": "O voo do Brasil está incluso?",
-      "answer": "Não. O pacote cobre tudo em terra na Grécia, mais os voos internos e os ferries. A WallTravel cota o voo internacional para o grupo e ajuda você a escolher."
+      "answer": "Não. A expedição cobre tudo em terra na Grécia, mais os voos internos e os ferries. A WallTravel cota o voo internacional para o grupo e ajuda você a escolher."
     },
     {
       "question": "Como funciona a alimentação?",

@@ -429,7 +429,7 @@ export function renderVitrineIntro(mediaUrl = "") {
 export function renderGroupCatalogIntro({ mediaUrl = "" } = {}) {
   return ImmersiveIntro({
     brand: "",
-    title: "Viagens em grupo",
+    title: "Expedições em grupo",
     mediaUrl,
     preset: "groupCatalog",
     sessionKey: INTRO_PRESETS.groupCatalog.sessionKey,

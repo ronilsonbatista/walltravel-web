@@ -810,6 +810,10 @@ export function renderGroupsCatalog(groups, esc) {
         g.groupSize && !g.comingSoon
           ? `<p class="group-chapter-capacity">Grupo de apenas ${esc(String(g.groupSize))} pessoas</p>`
           : "";
+      const lodging =
+        !g.comingSoon && String(g.slug || "").toLowerCase().includes("grecia")
+          ? `<p class="group-chapter-lodging">Hospedagem 4★ com café da manhã</p>`
+          : "";
 
       return `<a href="/grupos/${esc(g.slug)}" class="group-chapter group-chapter--${side}" data-reveal data-reveal-delay="${i * 80}">
         ${media}
@@ -829,6 +833,8 @@ export function renderGroupsCatalog(groups, esc) {
               ? `<p class="group-chapter-desc">${esc(g.shortDescription)}</p>`
               : ""
           }
+          ${capacity}
+          ${lodging}
           <div class="group-chapter-commerce">
             ${
               price && !g.comingSoon
@@ -841,9 +847,8 @@ export function renderGroupsCatalog(groups, esc) {
                   ? `<p class="group-chapter-price group-chapter-price--soon">Datas e investimento em breve</p>`
                   : ""
             }
-            ${capacity}
           </div>
-          <span class="group-chapter-cta${g.comingSoon ? " group-chapter-cta--soon" : ""}">${g.comingSoon ? "Quero ser avisado" : "Ver detalhes"}</span>
+          <span class="group-chapter-cta${g.comingSoon ? " group-chapter-cta--soon" : ""}">${g.comingSoon ? "Quero ser avisado" : "Ver expedição"}</span>
         </div>
       </a>`;
     })
@@ -851,17 +856,17 @@ export function renderGroupsCatalog(groups, esc) {
 
   return `<div class="groups-page group-landing-ds groups-page--chapters" data-group-over-hero>
     <div class="group-hero group-hero--fullbleed groups-catalog-hero">
-      ${HeroCarousel({ slides: heroSlides, name: "Viagens em grupo", esc })}
+      ${HeroCarousel({ slides: heroSlides, name: "Expedições em grupo", esc })}
       <div class="group-hero-overlay group-hero-overlay--strong"></div>
       <div class="group-hero-content section-container">
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a>
           <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-active">Viagens em grupo</span>
+          <span class="breadcrumb-active">Expedições em grupo</span>
         </div>
         <span class="category-meta-info">WallTravel</span>
-        <h1 class="groups-intro-title" data-reveal>Viagens em grupo</h1>
-        <p class="groups-header-desc" data-reveal>Expedições em grupo pequeno — curadoria, logística e presença WallTravel em cada destino.</p>
+        <h1 class="groups-intro-title" data-reveal>Expedições em grupo</h1>
+        <p class="groups-header-desc" data-reveal>Grupos pequenos, destinos com intenção e a WallTravel cuidando da logística — para sobrar presença no caminho.</p>
       </div>
     </div>
 
@@ -869,13 +874,13 @@ export function renderGroupsCatalog(groups, esc) {
       <div class="section-container group-manifesto-layout">
         <h2 class="group-manifesto-sticky" data-manifesto-sticky>Viajar junto muda o ritmo.</h2>
         <div class="group-manifesto-body">
-          <p class="group-editorial group-editorial--lead">Grupos pequenos, destinos com intenção e a WallTravel cuidando do que precisa estar resolvido — para sobrar presença no caminho.</p>
-          <p class="group-editorial">Cada jornada abaixo é própria: aberta para reserva ou em breve. Mostramos apenas o que já está confirmado — sem inventar o restante.</p>
+          <p class="group-editorial group-editorial--lead">Expedições com curadoria, grupos reduzidos e presença WallTravel em cada destino.</p>
+          <p class="group-editorial">Cada jornada abaixo é própria: aberta para reserva ou em breve. Mostramos apenas o que já está confirmado.</p>
         </div>
       </div>
     </section>
 
-    <div class="groups-chapters" aria-label="Viagens em grupo">
+    <div class="groups-chapters" aria-label="Expedições em grupo">
       ${chapters}
     </div>
   </div>`;
@@ -902,7 +907,7 @@ export function renderGroupDetailPage(group, esc, WA) {
       contentHtml: `
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a><span class="breadcrumb-separator">/</span>
-          <a href="/grupos">Viagens em grupo</a><span class="breadcrumb-separator">/</span>
+          <a href="/grupos">Expedições em grupo</a><span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-active">${esc(group.name)}</span>
         </div>
         <span class="group-card-badge">Em breve</span>
@@ -971,7 +976,7 @@ export function renderGroupDetailPage(group, esc, WA) {
     contentHtml: `
         <div class="breadcrumb breadcrumb--light">
           <a href="/">Início</a><span class="breadcrumb-separator">/</span>
-          <a href="/grupos">Viagens em grupo</a><span class="breadcrumb-separator">/</span>
+          <a href="/grupos">Expedições em grupo</a><span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-active">${esc(group.name)}</span>
         </div>
         <h1 data-reveal>${esc(group.name)}</h1>

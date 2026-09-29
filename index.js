@@ -3,7 +3,8 @@ import {
   getCategories,
   getFeaturedCategories,
   getCategoryBySlug, 
-  getPackagesByCategory, 
+  getPackagesByCategory,
+  getPackages,
   hydrateStorefront,
   getStorefrontSource,
   getStorefrontHydrateError,
@@ -102,21 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const updateFooterDestinosLinks = () => {
-    const list = document.getElementById('footer-destinos-links');
-    if (!list) return;
-    const categories = getCategories();
-    const dynamic = categories
-      .slice(0, 5)
-      .map(
-        (cat) =>
-          `<li><a href="/vitrine/${esc(cat.slug)}">${esc(cat.name)}</a></li>`,
-      )
-      .join('');
-    list.innerHTML = `
-      ${dynamic}
-      <li><a href="/vitrine">Vitrine completa</a></li>
-      <li><a href="/grupos">Viagens em grupo</a></li>
-    `;
+    /* Destinos column removed from footer in V1 — keep hook for hydrate safety */
   };
 
   renderHomeDestinosExplorer();
@@ -695,7 +682,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         "";
     } else if (path === "/grupos" || path === "/grupos/") {
       pageType = "GROUP";
-      entityName = "viagens em grupo";
+      entityName = "expedições em grupo";
     } else if (path.startsWith("/viagens/") || path.startsWith("/pacote/")) {
       pageType = "VITRINE";
       placement = "product";
@@ -785,36 +772,61 @@ document.addEventListener('DOMContentLoaded', async () => {
   // A. Render main Category Vitrine (/vitrine)
   const renderVitrine = () => {
     const categories = getCategories();
+    const packages = typeof getPackages === "function" ? getPackages() : [];
+    const tripCount = Array.isArray(packages)
+      ? packages.length
+      : categories.reduce((sum, cat) => sum + (Number(cat.packageCount) || 0), 0);
     trackStorefrontEvent("vitrine_view", { source: getStorefrontSource() });
     
     updateSEO(
-      "Vitrine de Viagens",
-      "Explore experiências exclusivas sob medida, divididas por estilos de viagem curados pela WallTravel."
+      "Vitrine de viagens",
+      "Catálogo WallTravel de viagens sob medida — por destino, estilo e perfil."
     );
 
     const leadImage = categories.find((cat) => cat.image)?.image || "/images/vitrine/europa.webp";
+    const summaryChips = categories
+      .filter((cat) => (cat.packageCount || 0) > 0 || cat.image)
+      .slice(0, 8)
+      .map(
+        (cat) =>
+          `<a class="wt-vitrine-chip" href="/vitrine/${esc(cat.slug)}">${esc(cat.name)}</a>`,
+      )
+      .join("");
+
     vitrineView.innerHTML = `
       <figure class="wt-vitrine-mast">
         <img src="${esc(leadImage)}" alt="" width="1600" height="900" decoding="async">
         <figcaption>
-          <h1>Vitrine de Viagens</h1>
-          <p>Experiências exclusivas, divididas por estilos de viagem.</p>
+          <h1>Vitrine de viagens</h1>
+          <p>Catálogo editorial de destinos e jornadas WallTravel.</p>
         </figcaption>
       </figure>
       <div class="vitrine-header wt-vitrine-header" data-reveal>
         <div class="breadcrumb">
           <a href="/">Início</a>
           <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-active">Vitrine</span>
+          <span class="breadcrumb-active">Vitrine de viagens</span>
         </div>
         <span class="category-meta-info">Curadoria WallTravel</span>
-        <h1 class="section-title" style="margin-bottom: 1rem;">Vitrine de Viagens</h1>
-        <p style="color: var(--color-text-muted);">Explore experiências exclusivas sob medida, divididas por estilos de viagem curados.</p>
+        <h1 class="section-title" style="margin-bottom: 1rem;">Vitrine de viagens</h1>
+        <p class="wt-vitrine-lede">Explore viagens por destino e estilo. A conversão é falar com um especialista — sem carrinho e sem checkout.</p>
+        <div class="wt-vitrine-summary" aria-label="Resumo da vitrine">
+          <p class="wt-vitrine-summary-count"><strong>${tripCount}</strong> ${tripCount === 1 ? "viagem disponível" : "viagens disponíveis"}</p>
+          <div class="wt-vitrine-chips">${summaryChips}</div>
+        </div>
       </div>
       
       <div class="vitrine-grid wt-vitrine-grid">
         ${categories.map((cat) => renderVitrineCategoryCard(cat, esc)).join('')}
       </div>
+
+      <section class="wt-vitrine-bespoke" data-reveal>
+        <div class="wt-vitrine-bespoke-inner">
+          <h2>Não encontrou a viagem que procura?</h2>
+          <p>Conte para a gente o que você está planejando. Um especialista WallTravel pode criar uma viagem sob medida para você.</p>
+          <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'vitrine-bespoke', source: 'vitrine-empty-intent' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">Falar com um especialista</a>
+        </div>
+      </section>
     `;
     vitrineView.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-revealed"));
     handleHeaderScroll();
@@ -867,7 +879,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       <!-- Search + tag filters -->
       <div class="filter-bar" id="category-filter-bar">
         <span class="filter-label">Filtrar:</span>
-        <input type="search" id="category-search" placeholder="Buscar experiência…" style="min-width:12rem;padding:0.45rem 0.75rem;border:1px solid var(--color-border,#ddd);border-radius:0.4rem;font:inherit;" />
+        <input type="search" id="category-search" placeholder="Buscar viagem…" style="min-width:12rem;padding:0.45rem 0.75rem;border:1px solid var(--color-border,#ddd);border-radius:0.4rem;font:inherit;" />
         <button class="filter-btn active" data-filter="todos" type="button">Todos</button>
         <button class="filter-btn" data-filter="lua-de-mel" type="button">Lua de Mel</button>
         <button class="filter-btn" data-filter="natureza" type="button">Natureza</button>
@@ -878,20 +890,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 1.5rem;">
         <span style="font-size: 0.85rem; color: var(--color-text-muted); font-weight: 500;" id="packages-counter">
-          ${packages.length} ${packages.length === 1 ? 'experiência localizada' : 'experiências localizadas'}
+          ${packages.length} ${packages.length === 1 ? 'viagem localizada' : 'viagens localizadas'}
         </span>
       </div>
 
       <!-- Packages Grid -->
       <div id="category-packages-container">
         ${packages.length === 0 ? `
-          <div class="empty-state-view">
-            <h2 class="empty-state-title" style="font-size: 1.5rem; color: var(--color-text);">Nenhuma experiência disponível</h2>
-            <p class="empty-state-desc">Estamos desenhando novos roteiros para esta categoria. Fale com um especialista para solicitar um planejamento personalizado.</p>
-            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category-empty', entity: { name: category.name, slug: category.slug }, customMessage: `Olá! Gostaria de solicitar um roteiro personalizado para a categoria ${category.name}.`, source: 'category-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
+          <div class="empty-state-view wt-filter-empty">
+            <h2 class="empty-state-title" style="font-size: 1.5rem; color: var(--color-text);">Não encontramos uma viagem com esses filtros.</h2>
+            <p class="empty-state-desc">Podemos criar uma opção sob medida para você.</p>
+            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category-empty', entity: { name: category.name, slug: category.slug }, customMessage: `Olá! Gostaria de solicitar um roteiro sob medida para a categoria ${category.name}.`, source: 'category-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
           </div>
         ` : `
-          <div class="packages-grid">
+          <div class="packages-grid" id="category-packages-grid">
             ${packages.map(pkg => `
               <div class="package-card" data-tags="${esc((pkg.tags || []).join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}">
                 <div class="package-card-img-wrapper">
@@ -966,7 +978,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (show) count += 1;
       });
       if (counterEl) {
-        counterEl.textContent = `${count} ${count === 1 ? 'experiência localizada' : 'experiências localizadas'}`;
+        counterEl.textContent = `${count} ${count === 1 ? 'viagem localizada' : 'viagens localizadas'}`;
+      }
+      let emptyEl = categoryView.querySelector('#category-filter-empty');
+      const grid = categoryView.querySelector('#category-packages-grid');
+      if (packageCards.length && count === 0) {
+        if (!emptyEl) {
+          emptyEl = document.createElement('div');
+          emptyEl.id = 'category-filter-empty';
+          emptyEl.className = 'empty-state-view wt-filter-empty';
+          emptyEl.innerHTML = `
+            <h2 class="empty-state-title" style="font-size: 1.5rem; color: var(--color-text);">Não encontramos uma viagem com esses filtros.</h2>
+            <p class="empty-state-desc">Podemos criar uma opção sob medida para você.</p>
+            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category-filter-empty', entity: { name: category.name, slug: category.slug }, source: 'category-filter-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
+          `;
+          categoryView.querySelector('#category-packages-container')?.appendChild(emptyEl);
+        }
+        emptyEl.style.display = 'block';
+        if (grid) grid.style.display = 'none';
+      } else if (emptyEl) {
+        emptyEl.style.display = 'none';
+        if (grid) grid.style.display = '';
       }
     };
 
@@ -1020,7 +1052,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     const groups = getGroups();
     updateSEO(
-      "Viagens em grupo",
+      "Expedições em grupo",
       "Expedições em grupo pequeno com curadoria WallTravel — destinos com intenção e logística completa.",
     );
     groupsView.innerHTML = renderGroupsCatalog(groups, esc);

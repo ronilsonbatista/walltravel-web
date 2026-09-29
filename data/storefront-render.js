@@ -10,7 +10,7 @@ function imgOnErrorAttr() {
  */
 export function renderDestinoCard(cat, esc, { href }) {
   const count = cat.packageCount || 0;
-  const countLabel = `${count} ${count === 1 ? "Pacote" : "Pacotes"}`;
+  const countLabel = `${count} ${count === 1 ? "viagem" : "viagens"}`;
   const noImgClass = cat.image ? "" : " destino-card--no-image";
   const imgBlock = cat.image
     ? `<div class="destino-card-img-wrapper">
@@ -24,7 +24,7 @@ export function renderDestinoCard(cat, esc, { href }) {
       <span class="category-card-meta">${countLabel}</span>
       <h3 class="destino-card-title">${esc(cat.name)}</h3>
       <p class="destino-card-desc">${esc(cat.description)}</p>
-      <span class="category-card-cta">Ver pacotes ${ARROW_SVG}</span>
+      <span class="category-card-cta">Ver viagens ${ARROW_SVG}</span>
     </div>
   </a>`;
 }
@@ -34,7 +34,7 @@ export function renderDestinoCard(cat, esc, { href }) {
  */
 export function renderVitrineCategoryCard(cat, esc) {
   const count = cat.packageCount || 0;
-  const countLabel = `${count} ${count === 1 ? "experiência" : "experiências"}`;
+  const countLabel = `${count} ${count === 1 ? "viagem" : "viagens"}`;
   const noImgClass = cat.image ? "" : " category-card--no-image";
   const imgBlock = cat.image
     ? `<div class="category-card-img-wrapper">
@@ -50,7 +50,7 @@ export function renderVitrineCategoryCard(cat, esc) {
         <h3 class="category-card-title">${esc(cat.name)}</h3>
         <p class="category-card-desc">${esc(cat.description)}</p>
       </div>
-      <span class="category-card-cta">Ver experiências <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21 12l-8.15-8.15-1.42 1.42 5.43 5.43H5v2z"/></svg></span>
+      <span class="category-card-cta">Ver viagens <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21 12l-8.15-8.15-1.42 1.42 5.43 5.43H5v2z"/></svg></span>
     </div>
   </a>`;
 }
