@@ -81,7 +81,7 @@ test.describe("premium UX refinement", () => {
     await context.close();
   });
 
-  test("mobile menu does not leak Destinos into viewport", async ({ browser }) => {
+  test("mobile menu does not leak Vitrine into viewport", async ({ browser }) => {
     const context = await browser.newContext({ ...devices["iPhone 12"], reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("/");
@@ -93,11 +93,15 @@ test.describe("premium UX refinement", () => {
     const leak = await page.evaluate(() => {
       const nav = document.getElementById("nav-menu");
       if (!nav || nav.classList.contains("active")) return { ok: false, reason: "menu missing or open" };
-      const dest = Array.from(nav.querySelectorAll(".nav-link")).find((a) => /destinos/i.test(a.textContent || ""));
-      const r = dest?.getBoundingClientRect();
+      const links = Array.from(nav.querySelectorAll(".nav-link"));
+      const destinos = links.find((a) => /destinos/i.test(a.textContent || ""));
+      const vitrine = links.find((a) => /vitrine/i.test(a.textContent || ""));
+      const r = vitrine?.getBoundingClientRect();
       const vw = window.innerWidth;
       return {
         ok: true,
+        hasDestinos: Boolean(destinos),
+        hasVitrine: Boolean(vitrine),
         left: r?.left ?? null,
         right: r?.right ?? null,
         vw,
@@ -106,6 +110,8 @@ test.describe("premium UX refinement", () => {
       };
     });
     expect(leak.ok).toBe(true);
+    expect(leak.hasDestinos).toBe(false);
+    expect(leak.hasVitrine).toBe(true);
     expect(leak.visibility).toBe("hidden");
     expect(leak.ariaHidden).toBe("true");
     expect(leak.left).toBeGreaterThanOrEqual(leak.vw - 1);
