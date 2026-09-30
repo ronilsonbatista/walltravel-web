@@ -202,58 +202,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyStagingNoindex();
 
   // ==========================================================================
-  // 1. STICKY HEADER SCROLL EFFECT (DYNAMIC TRANSPARENT -> SCROLLED)
-  // Shared Home header: transparent over home + group heroes; solid otherwise.
+  // 1. STICKY HEADER — always solid white (every route, scroll, desktop/mobile)
   // ==========================================================================
   const header = document.querySelector('.header');
   let groupExperienceCleanup = null;
 
-  const isHomePath = (path) => path === '/' || path === '/index.html';
-  const isGroupDetailPath = (path) =>
-    path.startsWith('/grupos/') && path !== '/grupos/' && path.length > '/grupos/'.length;
-  const isGroupsCatalogPath = (path) => path === '/grupos' || path === '/grupos/';
-  const isVitrineMastPath = (path) =>
-    path === '/vitrine' || path === '/vitrine/' || path.startsWith('/vitrine/');
-
   const handleHeaderScroll = () => {
-    const path = window.location.pathname;
-    if (isHomePath(path)) {
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-      return;
-    }
-
-    // Vitrine mast: transparent header + white nav (same treatment as home-on-dark)
-    if (isVitrineMastPath(path)) {
-      const band = document.querySelector(
-        ".wt-vitrine-mast, #category-view .category-hero-right, #package-view .group-hero",
-      );
-      if (band) {
-        const threshold = Math.max(48, band.offsetHeight * 0.45);
-        header.classList.toggle("scrolled", window.scrollY > threshold);
-        return;
-      }
-    }
-
-    if (isGroupDetailPath(path) || isGroupsCatalogPath(path)) {
-      const hero =
-        document.querySelector('[data-group-over-hero] .group-hero') ||
-        document.querySelector('[data-group-over-hero] .groups-intro-hero');
-      if (hero) {
-        const threshold = Math.max(80, hero.offsetHeight * 0.55);
-        if (window.scrollY > threshold) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-        return;
-      }
-    }
-
-    // Other subpages: solid header
+    if (!header) return;
     header.classList.add('scrolled');
   };
 
@@ -683,17 +638,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (path === '/vitrine' || path === '/vitrine/') {
         vitrineView.style.display = 'block';
         renderVitrine();
-        header.classList.remove('scrolled');
         handleHeaderScroll();
       } else if (path.startsWith('/vitrine/')) {
         categoryView.style.display = 'block';
         let categorySlug = path.substring('/vitrine/'.length);
         if (categorySlug.endsWith('/')) categorySlug = categorySlug.slice(0, -1);
         renderCategory(categorySlug);
-        header.classList.remove('scrolled');
         handleHeaderScroll();
       } else if (path.startsWith('/pacote/') || path.startsWith('/viagens/')) {
-        header.classList.add('scrolled');
+        handleHeaderScroll();
         packageView.style.display = 'block';
         const prefix = path.startsWith('/viagens/') ? '/viagens/' : '/pacote/';
         let packageSlug = path.substring(prefix.length);

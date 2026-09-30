@@ -15,8 +15,8 @@
     html{background-color:#F6F1E8;color:#16170F}
     body{background-color:#F6F1E8;margin:0}
     html.wt-intro-skip #wt-home-intro-mount{display:none!important}
-    html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:transparent}
-    html.wt-intro-skip .logo-svg{filter:brightness(0) invert(1)}
+    html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:#ffffff;border-bottom:1px solid rgba(63,67,40,0.12);box-shadow:0 8px 28px rgba(63,67,40,0.06)}
+    html.wt-intro-skip .logo-svg{filter:none}
     html.wt-intro-skip .hero{position:relative;height:100svh;min-height:100svh;overflow:hidden;background:#3F4328}
     html.wt-intro-skip .hero-slideshow,html.wt-intro-skip .hero-slide.active{position:absolute;inset:0}
     html.wt-intro-skip .hero-slide{opacity:0}
@@ -138,7 +138,7 @@
   <!-- ==========================================================================
        HEADER / NAVIGATION
        ========================================================================== -->
-  <header class="header">
+  <header class="header scrolled">
     <div class="nav-container">
       <a href="/" class="logo-link" id="nav-logo" aria-label="WallTravel Home">
         <img src="/assets/01_logos/01_vetor/02_logotipo/Verde escuro.svg" alt="WallTravel Logo" class="logo-svg">
@@ -506,8 +506,9 @@
     <div class="como-funciona-page">
       <header class="como-funciona-mast">
         <picture>
-          <source media="(max-width: 768px)" srcset="/images/vitrine/asia-kyoto-mobile.webp" type="image/webp">
-          <img src="/images/vitrine/asia-kyoto.webp" alt="" width="2000" height="1335" decoding="async" fetchpriority="high">
+          <source media="(max-width: 768px)" srcset="/images/vitrine/australia-uluru-mobile.webp" type="image/webp">
+          <source type="image/webp" srcset="/images/vitrine/australia-uluru.webp">
+          <img src="/images/vitrine/australia-uluru.jpg" alt="Uluru ao entardecer, no outback australiano" width="2000" height="1333" decoding="async" fetchpriority="high">
         </picture>
         <div class="como-funciona-mast-overlay" aria-hidden="true"></div>
         <div class="como-funciona-mast-content section-container">
