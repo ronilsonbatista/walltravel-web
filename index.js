@@ -212,6 +212,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const isGroupDetailPath = (path) =>
     path.startsWith('/grupos/') && path !== '/grupos/' && path.length > '/grupos/'.length;
   const isGroupsCatalogPath = (path) => path === '/grupos' || path === '/grupos/';
+  const isVitrineMastPath = (path) =>
+    path === '/vitrine' || path === '/vitrine/' || path.startsWith('/vitrine/');
 
   const handleHeaderScroll = () => {
     const path = window.location.pathname;
@@ -224,14 +226,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    const mobileOverlay = window.matchMedia("(max-width: 768px)").matches;
-    if (
-      mobileOverlay &&
-      (path === "/vitrine" || path === "/vitrine/" || path.startsWith("/vitrine/") || path.startsWith("/viagens/") || path.startsWith("/pacote/"))
-    ) {
-      const band = document.querySelector(".wt-vitrine-mast, #package-view .group-hero, #category-view .category-hero-right");
+    // Vitrine mast: transparent header + white nav (same treatment as home-on-dark)
+    if (isVitrineMastPath(path)) {
+      const band = document.querySelector(
+        ".wt-vitrine-mast, #category-view .category-hero-right, #package-view .group-hero",
+      );
       if (band) {
-        header.classList.toggle("scrolled", window.scrollY > Math.max(48, band.offsetHeight * 0.45));
+        const threshold = Math.max(48, band.offsetHeight * 0.45);
+        header.classList.toggle("scrolled", window.scrollY > threshold);
         return;
       }
     }
@@ -679,15 +681,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       clearInterval(autoplayInterval);
       
       if (path === '/vitrine' || path === '/vitrine/') {
-        header.classList.add('scrolled');
         vitrineView.style.display = 'block';
         renderVitrine();
+        header.classList.remove('scrolled');
+        handleHeaderScroll();
       } else if (path.startsWith('/vitrine/')) {
-        header.classList.add('scrolled');
         categoryView.style.display = 'block';
         let categorySlug = path.substring('/vitrine/'.length);
         if (categorySlug.endsWith('/')) categorySlug = categorySlug.slice(0, -1);
         renderCategory(categorySlug);
+        header.classList.remove('scrolled');
+        handleHeaderScroll();
       } else if (path.startsWith('/pacote/') || path.startsWith('/viagens/')) {
         header.classList.add('scrolled');
         packageView.style.display = 'block';
@@ -851,8 +855,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       "Catálogo WallTravel de viagens sob medida, por destino, estilo e perfil."
     );
 
-    // Fixed dark international mast: white title must stay readable (not category cover/cave).
-    const leadImage = "/images/vitrine/europa-paris-noite.webp";
+    // Darker Asia mast (not a landmark cliché); white title stays readable.
+    const leadImage = "/images/vitrine/asia-kyoto.webp";
     const activeCategories = categories.filter((cat) => (Number(cat.packageCount) || 0) > 0);
     const summaryChips = activeCategories
       .slice(0, 8)
@@ -865,8 +869,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     vitrineView.innerHTML = `
       <figure class="wt-vitrine-mast">
         <picture>
-          <source media="(max-width: 768px)" srcset="/images/vitrine/europa-paris-noite-mobile.webp" type="image/webp">
-          <img src="${esc(leadImage)}" alt="Paris à noite, vitrine WallTravel" width="2400" height="1600" decoding="async" fetchpriority="high">
+          <source media="(max-width: 768px)" srcset="/images/vitrine/asia-kyoto-mobile.webp" type="image/webp">
+          <img src="${esc(leadImage)}" alt="Ásia, vitrine WallTravel" width="2000" height="1335" decoding="async" fetchpriority="high">
         </picture>
         <figcaption>
           <h1>Vitrine de viagens</h1>
