@@ -33,7 +33,6 @@ import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
 import { publicPackageTags } from './data/platform-api.js';
 import {
-  renderHomeOpeningIntro,
   renderDestinationExplorer,
   playPageIntro,
   initDestinationExplorer,
