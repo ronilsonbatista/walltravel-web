@@ -39,6 +39,19 @@ async function getJson(path) {
   return res.json();
 }
 
+/** Internal CMS/API metadata tags must never appear on the public storefront. */
+const INTERNAL_PACKAGE_TAG_RE = /^(legacy|source)\s*:/i;
+
+export function isPublicPackageTag(tag) {
+  const value = String(tag ?? "").trim();
+  if (!value) return false;
+  return !INTERNAL_PACKAGE_TAG_RE.test(value);
+}
+
+export function publicPackageTags(tags) {
+  return (Array.isArray(tags) ? tags : []).filter(isPublicPackageTag);
+}
+
 export async function fetchPublicCategories() {
   const body = await getJson("/api/public/storefront/categories");
   if (!body?.ok || !Array.isArray(body.items)) {
@@ -211,7 +224,7 @@ export function mapProduct(apiProduct) {
       : apiProduct.coverImageUrl
         ? [apiProduct.coverImageUrl]
         : [],
-    tags: Array.isArray(apiProduct.tags) ? apiProduct.tags : [],
+    tags: publicPackageTags(apiProduct.tags),
     included: Array.isArray(apiProduct.includes) ? apiProduct.includes : [],
     notIncluded: Array.isArray(apiProduct.excludes) ? apiProduct.excludes : [],
     itinerary: Array.isArray(apiProduct.itinerary)

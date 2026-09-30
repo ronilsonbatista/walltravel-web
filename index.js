@@ -31,6 +31,7 @@ import {
 } from './data/storefront-events.js';
 import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
+import { publicPackageTags } from './data/platform-api.js';
 import {
   renderHomeOpeningIntro,
   renderDestinationExplorer,
@@ -588,6 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const categoryView = document.getElementById('category-view');
   const packageView = document.getElementById('package-view');
   const groupsView = document.getElementById('groups-view');
+  const comoFuncionaView = document.getElementById('como-funciona-view');
 
   const hideAllViews = () => {
     homeView.style.display = 'none';
@@ -595,10 +597,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     categoryView.style.display = 'none';
     packageView.style.display = 'none';
     if (groupsView) groupsView.style.display = 'none';
+    if (comoFuncionaView) comoFuncionaView.style.display = 'none';
     
     // Clean up any sticky bottom bar that might be active
     const oldSticky = document.querySelector('.sticky-bottom-bar');
     if (oldSticky) oldSticky.remove();
+  };
+
+  const scrollToHashTarget = () => {
+    const hash = window.location.hash;
+    if (!hash || hash === '#') return;
+    const target = document.querySelector(hash);
+    if (!target) return;
+    const headerHeight = header?.offsetHeight || 80;
+    window.scrollTo({
+      top: target.getBoundingClientRect().top + window.scrollY - headerHeight,
+      behavior: 'smooth',
+    });
   };
 
   // Route router logic
@@ -656,6 +671,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         let groupSlug = path.substring('/grupos/'.length);
         if (groupSlug.endsWith('/')) groupSlug = groupSlug.slice(0, -1);
         await renderGroupPage(groupSlug);
+      } else if (path === '/como-funciona' || path === '/como-funciona/') {
+        header.classList.add('scrolled');
+        if (comoFuncionaView) {
+          comoFuncionaView.style.display = 'block';
+          comoFuncionaView.querySelectorAll('.fade-in-section').forEach((el) => {
+            el.classList.add('is-visible');
+          });
+          hydrateWhatsAppCTAs(comoFuncionaView);
+        }
+        updateSEO(
+          "Como funciona | WallTravel",
+          "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem — com critério e presença."
+        );
+        if (window.location.hash) {
+          window.requestAnimationFrame(() => window.setTimeout(scrollToHashTarget, 60));
+        }
       } else {
         // Unknown route → 404 (do not silently fall back to Home)
         header.classList.add('scrolled');
@@ -700,6 +731,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         "";
     } else if (path.startsWith("/vitrine")) {
       pageType = "VITRINE";
+    } else if (path.startsWith("/como-funciona")) {
+      pageType = "ABOUT";
     }
 
     float.setAttribute("data-wa-page-type", pageType);
@@ -741,7 +774,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
         }
         
-        if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens') || path.startsWith('/grupos')) {
+        if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens') || path.startsWith('/grupos') || path.startsWith('/como-funciona')) {
           e.preventDefault();
           window.history.pushState(null, '', path + hash);
           handleRouting();
@@ -786,7 +819,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       "Catálogo WallTravel de viagens sob medida — por destino, estilo e perfil."
     );
 
-    const leadImage = categories.find((cat) => cat.image)?.image || "/images/vitrine/europa.webp";
+    // Fixed dark international mast — white title must stay readable (not category cover/cave).
+    const leadImage = "/images/vitrine/europa-paris-noite.webp";
     const activeCategories = categories.filter((cat) => (Number(cat.packageCount) || 0) > 0);
     const summaryChips = activeCategories
       .slice(0, 8)
@@ -798,7 +832,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     vitrineView.innerHTML = `
       <figure class="wt-vitrine-mast">
-        <img src="${esc(leadImage)}" alt="" width="1600" height="900" decoding="async">
+        <picture>
+          <source media="(max-width: 768px)" srcset="/images/vitrine/europa-paris-noite-mobile.webp" type="image/webp">
+          <img src="${esc(leadImage)}" alt="Paris à noite — vitrine WallTravel" width="2400" height="1600" decoding="async" fetchpriority="high">
+        </picture>
         <figcaption>
           <h1>Vitrine de viagens</h1>
           <p>Viagens selecionadas pela WallTravel — por destino e estilo. Personalizáveis com um especialista.</p>
@@ -914,16 +951,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         ` : `
           <div class="packages-grid" id="category-packages-grid">
-            ${packages.map(pkg => `
-              <div class="package-card" data-tags="${esc((pkg.tags || []).join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}">
+            ${packages.map(pkg => {
+              const visibleTags = publicPackageTags(pkg.tags);
+              return `
+              <div class="package-card" data-tags="${esc(visibleTags.join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}">
                 <div class="package-card-img-wrapper">
                   <img src="${esc(pkg.image)}" alt="${esc(pkg.name)}" class="package-card-img" width="800" height="600" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 33vw" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
                 </div>
                 <div class="package-card-content">
                   <div>
+                    ${visibleTags.length ? `
                     <div class="package-card-tags">
-                      ${(pkg.tags || []).map(tag => `<span class="package-tag">${esc(tag)}</span>`).join('')}
-                    </div>
+                      ${visibleTags.map(tag => `<span class="package-tag">${esc(tag)}</span>`).join('')}
+                    </div>` : ""}
                     <h3 class="package-card-title">${esc(pkg.name)}</h3>
                     <div class="package-card-meta-line">
                       <div class="package-card-meta-item">
@@ -955,7 +995,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   </div>
                 </div>
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         `}
       </div>
