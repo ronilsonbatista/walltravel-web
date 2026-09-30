@@ -388,6 +388,14 @@ a {
   transition: background-color 280ms ease, border-color 280ms ease, box-shadow 280ms ease, padding 280ms ease;
 }
 
+/* Home at top of hero: transparent overlay (white logo/nav). */
+html.wt-route-home .header:not(.scrolled) {
+  padding: 0;
+  background-color: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
 .header.scrolled {
   padding: 0.15rem 0;
   background-color: #ffffff;
@@ -414,8 +422,12 @@ a {
 .logo-svg {
   height: 100%;
   width: auto;
-  filter: none; /* Dark logo on solid white header */
+  filter: none; /* Dark logo on solid white header (default) */
   transition: var(--transition-smooth);
+}
+
+html.wt-route-home .header:not(.scrolled) .logo-svg {
+  filter: brightness(0) invert(1); /* White logo over home hero */
 }
 
 .header.scrolled .logo-svg {
@@ -449,6 +461,10 @@ a {
   padding: 0.4rem 0;
 }
 
+html.wt-route-home .header:not(.scrolled) .nav-link {
+  color: rgba(255, 255, 255, 0.88);
+}
+
 .header.scrolled .nav-link {
   color: var(--color-text-muted);
 }
@@ -466,6 +482,10 @@ a {
 
 .nav-link:hover {
   color: var(--color-text);
+}
+
+html.wt-route-home .header:not(.scrolled) .nav-link:hover {
+  color: #FFFFFF;
 }
 
 .header.scrolled .nav-link:hover {
@@ -527,6 +547,10 @@ a {
   margin: 4px 0;
   background-color: var(--color-text); /* Dark hamburger on solid white header */
   transition: var(--transition-smooth);
+}
+
+html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
+  background-color: #FFFFFF; /* White hamburger over home hero */
 }
 
 .header.scrolled .menu-btn-bar {

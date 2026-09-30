@@ -17,6 +17,8 @@
     html.wt-intro-skip #wt-home-intro-mount{display:none!important}
     html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:#ffffff;border-bottom:1px solid rgba(63,67,40,0.12);box-shadow:0 8px 28px rgba(63,67,40,0.06)}
     html.wt-intro-skip .logo-svg{filter:none}
+    html.wt-route-home.wt-intro-skip .header:not(.scrolled){background:transparent;border-bottom:1px solid rgba(255,255,255,0.1);box-shadow:none}
+    html.wt-route-home.wt-intro-skip .header:not(.scrolled) .logo-svg{filter:brightness(0) invert(1)}
     html.wt-intro-skip .hero{position:relative;height:100svh;min-height:100svh;overflow:hidden;background:#3F4328}
     html.wt-intro-skip .hero-slideshow,html.wt-intro-skip .hero-slide.active{position:absolute;inset:0}
     html.wt-intro-skip .hero-slide{opacity:0}
@@ -87,6 +89,7 @@
         reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       } catch (e2) {}
       var root = document.documentElement;
+      root.classList.toggle("wt-route-home", isHome);
       if (skip) {
         root.classList.add("wt-intro-skip", "wt-hero-live");
         root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
@@ -138,7 +141,7 @@
   <!-- ==========================================================================
        HEADER / NAVIGATION
        ========================================================================== -->
-  <header class="header scrolled">
+  <header class="header">
     <div class="nav-container">
       <a href="/" class="logo-link" id="nav-logo" aria-label="WallTravel Home">
         <img src="/assets/01_logos/01_vetor/02_logotipo/Verde escuro.svg" alt="WallTravel Logo" class="logo-svg">

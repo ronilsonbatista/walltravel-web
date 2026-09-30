@@ -202,13 +202,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyStagingNoindex();
 
   // ==========================================================================
-  // 1. STICKY HEADER — always solid white (every route, scroll, desktop/mobile)
+  // 1. STICKY HEADER
+  // Home: transparent over hero (white logo/nav), solid white after scroll.
+  // All other routes: solid white header (dark logo/links) always.
   // ==========================================================================
   const header = document.querySelector('.header');
   let groupExperienceCleanup = null;
 
+  const isHomePath = (path) => path === '/' || path === '/index.html';
+
   const handleHeaderScroll = () => {
     if (!header) return;
+    const path = window.location.pathname;
+    if (isHomePath(path)) {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+      return;
+    }
     header.classList.add('scrolled');
   };
 
@@ -571,6 +580,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const syncHomeIntroForRoute = (path) => {
     const root = document.documentElement;
     const mount = document.getElementById('wt-home-intro-mount');
+    root.classList.toggle("wt-route-home", isHomePathname(path));
     if (isHomePathname(path)) {
       if (!mount?.querySelector("[data-wt-page-intro]") && !root.classList.contains("wt-intro-skip")) {
         root.classList.add("wt-intro-skip", "wt-hero-live");
@@ -678,7 +688,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       } else {
         // Unknown route → 404 (do not silently fall back to Home)
-        header.classList.add('scrolled');
         packageView.style.display = 'block';
         renderEmptyState(
           packageView,
@@ -686,6 +695,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           "O endereço que você tentou abrir não existe ou foi removido."
         );
       }
+      handleHeaderScroll();
     }
     syncFloatWhatsApp(path);
   };
