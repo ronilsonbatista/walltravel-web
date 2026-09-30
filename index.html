@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#F6F1E8">
   
-  <title>WallTravel — Experiências Incríveis</title>
-  <meta name="description" content="WallTravel – Viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa.">
+  <title>WallTravel | Experiências Incríveis</title>
+  <meta name="description" content="WallTravel: viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa.">
 
   <!-- First paint: cream + wordmark before stylesheet or JS (no white flash) -->
   <link rel="preload" href="/assets/03_tipografia/01_titulo/FacultyGlyphic-Regular.ttf" as="font" type="font/ttf" crossorigin>
@@ -15,8 +15,10 @@
     html{background-color:#F6F1E8;color:#16170F}
     body{background-color:#F6F1E8;margin:0}
     html.wt-intro-skip #wt-home-intro-mount{display:none!important}
-    html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:transparent}
-    html.wt-intro-skip .logo-svg{filter:brightness(0) invert(1)}
+    html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:#ffffff;border-bottom:1px solid rgba(63,67,40,0.12);box-shadow:0 8px 28px rgba(63,67,40,0.06)}
+    html.wt-intro-skip .logo-svg{filter:none}
+    html.wt-route-home.wt-intro-skip .header:not(.scrolled){background:transparent;border-bottom:1px solid rgba(255,255,255,0.1);box-shadow:none}
+    html.wt-route-home.wt-intro-skip .header:not(.scrolled) .logo-svg{filter:brightness(0) invert(1)}
     html.wt-intro-skip .hero{position:relative;height:100svh;min-height:100svh;overflow:hidden;background:#3F4328}
     html.wt-intro-skip .hero-slideshow,html.wt-intro-skip .hero-slide.active{position:absolute;inset:0}
     html.wt-intro-skip .hero-slide{opacity:0}
@@ -87,8 +89,10 @@
         reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       } catch (e2) {}
       var root = document.documentElement;
+      root.classList.toggle("wt-route-home", isHome);
       if (skip) {
         root.classList.add("wt-intro-skip", "wt-hero-live");
+        root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
         root.dataset.introPhase = "hero-live";
         var theme = document.querySelector('meta[name="theme-color"]');
         if (theme) theme.setAttribute("content", "#3F4328");
@@ -114,14 +118,14 @@
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="WallTravel — Experiências Incríveis">
-  <meta property="og:description" content="WallTravel – Viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa.">
+  <meta property="og:title" content="WallTravel | Experiências Incríveis">
+  <meta property="og:description" content="WallTravel: viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa.">
   <meta property="og:image" content="/images/vitrine/noronha.jpg">
   
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="WallTravel — Experiências Incríveis">
-  <meta name="twitter:description" content="WallTravel – Viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa.">
+  <meta name="twitter:title" content="WallTravel | Experiências Incríveis">
+  <meta name="twitter:description" content="WallTravel: viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa.">
   <meta name="twitter:image" content="/images/vitrine/noronha.jpg">
   
   <!-- Icons -->
@@ -153,8 +157,8 @@
         <ul class="nav-menu-list">
           <li><a href="/vitrine" class="nav-link">Vitrine</a></li>
           <li><a href="/grupos" class="nav-link">Expedições em grupo</a></li>
+          <li><a href="/como-funciona" class="nav-link">Como funciona</a></li>
           <li><a href="/#sobre" class="nav-link">Sobre nós</a></li>
-          <li><a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="nav" target="_blank" rel="noopener" class="nav-link">Contato</a></li>
           <li><a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-placement="nav-cta" target="_blank" rel="noopener" class="nav-cta">Fale com um especialista</a></li>
         </ul>
       </nav>
@@ -182,13 +186,19 @@
   <script>
     (function () {
       var root = document.documentElement;
-      if (root.classList.contains("wt-intro-skip")) {
+      var path = location.pathname || "/";
+      var isHome = path === "/" || path === "/index.html";
+      // Home-only: never animate splash on vitrine/grupos/como-funciona/etc.
+      if (!isHome || root.classList.contains("wt-intro-skip")) {
+        root.classList.add("wt-intro-skip", "wt-hero-live");
+        root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+        root.dataset.introPhase = "hero-live";
         var skipped = document.getElementById("wt-home-intro-mount");
         if (skipped) skipped.replaceChildren();
         window.__wtHomeIntro = Promise.resolve(false);
         return;
       }
-      var el = document.querySelector("[data-wt-page-intro]");
+      var el = document.querySelector("#wt-home-intro-mount [data-wt-page-intro][data-intro-preset='home']");
       if (!el) {
         window.__wtHomeIntro = Promise.resolve(false);
         return;
@@ -273,6 +283,9 @@
           else finish();
         }, reading + fadeMs + 1200);
         clock = window.setTimeout(frame, 32);
+        window.__wtAbortHomeIntro = function () {
+          finish();
+        };
       });
     })();
   </script>
@@ -345,7 +358,7 @@
       <div class="hero-left">
         <span class="hero-subtitle">Curadoria de viagens</span>
         <h1 class="hero-title">Experiências extraordinárias desenhadas com propósito.</h1>
-        <p class="hero-desc">Planejamos cada etapa da viagem de acordo com o seu perfil — com clareza, cuidado e presença.</p>
+        <p class="hero-desc">Planejamos cada etapa da viagem de acordo com o seu perfil, com clareza, cuidado e presença.</p>
         
         <div class="hero-cta-wrapper">
           <a href="/vitrine" class="btn-primary" data-storefront-cta="vitrine">Explorar viagens</a>
@@ -413,166 +426,6 @@
   </section>
 
   <!-- ==========================================================================
-       SECTION: POR QUE WALLTRAVEL
-       ========================================================================== -->
-  <section class="section section-rhythm-b fade-in-section" id="diferenciais">
-    <div class="section-container">
-      <div class="section-header section-header--editorial">
-        <span class="section-tag">Por que WallTravel</span>
-        <h2 class="section-title">Por que escolher a WallTravel</h2>
-        <p class="section-lede">Especialistas reais, suporte contínuo e escolhas práticas — do primeiro contato ao retorno.</p>
-      </div>
-
-      <div class="features-grid features-grid--six">
-        
-        <div class="feature-item">
-          <span class="feature-number">01</span>
-          <h3 class="feature-title">Suporte 24h</h3>
-          <p class="feature-desc">Alguém disponível a qualquer hora se algo mudar no destino.</p>
-        </div>
-
-        <div class="feature-item">
-          <span class="feature-number">02</span>
-          <h3 class="feature-title">Voos sob medida</h3>
-          <p class="feature-desc">Rotas e horários pensados para o seu conforto e o ritmo da viagem.</p>
-        </div>
-
-        <div class="feature-item">
-          <span class="feature-number">03</span>
-          <h3 class="feature-title">Roteiros com critério</h3>
-          <p class="feature-desc">Indicações fora do óbvio, alinhadas ao seu perfil — não a um modelo genérico.</p>
-        </div>
-
-        <div class="feature-item">
-          <span class="feature-number">04</span>
-          <h3 class="feature-title">Quem já esteve lá</h3>
-          <p class="feature-desc">Recomendações de quem conhece o destino na prática.</p>
-        </div>
-
-        <div class="feature-item">
-          <span class="feature-number">05</span>
-          <h3 class="feature-title">Documentos e seguros</h3>
-          <p class="feature-desc">Orientação clara para a viagem seguir sem surpresa burocrática.</p>
-        </div>
-
-        <div class="feature-item">
-          <span class="feature-number">06</span>
-          <h3 class="feature-title">Conversa humana</h3>
-          <p class="feature-desc">Você fala com especialistas. Sem robôs e sem roteiro engessado.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ==========================================================================
-       SECTION: COMO TRABALHAMOS
-       ========================================================================== -->
-  <section class="section section-rhythm-c section-assessoria fade-in-section" id="personalizacao">
-    <div class="section-container">
-      <div class="section-header section-header--editorial">
-        <span class="section-tag">Como trabalhamos</span>
-        <h2 class="section-title">Pesquisamos, selecionamos e organizamos cada etapa</h2>
-        <p class="section-lede">Da mobilidade ao roteiro, conectamos o que a viagem precisa — com critério e presença.</p>
-      </div>
-
-      <div class="services-grid">
-        
-        <div class="service-card">
-          <div class="service-card-img-wrapper">
-            <picture>
-              <source type="image/webp" srcset="/assets/images/service_cars.webp">
-              <img src="/assets/images/service_cars.jpg" alt="Carro esportivo na Itália" width="1024" height="1024" loading="lazy" decoding="async">
-            </picture>
-            <div class="service-card-overlay"></div>
-          </div>
-          <div class="service-card-content">
-            <div>
-              <div class="service-card-num">01</div>
-              <h3 class="service-card-title">Aluguel de veículos</h3>
-              <p class="service-card-desc">Carros escolhidos para cada trecho — do conforto no dia a dia ao desempenho quando a estrada pede.</p>
-            </div>
-            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Aluguel de veículos" data-wa-message="Olá! Gostaria de saber mais sobre Aluguel de veículos com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
-              Falar com especialista
-              <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="service-card">
-          <div class="service-card-img-wrapper">
-            <picture>
-              <source type="image/webp" srcset="/assets/images/service_boats.webp">
-              <img src="/assets/images/service_boats.jpg" alt="Iate no mar Mediterrâneo" width="1024" height="1024" loading="lazy" decoding="async">
-            </picture>
-            <div class="service-card-overlay"></div>
-          </div>
-          <div class="service-card-content">
-            <div>
-              <div class="service-card-num">02</div>
-              <h3 class="service-card-title">Iates e embarcações privadas</h3>
-              <p class="service-card-desc">Embarcações com parceiros selecionados, no destino e no ritmo da sua viagem.</p>
-            </div>
-            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Iates e embarcações privadas" data-wa-message="Olá! Gostaria de saber mais sobre iates e embarcações privadas com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
-              Falar com especialista
-              <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="service-card">
-          <div class="service-card-img-wrapper">
-            <picture>
-              <source type="image/webp" srcset="/assets/images/service_itinerary.webp">
-              <img src="/assets/images/service_itinerary.jpg" alt="Paris à noite — referência visual de roteiro e destino" width="1600" height="1000" loading="lazy" decoding="async">
-            </picture>
-            <div class="service-card-overlay"></div>
-          </div>
-          <div class="service-card-content">
-            <div>
-              <div class="service-card-num">03</div>
-              <h3 class="service-card-title">Roteiros sob medida</h3>
-              <p class="service-card-desc">Montamos o roteiro conforme tempo, orçamento e estilo — com seleção em cada escolha.</p>
-            </div>
-            <a href="#" data-wa-cta data-wa-page-type="SERVICE" data-wa-placement="service" data-wa-entity="Roteiros sob medida" data-wa-message="Olá! Gostaria de montar um roteiro sob medida com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
-              Planejar minha viagem
-              <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ==========================================================================
-       SECTION: O QUE MUDA (benefício concreto)
-       ========================================================================== -->
-  <section class="section section-rhythm-olive-soft fade-in-section" id="beneficio">
-    <div class="section-container">
-      <div class="section-header section-header--manifesto">
-        <span class="section-tag">Na prática</span>
-        <h2 class="section-title">O que muda na sua viagem</h2>
-        <p class="section-lede">Menos improviso no caminho. Mais tempo no que importa. E alguém resolvendo o que aparecer.</p>
-      </div>
-      <ul class="benefit-strip" aria-label="Benefícios concretos">
-        <li>
-          <strong>Antes de sair</strong>
-          <span>Decisões claras sobre roteiro, hospedagem e deslocamentos.</span>
-        </li>
-        <li>
-          <strong>No destino</strong>
-          <span>Mais presença no lugar — menos tempo resolvendo logística.</span>
-        </li>
-        <li>
-          <strong>Se algo mudar</strong>
-          <span>Suporte humano para ajustar o plano sem perder o fio da viagem.</span>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ==========================================================================
        SECTION: EXPEDIÇÕES EM GRUPO
        ========================================================================== -->
   <section class="section section-rhythm-sand fade-in-section" id="expedicoes">
@@ -597,6 +450,20 @@
   </section>
 
   <!-- ==========================================================================
+       TEASER → full brand detail on /como-funciona
+       ========================================================================== -->
+  <section class="section section-rhythm-b fade-in-section" id="diferenciais">
+    <div class="section-container">
+      <div class="section-header section-header--editorial home-teaser">
+        <span class="section-tag">Por que WallTravel</span>
+        <h2 class="section-title">Por que escolher a WallTravel</h2>
+        <p class="section-lede">Especialistas reais, suporte contínuo e escolhas práticas, do primeiro contato ao retorno.</p>
+        <a href="/como-funciona" class="home-teaser-link">Saber mais</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
        SECTION: SOBRE NÓS
        ========================================================================== -->
   <section class="section section-rhythm-a fade-in-section" id="sobre">
@@ -606,11 +473,11 @@
           <span class="section-tag" style="margin-bottom: 1rem; display: block;">Sobre nós</span>
           <h2 class="section-title" style="margin-bottom: 2rem;">Quem cuida da sua viagem</h2>
           
-          <p class="team-lead">Somos <strong>Wallace, Weslley e Ronilson</strong> — três pessoas que transformaram a paixão por viajar em um trabalho de seleção e presença.</p>
+          <p class="team-lead">Somos <strong>Wallace, Weslley e Ronilson</strong>: três pessoas que transformaram a paixão por viajar em um trabalho de seleção e presença.</p>
           
           <p class="team-body-text">Juntos visitamos mais de 35 países, moramos no exterior e entendemos que cada viajante tem um ritmo. Planejamos do primeiro contato ao retorno.</p>
           
-          <p class="team-body-text">Experiência prática nos destinos e suporte humano 24h — para a viagem acontecer com clareza.</p>
+          <p class="team-body-text">Experiência prática nos destinos e suporte humano 24h, para a viagem acontecer com clareza.</p>
           
           <div class="team-stats">
             <div class="stat-item">
@@ -634,6 +501,184 @@
   <div id="category-view" class="page-view" style="display: none;"></div>
   <div id="package-view" class="page-view" style="display: none;"></div>
   <div id="groups-view" class="page-view" style="display: none;"></div>
+
+  <!-- ==========================================================================
+       PAGE: COMO FUNCIONA (detail for home teasers)
+       ========================================================================== -->
+  <div id="como-funciona-view" class="page-view" style="display: none;">
+    <div class="como-funciona-page">
+      <header class="como-funciona-mast">
+        <picture>
+          <source media="(max-width: 768px)" srcset="/images/vitrine/australia-uluru-mobile.webp" type="image/webp">
+          <source type="image/webp" srcset="/images/vitrine/australia-uluru.webp">
+          <img src="/images/vitrine/australia-uluru.jpg" alt="Uluru ao entardecer, no outback australiano" width="2000" height="1333" decoding="async" fetchpriority="high">
+        </picture>
+        <div class="como-funciona-mast-overlay" aria-hidden="true"></div>
+        <div class="como-funciona-mast-content section-container">
+          <nav class="breadcrumb breadcrumb--light" aria-label="Breadcrumb">
+            <a href="/">Início</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-active">Como funciona</span>
+          </nav>
+          <span class="como-funciona-mast-tag">WallTravel</span>
+          <h1 class="como-funciona-mast-title">Como a WallTravel cuida da sua viagem</h1>
+          <p class="como-funciona-mast-lede">Do primeiro contato ao retorno: critério, presença e escolhas práticas. Sem improviso no caminho.</p>
+        </div>
+      </header>
+
+      <section class="section section-rhythm-b fade-in-section" id="por-que">
+        <div class="section-container">
+          <div class="section-header section-header--editorial">
+            <span class="section-tag">Por que WallTravel</span>
+            <h2 class="section-title">Por que escolher a WallTravel</h2>
+            <p class="section-lede">Especialistas reais, suporte contínuo e escolhas práticas, do primeiro contato ao retorno.</p>
+          </div>
+
+          <div class="features-grid features-grid--six">
+            <div class="feature-item">
+              <span class="feature-number">01</span>
+              <h3 class="feature-title">Suporte 24h</h3>
+              <p class="feature-desc">Alguém disponível a qualquer hora se algo mudar no destino.</p>
+            </div>
+            <div class="feature-item">
+              <span class="feature-number">02</span>
+              <h3 class="feature-title">Voos sob medida</h3>
+              <p class="feature-desc">Rotas e horários pensados para o seu conforto e o ritmo da viagem.</p>
+            </div>
+            <div class="feature-item">
+              <span class="feature-number">03</span>
+              <h3 class="feature-title">Roteiros com critério</h3>
+              <p class="feature-desc">Indicações fora do óbvio, alinhadas ao seu perfil, não a um modelo genérico.</p>
+            </div>
+            <div class="feature-item">
+              <span class="feature-number">04</span>
+              <h3 class="feature-title">Quem já esteve lá</h3>
+              <p class="feature-desc">Recomendações de quem conhece o destino na prática.</p>
+            </div>
+            <div class="feature-item">
+              <span class="feature-number">05</span>
+              <h3 class="feature-title">Documentos e seguros</h3>
+              <p class="feature-desc">Orientação clara para a viagem seguir sem surpresa burocrática.</p>
+            </div>
+            <div class="feature-item">
+              <span class="feature-number">06</span>
+              <h3 class="feature-title">Conversa humana</h3>
+              <p class="feature-desc">Você fala com especialistas. Sem robôs e sem roteiro engessado.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-rhythm-c section-assessoria fade-in-section" id="como-trabalhamos">
+        <div class="section-container">
+          <div class="section-header section-header--editorial">
+            <span class="section-tag">Como trabalhamos</span>
+            <h2 class="section-title">Pesquisamos, selecionamos e organizamos cada etapa</h2>
+            <p class="section-lede">Da mobilidade ao roteiro, conectamos o que a viagem precisa, com critério e presença.</p>
+          </div>
+
+          <div class="services-grid">
+            <div class="service-card">
+              <div class="service-card-img-wrapper">
+                <picture>
+                  <source type="image/webp" srcset="/assets/images/service_cars.webp">
+                  <img src="/assets/images/service_cars.jpg" alt="Carro esportivo na Itália" width="1024" height="1024" loading="lazy" decoding="async">
+                </picture>
+                <div class="service-card-overlay"></div>
+              </div>
+              <div class="service-card-content">
+                <div>
+                  <div class="service-card-num">01</div>
+                  <h3 class="service-card-title">Aluguel de veículos</h3>
+                  <p class="service-card-desc">Carros escolhidos para cada trecho, do conforto no dia a dia ao desempenho quando a estrada pede.</p>
+                </div>
+                <a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="service" data-wa-entity="Aluguel de veículos" data-wa-message="Olá! Gostaria de saber mais sobre Aluguel de veículos com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
+                  Falar com especialista
+                  <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-card-img-wrapper">
+                <picture>
+                  <source type="image/webp" srcset="/assets/images/service_boats.webp">
+                  <img src="/assets/images/service_boats.jpg" alt="Iate no mar Mediterrâneo" width="1024" height="1024" loading="lazy" decoding="async">
+                </picture>
+                <div class="service-card-overlay"></div>
+              </div>
+              <div class="service-card-content">
+                <div>
+                  <div class="service-card-num">02</div>
+                  <h3 class="service-card-title">Iates e embarcações privadas</h3>
+                  <p class="service-card-desc">Embarcações com parceiros selecionados, no destino e no ritmo da sua viagem.</p>
+                </div>
+                <a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="service" data-wa-entity="Iates e embarcações privadas" data-wa-message="Olá! Gostaria de saber mais sobre iates e embarcações privadas com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
+                  Falar com especialista
+                  <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-card-img-wrapper">
+                <picture>
+                  <source type="image/webp" srcset="/assets/images/service_itinerary.webp">
+                  <img src="/assets/images/service_itinerary.jpg" alt="Paris à noite, referência visual de roteiro e destino" width="1600" height="1000" loading="lazy" decoding="async">
+                </picture>
+                <div class="service-card-overlay"></div>
+              </div>
+              <div class="service-card-content">
+                <div>
+                  <div class="service-card-num">03</div>
+                  <h3 class="service-card-title">Roteiros sob medida</h3>
+                  <p class="service-card-desc">Montamos o roteiro conforme tempo, orçamento e estilo, com seleção em cada escolha.</p>
+                </div>
+                <a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="service" data-wa-entity="Roteiros sob medida" data-wa-message="Olá! Gostaria de montar um roteiro sob medida com a WallTravel." target="_blank" rel="noopener" class="service-card-cta">
+                  Planejar minha viagem
+                  <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42 5.43 5.43H5v2z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-rhythm-olive-soft fade-in-section" id="na-pratica">
+        <div class="section-container">
+          <div class="section-header section-header--manifesto">
+            <span class="section-tag">Na prática</span>
+            <h2 class="section-title">O que muda na sua viagem</h2>
+            <p class="section-lede">Menos improviso no caminho. Mais tempo no que importa. E alguém resolvendo o que aparecer.</p>
+          </div>
+          <ul class="benefit-strip" aria-label="Benefícios concretos">
+            <li>
+              <strong>Antes de sair</strong>
+              <span>Decisões claras sobre roteiro, hospedagem e deslocamentos.</span>
+            </li>
+            <li>
+              <strong>No destino</strong>
+              <span>Mais presença no lugar, menos tempo resolvendo logística.</span>
+            </li>
+            <li>
+              <strong>Se algo mudar</strong>
+              <span>Suporte humano para ajustar o plano sem perder o fio da viagem.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section section-rhythm-a fade-in-section">
+        <div class="section-container como-funciona-footer-cta">
+          <p class="section-lede">Pronto para planejar com a WallTravel?</p>
+          <div class="home-destinos-ctas">
+            <a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="como-funciona-cta" target="_blank" rel="noopener" class="btn-primary">Falar com um especialista</a>
+            <a href="/vitrine" class="btn-outline">Explorar a vitrine</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
   </div> <!-- Fim de #main-content -->
 
   <!-- ==========================================================================
@@ -651,6 +696,7 @@
         <h4>Empresa</h4>
         <ul class="footer-links">
           <li><a href="/#sobre">Sobre nós</a></li>
+          <li><a href="/como-funciona">Como funciona</a></li>
           <li><a href="/grupos">Expedições em grupo</a></li>
           <li><a href="/vitrine">Vitrine de viagens</a></li>
           <li><a href="#" data-wa-cta data-wa-page-type="ABOUT" data-wa-placement="footer-contato" target="_blank" rel="noopener">Contato</a></li>

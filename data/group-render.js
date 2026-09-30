@@ -811,7 +811,6 @@ export function renderGroupsCatalog(groups, esc) {
 
   const chapters = groups
     .map((g, i) => {
-      const price = formatMoney(g.priceFrom, g.currency);
       const dates = formatTripDates(g.departureDate, g.returnDate);
       const side = i % 2 === 0 ? "left" : "right";
       const imgs = [g.coverImageUrl, ...(g.gallery || [])].filter(Boolean);
@@ -843,16 +842,8 @@ export function renderGroupsCatalog(groups, esc) {
             </div>`
           : `<div class="group-chapter-media group-chapter-media--empty" aria-hidden="true"></div>`;
 
-      const capacity =
-        g.groupSize && !g.comingSoon
-          ? `<p class="group-chapter-capacity">Grupo de apenas ${esc(String(g.groupSize))} pessoas</p>`
-          : "";
-      const lodging =
-        !g.comingSoon && String(g.slug || "").toLowerCase().includes("grecia")
-          ? `<p class="group-chapter-lodging">Hospedagem 4★ com café da manhã</p>`
-          : "";
-
-      return `<a href="/grupos/${esc(g.slug)}" class="group-chapter group-chapter--${side}" data-reveal data-reveal-delay="${i * 80}">
+      // Lean catalog panel: identity + one CTA. Detail/price live on /grupos/[slug].
+      return `<a href="/grupos/${esc(g.slug)}" class="group-chapter group-chapter--${side} group-chapter--lean" data-reveal data-reveal-delay="${i * 80}">
         ${media}
         <div class="group-chapter-veil"></div>
         <div class="group-chapter-copy">
@@ -866,25 +857,10 @@ export function renderGroupsCatalog(groups, esc) {
           }
           <p class="group-chapter-kicker">${esc(g.destinationLabel || "Expedição WallTravel")}</p>
           ${
-            !g.comingSoon && g.shortDescription
-              ? `<p class="group-chapter-desc">${esc(g.shortDescription)}</p>`
+            g.comingSoon
+              ? `<p class="group-chapter-price group-chapter-price--soon">Datas e investimento em breve</p>`
               : ""
           }
-          ${capacity}
-          ${lodging}
-          <div class="group-chapter-commerce">
-            ${
-              price && !g.comingSoon
-                ? `<p class="group-chapter-price">
-                    <span class="group-chapter-price-label">A partir de</span>
-                    <strong>${esc(price)}</strong>
-                    <span class="group-chapter-price-unit">por pessoa</span>
-                  </p>`
-                : g.comingSoon
-                  ? `<p class="group-chapter-price group-chapter-price--soon">Datas e investimento em breve</p>`
-                  : ""
-            }
-          </div>
           <span class="group-chapter-cta${g.comingSoon ? " group-chapter-cta--soon" : ""}">${g.comingSoon ? "Quero ser avisado" : "Ver expedição"}</span>
         </div>
       </a>`;
@@ -903,7 +879,7 @@ export function renderGroupsCatalog(groups, esc) {
         </div>
         <span class="category-meta-info">WallTravel</span>
         <h1 class="groups-intro-title" data-reveal>Expedições em grupo</h1>
-        <p class="groups-header-desc" data-reveal>Grupos pequenos, destinos com intenção e a WallTravel cuidando da logística — para sobrar presença no caminho.</p>
+        <p class="groups-header-desc" data-reveal>Grupos pequenos, destinos com intenção e a WallTravel cuidando da logística, para sobrar presença no caminho.</p>
       </div>
     </div>
 

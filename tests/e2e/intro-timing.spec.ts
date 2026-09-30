@@ -245,7 +245,7 @@ test.describe("immersive intro timing", () => {
     await expect(page.locator("[data-wt-group-template]")).toBeVisible();
   });
 
-  test("vitrine, groups and experience open without an intro", async ({ page }) => {
+  test("vitrine, groups, como-funciona and experience open without an intro", async ({ page }) => {
     await page.goto("/vitrine");
     await page.waitForLoadState("domcontentloaded");
     await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
@@ -255,6 +255,12 @@ test.describe("immersive intro timing", () => {
     await page.waitForLoadState("domcontentloaded");
     await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
     await expect(page.locator(".groups-catalog-hero")).toBeVisible();
+
+    await page.goto("/como-funciona");
+    await page.waitForLoadState("domcontentloaded");
+    await expect(page.locator("[data-wt-page-intro]")).toHaveCount(0);
+    await expect(page.locator(".como-funciona-mast-title")).toBeVisible();
+    await expect(page.locator("html")).toHaveClass(/wt-intro-skip/);
 
     await page.goto("/viagens/safari-africa");
     await page.waitForLoadState("domcontentloaded");

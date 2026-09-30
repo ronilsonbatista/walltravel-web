@@ -31,8 +31,8 @@ import {
 } from './data/storefront-events.js';
 import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
+import { publicPackageTags } from './data/platform-api.js';
 import {
-  renderHomeOpeningIntro,
   renderDestinationExplorer,
   playPageIntro,
   initDestinationExplorer,
@@ -109,13 +109,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderHomeDestinosExplorer();
   updateFooterDestinosLinks();
 
-  // Home opening intro — CSS-first shell already in HTML; ensure markup once
+  // Home opening intro — CSS-first shell already in HTML; clear on non-home, never reinject after skip
   const homeIntroMount = document.getElementById("wt-home-intro-mount");
   if (homeIntroMount) {
-    if (document.documentElement.classList.contains("wt-intro-skip")) {
-      homeIntroMount.querySelector("[data-wt-page-intro]")?.remove();
-    } else if (!homeIntroMount.querySelector("[data-wt-page-intro]")) {
-      homeIntroMount.innerHTML = renderHomeOpeningIntro({ cssFirst: true });
+    if (!bootIsHome || document.documentElement.classList.contains("wt-intro-skip")) {
+      homeIntroMount.replaceChildren();
+      document.documentElement.classList.add("wt-intro-skip", "wt-hero-live");
+      document.documentElement.classList.remove(
+        "wt-intro-hold",
+        "wt-intro-pending",
+        "wt-intro-active",
+        "wt-intro-transition",
+      );
     }
   }
 
@@ -126,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       banner.style.cssText =
       "position:fixed;left:0;right:0;bottom:0;z-index:900;background:var(--surface-olive,#3F4328);color:var(--text-inverse,#F6F1E8);padding:0.65rem 1rem;padding-bottom:max(0.65rem, env(safe-area-inset-bottom, 0px));text-align:center;font-size:0.85rem;pointer-events:none;";
     banner.textContent =
-      "Catálogo temporariamente em modo local — tente novamente em instantes.";
+      "Catálogo temporariamente em modo local. Tente novamente em instantes.";
     document.body.prepend(banner);
   }
   // ==========================================================================
@@ -197,56 +202,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyStagingNoindex();
 
   // ==========================================================================
-  // 1. STICKY HEADER SCROLL EFFECT (DYNAMIC TRANSPARENT -> SCROLLED)
-  // Shared Home header: transparent over home + group heroes; solid otherwise.
+  // 1. STICKY HEADER
+  // Home: transparent over hero (white logo/nav), solid white after scroll.
+  // All other routes: solid white header (dark logo/links) always.
   // ==========================================================================
   const header = document.querySelector('.header');
   let groupExperienceCleanup = null;
 
   const isHomePath = (path) => path === '/' || path === '/index.html';
-  const isGroupDetailPath = (path) =>
-    path.startsWith('/grupos/') && path !== '/grupos/' && path.length > '/grupos/'.length;
-  const isGroupsCatalogPath = (path) => path === '/grupos' || path === '/grupos/';
 
   const handleHeaderScroll = () => {
+    if (!header) return;
     const path = window.location.pathname;
     if (isHomePath(path)) {
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
+      header.classList.toggle('scrolled', window.scrollY > 50);
       return;
     }
-
-    const mobileOverlay = window.matchMedia("(max-width: 768px)").matches;
-    if (
-      mobileOverlay &&
-      (path === "/vitrine" || path === "/vitrine/" || path.startsWith("/vitrine/") || path.startsWith("/viagens/") || path.startsWith("/pacote/"))
-    ) {
-      const band = document.querySelector(".wt-vitrine-mast, #package-view .group-hero, #category-view .category-hero-right");
-      if (band) {
-        header.classList.toggle("scrolled", window.scrollY > Math.max(48, band.offsetHeight * 0.45));
-        return;
-      }
-    }
-
-    if (isGroupDetailPath(path) || isGroupsCatalogPath(path)) {
-      const hero =
-        document.querySelector('[data-group-over-hero] .group-hero') ||
-        document.querySelector('[data-group-over-hero] .groups-intro-hero');
-      if (hero) {
-        const threshold = Math.max(80, hero.offsetHeight * 0.55);
-        if (window.scrollY > threshold) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-        return;
-      }
-    }
-
-    // Other subpages: solid header
     header.classList.add('scrolled');
   };
 
@@ -588,6 +559,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const categoryView = document.getElementById('category-view');
   const packageView = document.getElementById('package-view');
   const groupsView = document.getElementById('groups-view');
+  const comoFuncionaView = document.getElementById('como-funciona-view');
 
   const hideAllViews = () => {
     homeView.style.display = 'none';
@@ -595,16 +567,58 @@ document.addEventListener('DOMContentLoaded', async () => {
     categoryView.style.display = 'none';
     packageView.style.display = 'none';
     if (groupsView) groupsView.style.display = 'none';
+    if (comoFuncionaView) comoFuncionaView.style.display = 'none';
     
     // Clean up any sticky bottom bar that might be active
     const oldSticky = document.querySelector('.sticky-bottom-bar');
     if (oldSticky) oldSticky.remove();
   };
 
+  const isHomePathname = (path) => path === '/' || path === '/index.html';
+
+  /** Splash/intro is home-only; abort and clear on every non-home route (incl. SPA). */
+  const syncHomeIntroForRoute = (path) => {
+    const root = document.documentElement;
+    const mount = document.getElementById('wt-home-intro-mount');
+    root.classList.toggle("wt-route-home", isHomePathname(path));
+    if (isHomePathname(path)) {
+      if (!mount?.querySelector("[data-wt-page-intro]") && !root.classList.contains("wt-intro-skip")) {
+        root.classList.add("wt-intro-skip", "wt-hero-live");
+        root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+        root.dataset.introPhase = "hero-live";
+      }
+      return;
+    }
+    try {
+      if (typeof window.__wtAbortHomeIntro === "function") window.__wtAbortHomeIntro();
+    } catch {
+      /* ignore */
+    }
+    root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+    root.classList.add("wt-intro-skip", "wt-hero-live");
+    root.dataset.introPhase = "hero-live";
+    delete root.dataset.introState;
+    if (mount) mount.replaceChildren();
+    document.querySelectorAll("[data-wt-page-intro]").forEach((el) => el.remove());
+  };
+
+  const scrollToHashTarget = () => {
+    const hash = window.location.hash;
+    if (!hash || hash === '#') return;
+    const target = document.querySelector(hash);
+    if (!target) return;
+    const headerHeight = header?.offsetHeight || 80;
+    window.scrollTo({
+      top: target.getBoundingClientRect().top + window.scrollY - headerHeight,
+      behavior: 'smooth',
+    });
+  };
+
   // Route router logic
   const handleRouting = async () => {
     const path = window.location.pathname;
     hideAllViews();
+    syncHomeIntroForRoute(path);
     
     if (path === '/' || path === '/index.html') {
       homeView.style.display = 'block';
@@ -625,24 +639,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
       updateSEO(
-        "WallTravel — Experiências Incríveis",
-        "WallTravel – Viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa."
+        "WallTravel | Experiências Incríveis",
+        "WallTravel: viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa."
       );
     } else {
       clearInterval(autoplayInterval);
       
       if (path === '/vitrine' || path === '/vitrine/') {
-        header.classList.add('scrolled');
         vitrineView.style.display = 'block';
         renderVitrine();
+        handleHeaderScroll();
       } else if (path.startsWith('/vitrine/')) {
-        header.classList.add('scrolled');
         categoryView.style.display = 'block';
         let categorySlug = path.substring('/vitrine/'.length);
         if (categorySlug.endsWith('/')) categorySlug = categorySlug.slice(0, -1);
         renderCategory(categorySlug);
+        handleHeaderScroll();
       } else if (path.startsWith('/pacote/') || path.startsWith('/viagens/')) {
-        header.classList.add('scrolled');
+        handleHeaderScroll();
         packageView.style.display = 'block';
         const prefix = path.startsWith('/viagens/') ? '/viagens/' : '/pacote/';
         let packageSlug = path.substring(prefix.length);
@@ -656,9 +670,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         let groupSlug = path.substring('/grupos/'.length);
         if (groupSlug.endsWith('/')) groupSlug = groupSlug.slice(0, -1);
         await renderGroupPage(groupSlug);
+      } else if (path === '/como-funciona' || path === '/como-funciona/') {
+        header.classList.add('scrolled');
+        if (comoFuncionaView) {
+          comoFuncionaView.style.display = 'block';
+          comoFuncionaView.querySelectorAll('.fade-in-section').forEach((el) => {
+            el.classList.add('is-visible');
+          });
+          hydrateWhatsAppCTAs(comoFuncionaView);
+        }
+        updateSEO(
+          "Como funciona | WallTravel",
+          "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem, com critério e presença."
+        );
+        if (window.location.hash) {
+          window.requestAnimationFrame(() => window.setTimeout(scrollToHashTarget, 60));
+        }
       } else {
         // Unknown route → 404 (do not silently fall back to Home)
-        header.classList.add('scrolled');
         packageView.style.display = 'block';
         renderEmptyState(
           packageView,
@@ -666,6 +695,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           "O endereço que você tentou abrir não existe ou foi removido."
         );
       }
+      handleHeaderScroll();
     }
     syncFloatWhatsApp(path);
   };
@@ -700,6 +730,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         "";
     } else if (path.startsWith("/vitrine")) {
       pageType = "VITRINE";
+    } else if (path.startsWith("/como-funciona")) {
+      pageType = "ABOUT";
     }
 
     float.setAttribute("data-wa-page-type", pageType);
@@ -741,7 +773,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
         }
         
-        if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens') || path.startsWith('/grupos')) {
+        if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens') || path.startsWith('/grupos') || path.startsWith('/como-funciona')) {
           e.preventDefault();
           window.history.pushState(null, '', path + hash);
           handleRouting();
@@ -783,10 +815,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     updateSEO(
       "Vitrine de viagens",
-      "Catálogo WallTravel de viagens sob medida — por destino, estilo e perfil."
+      "Catálogo WallTravel de viagens sob medida, por destino, estilo e perfil."
     );
 
-    const leadImage = categories.find((cat) => cat.image)?.image || "/images/vitrine/europa.webp";
+    // Darker Asia mast (not a landmark cliché); white title stays readable.
+    const leadImage = "/images/vitrine/asia-kyoto.webp";
     const activeCategories = categories.filter((cat) => (Number(cat.packageCount) || 0) > 0);
     const summaryChips = activeCategories
       .slice(0, 8)
@@ -798,10 +831,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     vitrineView.innerHTML = `
       <figure class="wt-vitrine-mast">
-        <img src="${esc(leadImage)}" alt="" width="1600" height="900" decoding="async">
+        <picture>
+          <source media="(max-width: 768px)" srcset="/images/vitrine/asia-kyoto-mobile.webp" type="image/webp">
+          <img src="${esc(leadImage)}" alt="Ásia, vitrine WallTravel" width="2000" height="1335" decoding="async" fetchpriority="high">
+        </picture>
         <figcaption>
           <h1>Vitrine de viagens</h1>
-          <p>Viagens selecionadas pela WallTravel — por destino e estilo. Personalizáveis com um especialista.</p>
+          <p>Viagens selecionadas pela WallTravel, por destino e estilo. Personalizáveis com um especialista.</p>
         </figcaption>
       </figure>
       <div class="vitrine-header wt-vitrine-header" data-reveal>
@@ -819,7 +855,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="wt-vitrine-summary-label">${tripCount === 1 ? "viagem para explorar" : "viagens para explorar"}</span>
           </p>`
               : `<p class="wt-vitrine-summary-count">
-            <span class="wt-vitrine-summary-label">Seleção WallTravel — fale com um especialista para explorar o que está disponível agora.</span>
+            <span class="wt-vitrine-summary-label">Seleção WallTravel: fale com um especialista para explorar o que está disponível agora.</span>
           </p>`
           }
           ${summaryChips ? `<div class="wt-vitrine-chips">${summaryChips}</div>` : ""}
@@ -914,16 +950,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         ` : `
           <div class="packages-grid" id="category-packages-grid">
-            ${packages.map(pkg => `
-              <div class="package-card" data-tags="${esc((pkg.tags || []).join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}">
+            ${packages.map(pkg => {
+              const visibleTags = publicPackageTags(pkg.tags);
+              return `
+              <div class="package-card" data-tags="${esc(visibleTags.join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}">
                 <div class="package-card-img-wrapper">
                   <img src="${esc(pkg.image)}" alt="${esc(pkg.name)}" class="package-card-img" width="800" height="600" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 33vw" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
                 </div>
                 <div class="package-card-content">
                   <div>
+                    ${visibleTags.length ? `
                     <div class="package-card-tags">
-                      ${(pkg.tags || []).map(tag => `<span class="package-tag">${esc(tag)}</span>`).join('')}
-                    </div>
+                      ${visibleTags.map(tag => `<span class="package-tag">${esc(tag)}</span>`).join('')}
+                    </div>` : ""}
                     <h3 class="package-card-title">${esc(pkg.name)}</h3>
                     <div class="package-card-meta-line">
                       <div class="package-card-meta-item">
@@ -955,7 +994,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   </div>
                 </div>
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         `}
       </div>
@@ -1063,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const groups = getGroups();
     updateSEO(
       "Expedições em grupo",
-      "Expedições em grupo pequeno com curadoria WallTravel — destinos com intenção e logística completa.",
+      "Expedições em grupo pequeno com curadoria WallTravel: destinos com intenção e logística completa.",
     );
     groupsView.innerHTML = renderGroupsCatalog(groups, esc);
     bindGroupForms(groupsView, WA);
@@ -1092,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const seoDesc =
       group.seoDescription ||
       group.shortDescription ||
-      `Viagem em grupo WallTravel — ${group.name}.`;
+      `Viagem em grupo WallTravel: ${group.name}.`;
     updateSEO(seoTitle, seoDesc, group.coverImageUrl);
 
     groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);
