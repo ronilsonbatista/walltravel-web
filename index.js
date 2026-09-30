@@ -110,13 +110,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderHomeDestinosExplorer();
   updateFooterDestinosLinks();
 
-  // Home opening intro — CSS-first shell already in HTML; ensure markup once
+  // Home opening intro — CSS-first shell already in HTML; clear on non-home, never reinject after skip
   const homeIntroMount = document.getElementById("wt-home-intro-mount");
   if (homeIntroMount) {
-    if (document.documentElement.classList.contains("wt-intro-skip")) {
-      homeIntroMount.querySelector("[data-wt-page-intro]")?.remove();
-    } else if (!homeIntroMount.querySelector("[data-wt-page-intro]")) {
-      homeIntroMount.innerHTML = renderHomeOpeningIntro({ cssFirst: true });
+    if (!bootIsHome || document.documentElement.classList.contains("wt-intro-skip")) {
+      homeIntroMount.replaceChildren();
+      document.documentElement.classList.add("wt-intro-skip", "wt-hero-live");
+      document.documentElement.classList.remove(
+        "wt-intro-hold",
+        "wt-intro-pending",
+        "wt-intro-active",
+        "wt-intro-transition",
+      );
     }
   }
 
@@ -127,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       banner.style.cssText =
       "position:fixed;left:0;right:0;bottom:0;z-index:900;background:var(--surface-olive,#3F4328);color:var(--text-inverse,#F6F1E8);padding:0.65rem 1rem;padding-bottom:max(0.65rem, env(safe-area-inset-bottom, 0px));text-align:center;font-size:0.85rem;pointer-events:none;";
     banner.textContent =
-      "Catálogo temporariamente em modo local — tente novamente em instantes.";
+      "Catálogo temporariamente em modo local. Tente novamente em instantes.";
     document.body.prepend(banner);
   }
   // ==========================================================================
@@ -604,6 +609,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (oldSticky) oldSticky.remove();
   };
 
+  const isHomePathname = (path) => path === '/' || path === '/index.html';
+
+  /** Splash/intro is home-only; abort and clear on every non-home route (incl. SPA). */
+  const syncHomeIntroForRoute = (path) => {
+    const root = document.documentElement;
+    const mount = document.getElementById('wt-home-intro-mount');
+    if (isHomePathname(path)) {
+      if (!mount?.querySelector("[data-wt-page-intro]") && !root.classList.contains("wt-intro-skip")) {
+        root.classList.add("wt-intro-skip", "wt-hero-live");
+        root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+        root.dataset.introPhase = "hero-live";
+      }
+      return;
+    }
+    try {
+      if (typeof window.__wtAbortHomeIntro === "function") window.__wtAbortHomeIntro();
+    } catch {
+      /* ignore */
+    }
+    root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
+    root.classList.add("wt-intro-skip", "wt-hero-live");
+    root.dataset.introPhase = "hero-live";
+    delete root.dataset.introState;
+    if (mount) mount.replaceChildren();
+    document.querySelectorAll("[data-wt-page-intro]").forEach((el) => el.remove());
+  };
+
   const scrollToHashTarget = () => {
     const hash = window.location.hash;
     if (!hash || hash === '#') return;
@@ -620,6 +652,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const handleRouting = async () => {
     const path = window.location.pathname;
     hideAllViews();
+    syncHomeIntroForRoute(path);
     
     if (path === '/' || path === '/index.html') {
       homeView.style.display = 'block';
@@ -640,8 +673,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
       updateSEO(
-        "WallTravel — Experiências Incríveis",
-        "WallTravel – Viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa."
+        "WallTravel | Experiências Incríveis",
+        "WallTravel: viagens sob medida e expedições em grupo pequeno. Planeje a próxima aventura com quem acompanha cada etapa."
       );
     } else {
       clearInterval(autoplayInterval);
@@ -682,7 +715,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         updateSEO(
           "Como funciona | WallTravel",
-          "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem — com critério e presença."
+          "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem, com critério e presença."
         );
         if (window.location.hash) {
           window.requestAnimationFrame(() => window.setTimeout(scrollToHashTarget, 60));
@@ -816,10 +849,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     updateSEO(
       "Vitrine de viagens",
-      "Catálogo WallTravel de viagens sob medida — por destino, estilo e perfil."
+      "Catálogo WallTravel de viagens sob medida, por destino, estilo e perfil."
     );
 
-    // Fixed dark international mast — white title must stay readable (not category cover/cave).
+    // Fixed dark international mast: white title must stay readable (not category cover/cave).
     const leadImage = "/images/vitrine/europa-paris-noite.webp";
     const activeCategories = categories.filter((cat) => (Number(cat.packageCount) || 0) > 0);
     const summaryChips = activeCategories
@@ -834,11 +867,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       <figure class="wt-vitrine-mast">
         <picture>
           <source media="(max-width: 768px)" srcset="/images/vitrine/europa-paris-noite-mobile.webp" type="image/webp">
-          <img src="${esc(leadImage)}" alt="Paris à noite — vitrine WallTravel" width="2400" height="1600" decoding="async" fetchpriority="high">
+          <img src="${esc(leadImage)}" alt="Paris à noite, vitrine WallTravel" width="2400" height="1600" decoding="async" fetchpriority="high">
         </picture>
         <figcaption>
           <h1>Vitrine de viagens</h1>
-          <p>Viagens selecionadas pela WallTravel — por destino e estilo. Personalizáveis com um especialista.</p>
+          <p>Viagens selecionadas pela WallTravel, por destino e estilo. Personalizáveis com um especialista.</p>
         </figcaption>
       </figure>
       <div class="vitrine-header wt-vitrine-header" data-reveal>
@@ -856,7 +889,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="wt-vitrine-summary-label">${tripCount === 1 ? "viagem para explorar" : "viagens para explorar"}</span>
           </p>`
               : `<p class="wt-vitrine-summary-count">
-            <span class="wt-vitrine-summary-label">Seleção WallTravel — fale com um especialista para explorar o que está disponível agora.</span>
+            <span class="wt-vitrine-summary-label">Seleção WallTravel: fale com um especialista para explorar o que está disponível agora.</span>
           </p>`
           }
           ${summaryChips ? `<div class="wt-vitrine-chips">${summaryChips}</div>` : ""}
@@ -1103,7 +1136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const groups = getGroups();
     updateSEO(
       "Expedições em grupo",
-      "Expedições em grupo pequeno com curadoria WallTravel — destinos com intenção e logística completa.",
+      "Expedições em grupo pequeno com curadoria WallTravel: destinos com intenção e logística completa.",
     );
     groupsView.innerHTML = renderGroupsCatalog(groups, esc);
     bindGroupForms(groupsView, WA);
@@ -1132,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const seoDesc =
       group.seoDescription ||
       group.shortDescription ||
-      `Viagem em grupo WallTravel — ${group.name}.`;
+      `Viagem em grupo WallTravel: ${group.name}.`;
     updateSEO(seoTitle, seoDesc, group.coverImageUrl);
 
     groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);

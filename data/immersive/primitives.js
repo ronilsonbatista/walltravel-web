@@ -519,8 +519,19 @@ function bindApertureToHero(aperture, selector) {
  */
 export function playPageIntro(root = document) {
   if (typeof window !== "undefined" && window.__wtHomeIntro) return window.__wtHomeIntro;
+  const path = typeof window !== "undefined" ? window.location.pathname || "/" : "/";
+  const isHome = path === "/" || path === "/index.html";
+  if (!isHome) {
+    document.querySelectorAll("[data-wt-page-intro]").forEach((node) => node.remove());
+    const rootEl = document.documentElement;
+    rootEl.classList.remove("wt-intro-active", "wt-intro-pending", "wt-intro-hold", "wt-intro-transition");
+    rootEl.classList.add("wt-intro-skip", "wt-hero-live");
+    rootEl.dataset.introPhase = "hero-live";
+    return Promise.resolve(false);
+  }
   const el =
-    root.querySelector?.("[data-wt-page-intro]") || document.querySelector("[data-wt-page-intro]");
+    root.querySelector?.("[data-wt-page-intro][data-intro-preset='home']") ||
+    document.querySelector("[data-wt-page-intro][data-intro-preset='home']");
   if (!el) return Promise.resolve(false);
 
   const presetEarly = normalizePreset(

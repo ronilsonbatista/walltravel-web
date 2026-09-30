@@ -33,7 +33,7 @@ test.describe("premium UX refinement", () => {
     );
     expect(mist.toLowerCase()).toBe("#e8eae0");
     await expect(page.locator("#destinos-experiencias.section-rhythm-a")).toHaveCount(1);
-    await expect(page.locator("#personalizacao.section-rhythm-c")).toHaveCount(1);
+    await expect(page.locator("#diferenciais.section-rhythm-b")).toHaveCount(1);
   });
 
   test("groups catalog has no CMS copy", async ({ page }) => {
