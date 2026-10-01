@@ -175,7 +175,7 @@ export function renderWhyGroup(group, esc) {
     <div class="section-container group-band-inner">
       <div class="group-why-head">
         <span class="section-tag">Diferenciais</span>
-        <h2 class="group-band-title">Por que essa expedição é diferente</h2>
+        <h2 class="group-band-title">Qual é o diferencial da nossa expedição?</h2>
       </div>
       <div class="group-why-visual">
         ${group.whyGroup
@@ -605,21 +605,27 @@ export function renderFaq(group, esc) {
 export function renderLeader(group, esc) {
   const leader = group.leader;
   if (!leader?.name) return "";
+  const photo = leader.photoUrl ? String(leader.photoUrl) : "";
+  const photoJpg = photo.endsWith(".webp") ? photo.replace(/\.webp$/i, ".jpg") : "";
+  const photoMarkup = photo
+    ? photoJpg
+      ? `<picture>
+            <source type="image/webp" srcset="${esc(photo)}">
+            <img src="${esc(photoJpg)}" alt="${esc(leader.name)}" class="group-leader-photo" width="768" height="1024" loading="lazy" decoding="async" onerror="this.style.display='none'">
+          </picture>`
+      : `<img src="${esc(photo)}" alt="${esc(leader.name)}" class="group-leader-photo" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+    : "";
   return `<section class="group-band group-band--photo group-leader-band" id="group-leader" data-reveal>
     ${
-      leader.photoUrl
-        ? `<div class="group-leader-bg" aria-hidden="true"><img src="${esc(leader.photoUrl)}" alt="" loading="lazy"></div>`
+      photo
+        ? `<div class="group-leader-bg" aria-hidden="true"><img src="${esc(photo)}" alt="" loading="lazy"></div>`
         : ""
     }
     <div class="section-container group-band-inner group-leader-inner">
       <span class="section-tag section-tag--on-dark">Liderança</span>
       <h2 class="group-band-title">Líder da expedição</h2>
       <div class="group-leader-card">
-        ${
-          leader.photoUrl
-            ? `<img src="${esc(leader.photoUrl)}" alt="${esc(leader.name)}" class="group-leader-photo" loading="lazy" onerror="this.style.display='none'">`
-            : ""
-        }
+        ${photoMarkup}
         <div>
           <h3>${esc(leader.name)}</h3>
           ${leader.title ? `<p class="group-leader-title">${esc(leader.title)}</p>` : ""}

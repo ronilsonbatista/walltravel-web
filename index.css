@@ -4524,6 +4524,12 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 .group-investment-band .group-investment-card {
   background: color-mix(in srgb, #fff 8%, transparent);
   border: 1px solid rgba(246, 241, 232, 0.18);
+  padding: 1.5rem 1.5rem 1.35rem;
+}
+
+.group-investment-band .group-band-inner {
+  padding-left: clamp(1.75rem, 5vw, 3rem);
+  padding-right: clamp(1.75rem, 5vw, 3rem);
 }
 
 .group-investment-band .group-investment-card h3,
@@ -5273,7 +5279,7 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 
 .group-investment-card {
   border-top: 1px solid var(--border-color);
-  padding: 1.35rem 0 0;
+  padding: 1.35rem 1.25rem 0;
   background: transparent;
 }
 
@@ -5399,16 +5405,20 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 
 .group-leader-card {
   display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 1.75rem;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: clamp(1.75rem, 4vw, 2.75rem);
   align-items: start;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
 }
 
 .group-leader-photo {
-  width: 180px;
-  height: 220px;
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 3 / 4;
+  height: auto;
+  min-height: 320px;
   object-fit: cover;
+  object-position: center top;
 }
 
 .group-leader-title {
@@ -5867,6 +5877,12 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 
   .group-leader-card {
     grid-template-columns: 1fr;
+  }
+
+  .group-leader-photo {
+    max-width: min(100%, 420px);
+    min-height: 280px;
+    margin-inline: auto;
   }
 
   .group-gallery-cinematic {
