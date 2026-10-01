@@ -5421,6 +5421,16 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   object-position: center top;
 }
 
+.group-leader-card > picture {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+}
+
+.group-leader-card > picture .group-leader-photo {
+  max-width: none;
+}
+
 .group-leader-title {
   color: var(--color-primary);
   margin: 0.25rem 0 0.75rem;
