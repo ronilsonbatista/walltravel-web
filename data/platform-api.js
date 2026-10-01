@@ -131,14 +131,20 @@ const PRESENTATION_COVERS = {
   grecia: "/images/groups/grecia-santorini.webp",
 };
 
+/** Higher-quality leader portraits for public storefront presentation. */
+const PRESENTATION_LEADER_PHOTOS = {
+  grecia: "/images/groups/wallace-maia.webp",
+};
+
 function presentGroup(group) {
   const cover = PRESENTATION_COVERS[group?.slug];
-  if (!cover) return group;
+  const leaderPhoto = PRESENTATION_LEADER_PHOTOS[group?.slug];
   const gallery = Array.isArray(group.gallery) ? group.gallery : [];
-  return {
-    ...group,
-    coverImageUrl: cover,
-    gallery: [
+  const next = { ...group };
+
+  if (cover) {
+    next.coverImageUrl = cover;
+    next.gallery = [
       cover,
       ...gallery.filter(
         (src) =>
@@ -146,8 +152,14 @@ function presentGroup(group) {
           src !== cover &&
           !String(src).includes("hero-santorini.webp"),
       ),
-    ],
-  };
+    ];
+  }
+
+  if (leaderPhoto && next.leader) {
+    next.leader = { ...next.leader, photoUrl: leaderPhoto };
+  }
+
+  return next;
 }
 
 /** Map Public API group summary/detail → web group shape. */
