@@ -537,7 +537,7 @@ export function renderInvestment(group, esc) {
 
   const capacity =
     group.groupSize != null
-      ? `<p class="group-investment-capacity">Grupo de ${esc(String(group.groupSize))} viajantes — vagas reais, sem urgência artificial.</p>`
+      ? `<p class="group-investment-capacity">Grupo de ${esc(String(group.groupSize))} viajantes. Vagas reais, sem urgência artificial.</p>`
       : "";
 
   const heroPrice = formatMoney(group.priceFrom, group.currency);
@@ -562,8 +562,8 @@ export function renderInvestment(group, esc) {
             const price = formatMoney(opt.price, group.currency);
             const featured = i === 0 && price;
             return `<div class="group-investment-card ${featured ? "group-investment-card--featured" : ""}" data-reveal>
-              <h3>${esc(opt.title)}</h3>
-              ${opt.description ? `<p>${esc(opt.description)}</p>` : ""}
+              <h3 class="group-investment-card-title">${esc(opt.title)}</h3>
+              ${opt.description ? `<p class="group-investment-card-desc">${esc(opt.description)}</p>` : ""}
               <div class="group-investment-price">${price ? esc(price) : "Sob consulta"}</div>
               ${opt.priceNote ? `<p class="group-investment-note">${esc(opt.priceNote)}</p>` : ""}
             </div>`;
@@ -574,7 +574,14 @@ export function renderInvestment(group, esc) {
         group.paymentMethods?.length
           ? `<div class="group-payment-methods" data-reveal>
           <h3 class="group-subheading">Formas de pagamento</h3>
-          <ul>${group.paymentMethods.map((p) => `<li><strong>${esc(p.title)}</strong>${p.description ? ` — ${esc(p.description)}` : ""}</li>`).join("")}</ul>
+          <ul class="group-payment-list">${group.paymentMethods
+            .map(
+              (p) =>
+                `<li><strong>${esc(p.title)}</strong>${
+                  p.description ? `<span class="group-payment-desc">${esc(p.description)}</span>` : ""
+                }</li>`,
+            )
+            .join("")}</ul>
         </div>`
           : ""
       }
