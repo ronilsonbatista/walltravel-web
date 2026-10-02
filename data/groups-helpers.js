@@ -30,7 +30,7 @@ function useLocalGroups(reason) {
   detailCache.clear();
 }
 
-export async function hydrateGroups() {
+export async function hydrateGroups(options = {}) {
   hydrateError = null;
   detailCache.clear();
 
@@ -39,8 +39,18 @@ export async function hydrateGroups() {
     return { source, error: hydrateError };
   }
 
+  const prefetchSlug =
+    typeof options.prefetchSlug === "string" && options.prefetchSlug
+      ? options.prefetchSlug
+      : null;
+
   try {
-    const apiItems = await fetchPublicGroups();
+    const listPromise = fetchPublicGroups();
+    const detailPromise = prefetchSlug
+      ? fetchPublicGroupBySlug(prefetchSlug).catch(() => null)
+      : null;
+
+    const apiItems = await listPromise;
     if (!apiItems.length) {
       useLocalGroups("empty_api");
       return { source, error: hydrateError };
@@ -48,6 +58,15 @@ export async function hydrateGroups() {
     groups = apiItems.map(mapGroup).filter(Boolean);
     source = "platform";
     hydrateError = null;
+
+    if (detailPromise && prefetchSlug) {
+      const detail = await detailPromise;
+      if (detail) {
+        const mapped = mapGroup(detail);
+        if (mapped) detailCache.set(prefetchSlug, mapped);
+      }
+    }
+
     return { source, error: null };
   } catch (e) {
     useLocalGroups(e?.code || e?.message || "fetch_failed");
