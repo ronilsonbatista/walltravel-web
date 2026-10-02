@@ -76,7 +76,45 @@ document.addEventListener('DOMContentLoaded', async () => {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
 
-  await Promise.all([hydrateStorefront(), hydrateGroups()]);
+  // Route-aware hydrate: do not block first paint on APIs the route does not need.
+  // Still start both immediately so SPA navigations stay warm.
+  const needsStorefrontNow =
+    bootIsHomeEarly ||
+    bootPathEarly.startsWith("/vitrine") ||
+    bootPathEarly.startsWith("/pacote/") ||
+    bootPathEarly.startsWith("/viagens/");
+  const needsGroupsNow =
+    bootIsHomeEarly || bootPathEarly === "/grupos" || bootPathEarly.startsWith("/grupos/");
+
+  const groupPrefetchSlug = (() => {
+    if (!bootPathEarly.startsWith("/grupos/")) return null;
+    let slug = bootPathEarly.slice("/grupos/".length);
+    if (slug.endsWith("/")) slug = slug.slice(0, -1);
+    return slug || null;
+  })();
+  const packagePrefetchSlug = (() => {
+    const prefix = bootPathEarly.startsWith("/viagens/")
+      ? "/viagens/"
+      : bootPathEarly.startsWith("/pacote/")
+        ? "/pacote/"
+        : null;
+    if (!prefix) return null;
+    let slug = bootPathEarly.slice(prefix.length);
+    if (slug.endsWith("/")) slug = slug.slice(0, -1);
+    return slug || null;
+  })();
+
+  const storefrontReady = hydrateStorefront({
+    prefetchSlug: packagePrefetchSlug || undefined,
+  });
+  const groupsReady = hydrateGroups({
+    prefetchSlug: groupPrefetchSlug || undefined,
+  });
+  const bootWaiters = [];
+  if (needsStorefrontNow) bootWaiters.push(storefrontReady);
+  if (needsGroupsNow) bootWaiters.push(groupsReady);
+  await Promise.all(bootWaiters);
+
   hydrateWhatsAppCTAs(document);
   bindWhatsappTracking(document);
 
@@ -114,8 +152,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* Destinos column removed from footer in V1 — keep hook for hydrate safety */
   };
 
-  renderHomeDestinosExplorer();
-  updateFooterDestinosLinks();
+  const paintCatalogHooks = () => {
+    renderHomeDestinosExplorer();
+    updateFooterDestinosLinks();
+  };
+  if (needsStorefrontNow) {
+    paintCatalogHooks();
+  } else {
+    void storefrontReady.then(paintCatalogHooks);
+  }
 
   // Home opening intro — CSS-first shell already in HTML; clear on non-home, never reinject after skip
   const homeIntroMount = document.getElementById("wt-home-intro-mount");

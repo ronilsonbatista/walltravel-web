@@ -5,6 +5,13 @@
 
 const DEFAULT_WHATSAPP = "5521997138461";
 
+/** In-flight dedupe + short TTL so SPA navigations reuse warm catalog responses. */
+const RESPONSE_TTL_MS = 60_000;
+/** @type {Map<string, { expires: number, body: unknown }>} */
+const responseCache = new Map();
+/** @type {Map<string, Promise<unknown>>} */
+const inflight = new Map();
+
 export function getPlatformApiBase() {
   const raw =
     import.meta.env.WALLTRAVEL_PLATFORM_API_URL ||
@@ -28,15 +35,45 @@ async function getJson(path) {
     err.code = "config_missing";
     throw err;
   }
-  const res = await fetch(`${base}${path}`, {
-    headers: { Accept: "application/json" },
-  });
-  if (!res.ok) {
-    const err = new Error(`storefront_http_${res.status}`);
-    err.status = res.status;
-    throw err;
+
+  const url = `${base}${path}`;
+  const cached = responseCache.get(url);
+  if (cached && cached.expires > Date.now()) {
+    return cached.body;
   }
-  return res.json();
+
+  const pending = inflight.get(url);
+  if (pending) return pending;
+
+  const request = (async () => {
+    const res = await fetch(url, {
+      headers: { Accept: "application/json" },
+      credentials: "omit",
+      // Prefer HTTP cache when Platform sends Cache-Control / s-maxage.
+      cache: "default",
+    });
+    if (!res.ok) {
+      const err = new Error(`storefront_http_${res.status}`);
+      err.status = res.status;
+      throw err;
+    }
+    const body = await res.json();
+    responseCache.set(url, { expires: Date.now() + RESPONSE_TTL_MS, body });
+    return body;
+  })();
+
+  inflight.set(url, request);
+  try {
+    return await request;
+  } finally {
+    inflight.delete(url);
+  }
+}
+
+/** Clear client caches (tests / forced refresh). */
+export function clearPlatformApiCache() {
+  responseCache.clear();
+  inflight.clear();
 }
 
 /** Internal CMS/API metadata tags must never appear on the public storefront. */

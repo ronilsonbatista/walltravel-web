@@ -37,7 +37,7 @@ function useEmptyStorefront(reason) {
  * After CMS migration: do NOT fall back to data/vitrine.json packages at runtime.
  * Hero / honeymoon institutional blocks remain local (below).
  */
-export async function hydrateStorefront() {
+export async function hydrateStorefront(options = {}) {
   hydrateError = null;
   detailCache.clear();
 
@@ -46,11 +46,21 @@ export async function hydrateStorefront() {
     return { source, error: hydrateError };
   }
 
+  const prefetchSlug =
+    typeof options.prefetchSlug === "string" && options.prefetchSlug
+      ? options.prefetchSlug
+      : null;
+
   try {
-    const [apiCats, apiProducts] = await Promise.all([
+    const listPromise = Promise.all([
       fetchPublicCategories(),
       fetchPublicProducts(),
     ]);
+    const detailPromise = prefetchSlug
+      ? fetchPublicProductBySlug(prefetchSlug).catch(() => null)
+      : null;
+
+    const [apiCats, apiProducts] = await listPromise;
     categories = apiCats.map(mapCategory).filter(categoryHasInventory);
     packages = apiProducts.map(mapProduct);
     source = "platform";
@@ -59,6 +69,18 @@ export async function hydrateStorefront() {
       categories: categories.length,
       products: packages.length,
     });
+
+    if (detailPromise && prefetchSlug) {
+      const detail = await detailPromise;
+      if (detail) {
+        const mapped = mapProduct(detail);
+        detailCache.set(prefetchSlug, mapped);
+        const idx = packages.findIndex((p) => p.slug === prefetchSlug);
+        if (idx >= 0) packages[idx] = { ...packages[idx], ...mapped };
+        else packages.push(mapped);
+      }
+    }
+
     return { source, error: null };
   } catch (e) {
     useEmptyStorefront(e?.code || e?.message || "fetch_failed");
