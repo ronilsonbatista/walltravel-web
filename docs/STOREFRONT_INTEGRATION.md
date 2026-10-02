@@ -5,6 +5,7 @@
 | Item | Value |
 |---|---|
 | Env | `WALLTRAVEL_PLATFORM_API_URL` (also `VITE_WALLTRAVEL_PLATFORM_API_URL`) |
+| Production API host | `https://admin.walltravel.com.br` (same Platform host as the admin panel; set in Vercel env) |
 | API | `GET /api/public/storefront`, `/categories`, `/:slug` |
 | Ownership | Catalog = Platform; home hero/honeymoon copy = Web (local JSON) |
 | Fallback | On API failure / missing env → local `data/vitrine.json` + sticky notice |
