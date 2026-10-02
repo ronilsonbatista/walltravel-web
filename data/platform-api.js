@@ -194,9 +194,14 @@ export function mapGroup(apiGroup) {
     investmentOptions: Array.isArray(apiGroup.investmentOptions)
       ? apiGroup.investmentOptions
       : [],
-    paymentMethods: Array.isArray(apiGroup.paymentMethods)
-      ? apiGroup.paymentMethods
-      : [],
+    paymentMethods: (
+      Array.isArray(apiGroup.paymentMethods) ? apiGroup.paymentMethods : []
+    ).filter((p) => {
+      const title = String(p?.title ?? "").trim();
+      if (!title) return false;
+      // Group storefront: credit/debit only (CMS/API may still seed Pix).
+      return !/^pix$/i.test(title);
+    }),
     optionals: Array.isArray(apiGroup.optionals) ? apiGroup.optionals : [],
     includes: Array.isArray(apiGroup.includes) ? apiGroup.includes : [],
     excludes: Array.isArray(apiGroup.excludes) ? apiGroup.excludes : [],
