@@ -1,4 +1,4 @@
-import { buildWhatsAppCTA } from "./whatsapp-cta.js";
+import { buildWhatsAppCTA, messageForContext } from "./whatsapp-cta.js";
 import {
   HeroCarousel,
   StickyConversionCTA,
@@ -44,12 +44,13 @@ function formatTripDates(departureDate, returnDate) {
   return `${dep.getDate()} de ${MONTHS_PT[dep.getMonth()]} a ${ret.getDate()} de ${MONTHS_PT[ret.getMonth()]} de ${ret.getFullYear()}`;
 }
 
-/** Thin wrapper — prefer buildWhatsAppCTA with pageType/entity when possible. */
+/** Thin wrapper. Prefer buildWhatsAppCTA with context/entity when possible. */
 function waLink(WA, message, opts = {}) {
   return buildWhatsAppCTA({
     number: WA,
     customMessage: message,
     pageType: opts.pageType || "GENERIC",
+    context: opts.context,
     entity: opts.entity,
     placement: opts.placement,
     source: opts.source,
@@ -61,21 +62,21 @@ function groupWaHref(group, WA, placement = "cta") {
   return buildWhatsAppCTA({
     number: WA,
     pageType: group.comingSoon ? "COMING_SOON" : "GROUP",
+    context: "grupo",
     entity: {
       name: group.name,
       slug: group.slug,
       comingSoon: Boolean(group.comingSoon),
     },
-    customMessage: group.ctaWhatsappMessage || undefined,
     placement,
     source: "group",
   }).href;
 }
 
 export function buildGroupWhatsappMessage(group, formData = {}) {
-  const base =
-    group.ctaWhatsappMessage ||
-    `Olá! Gostaria de saber mais sobre o grupo ${group.name} da WallTravel.`;
+  const base = messageForContext("grupo", group.name, {
+    comingSoon: Boolean(group.comingSoon),
+  });
   const parts = [base];
   if (formData.name) parts.push(`Nome: ${formData.name}`);
   if (formData.whatsapp) parts.push(`WhatsApp: ${formData.whatsapp}`);
@@ -660,11 +661,11 @@ export function renderGroupForm(group, esc, WA) {
         group.comingSoon
           ? "Deixe seu WhatsApp. Avisamos quando datas e investimento forem publicados."
           : group.groupSize
-            ? `Grupo de ${esc(String(group.groupSize))} pessoas. Fale com a equipe — sem falsa urgência.`
+            ? `Grupo de ${esc(String(group.groupSize))} pessoas. Fale com a equipe, sem falsa urgência.`
             : "Fale com a equipe WallTravel pelo WhatsApp."
       }</p>
     </div>
-    <form class="group-lead-form" data-group-slug="${esc(group.slug)}" data-wa-message="${esc(group.ctaWhatsappMessage || "")}" novalidate>
+    <form class="group-lead-form" data-group-slug="${esc(group.slug)}" data-coming-soon="${group.comingSoon ? "1" : ""}" novalidate>
       ${fields
         .map(
           (f) => `
@@ -1070,20 +1071,17 @@ export function bindGroupForms(root, WA) {
       });
       const msgField = form.closest(".group-detail, .groups-page");
       const title = msgField?.querySelector("h1")?.textContent || slug;
-      const comingSoon = Boolean(msgField?.querySelector(".group-card-badge, .group-coming-banner"));
+      const comingSoon =
+        form.getAttribute("data-coming-soon") === "1" ||
+        Boolean(msgField?.querySelector(".group-card-badge, .group-coming-banner"));
       const message = buildGroupWhatsappMessage(
-        {
-          slug,
-          name: title,
-          ctaWhatsappMessage:
-            form.getAttribute("data-wa-message") ||
-            `Olá! Gostaria de informações sobre o grupo ${title} da WallTravel.`,
-        },
+        { slug, name: title, comingSoon },
         data,
       );
       const href = buildWhatsAppCTA({
         number: WA,
         pageType: comingSoon ? "COMING_SOON" : "GROUP",
+        context: "grupo",
         entity: { name: title, slug, comingSoon },
         customMessage: message,
         placement: "form",

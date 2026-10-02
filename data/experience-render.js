@@ -100,12 +100,12 @@ function renderExperiencePricing(pkg, esc, priceUnitLabel) {
   </section>`;
 }
 
-function packageWaHref(pkg, WA, placement, customMessage) {
+function packageWaHref(pkg, WA, placement) {
   return buildWhatsAppCTA({
     number: WA,
     pageType: "VITRINE",
+    context: "vitrine",
     entity: { name: pkg.name, slug: pkg.slug },
-    customMessage: customMessage || pkg.ctaWhatsappMessage || undefined,
     placement,
     source: "experience",
   }).href;
@@ -113,17 +113,12 @@ function packageWaHref(pkg, WA, placement, customMessage) {
 
 function renderExperienceCta(pkg, esc, WA) {
   const primary = packageWaHref(pkg, WA, "product");
-  const specialist = packageWaHref(
-    pkg,
-    WA,
-    "specialist",
-    `Olá! Gostaria de falar com um especialista sobre ${pkg.name} da WallTravel.`,
-  );
+  const specialist = packageWaHref(pkg, WA, "specialist");
   return `<section class="group-section group-form-section group-final-cta" id="exp-cta" data-reveal>
     <div class="group-final-cta-copy">
       <span class="section-tag">Contato</span>
       <h2 class="package-section-title">Planeje ${esc(pkg.name)}</h2>
-      <p class="group-final-cta-lede">Fale com a equipe WallTravel pelo WhatsApp — roteiro sob medida a partir desta experiência.</p>
+      <p class="group-final-cta-lede">Fale com a equipe WallTravel pelo WhatsApp. Roteiro sob medida a partir desta experiência.</p>
     </div>
     <div class="sidebar-ctas experience-cta-row">
       <a href="${primary}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp">
