@@ -295,7 +295,7 @@ export function mapProduct(apiProduct) {
     ctaLabel: apiProduct.ctaLabel || "Planejar minha viagem",
     ctaWhatsappMessage:
       apiProduct.ctaWhatsappMessage ||
-      `Olá! Vim pela vitrine do site e tenho interesse no pacote "${apiProduct.name}".`,
+      `Olá! Vim pela vitrine do site e tenho interesse no planejamento "${apiProduct.name}".`,
     seoTitle: apiProduct.seoTitle || null,
     seoDescription: apiProduct.seoDescription || null,
   };

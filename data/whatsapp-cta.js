@@ -20,7 +20,7 @@ export function messageForContext(context, title, opts = {}) {
 
   if (ctx === "vitrine") {
     if (name) {
-      return `Olá! Vim pela vitrine do site e tenho interesse no pacote "${name}".`;
+      return `Olá! Vim pela vitrine do site e tenho interesse no planejamento "${name}".`;
     }
     return "Olá! Vim pela vitrine do site e gostaria de planejar uma experiência sob medida.";
   }
@@ -120,7 +120,7 @@ export function buildWhatsAppCTA(opts = {}) {
     Boolean(entity?.comingSoon) ||
     String(opts.pageType || "").toUpperCase() === "COMING_SOON";
 
-  // Category listings name a category, not a package. Avoid "pacote" wording.
+  // Category listings name a category, not a product title.
   const placement = String(opts.placement || "").toLowerCase();
   const isCategoryListing =
     placement === "category" ||
