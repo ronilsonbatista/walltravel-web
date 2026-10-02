@@ -265,12 +265,12 @@
   ],
   "paymentMethods": [
     {
-      "title": "Cartão à vista",
-      "description": "Pagamento integral no cartão."
-    },
-    {
       "title": "Cartão de crédito",
       "description": "Entrada + saldo em até 10x, com juros."
+    },
+    {
+      "title": "Cartão de débito",
+      "description": "À vista."
     }
   ],
   "optionals": [],
