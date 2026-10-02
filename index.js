@@ -52,6 +52,14 @@ async function loadExperienceRenderer() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  } catch {
+    /* ignore */
+  }
+
   const bootPathEarly = window.location.pathname;
   const bootIsHomeEarly = bootPathEarly === "/" || bootPathEarly === "/index.html";
   let homeIntroPromise = Promise.resolve(false);
@@ -283,16 +291,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
             window.history.pushState(null, '', '/' + anchorId);
             handleRouting();
-            setTimeout(() => {
-              const element = document.querySelector(anchorId);
-              if (element) {
-                const headerHeight = header.offsetHeight;
-                window.scrollTo({
-                  top: element.getBoundingClientRect().top + window.scrollY - headerHeight,
-                  behavior: 'smooth'
-                });
-              }
-            }, 150);
           }
         }
         
@@ -604,21 +602,83 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const scrollToHashTarget = () => {
     const hash = window.location.hash;
-    if (!hash || hash === '#') return;
+    if (!hash || hash === '#') return false;
     const target = document.querySelector(hash);
-    if (!target) return;
+    if (!target) return false;
     const headerHeight = header?.offsetHeight || 80;
-    window.scrollTo({
-      top: target.getBoundingClientRect().top + window.scrollY - headerHeight,
-      behavior: 'smooth',
+    const top = Math.max(
+      0,
+      target.getBoundingClientRect().top + window.scrollY - headerHeight,
+    );
+    const rootEl = document.documentElement;
+    const prevBehavior = rootEl.style.scrollBehavior;
+    rootEl.style.scrollBehavior = 'auto';
+    try {
+      window.scrollTo({ top, left: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, top);
+    }
+    rootEl.style.scrollBehavior = prevBehavior;
+    return true;
+  };
+
+  /** Instant top pin — CSS scroll-behavior:smooth made "auto" animate and land mid-page. */
+  const resetScrollToTop = () => {
+    const rootEl = document.documentElement;
+    const prevBehavior = rootEl.style.scrollBehavior;
+    rootEl.style.scrollBehavior = 'auto';
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+    rootEl.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+    rootEl.style.scrollBehavior = prevBehavior;
+  };
+
+  /**
+   * Settle scroll after a route paint.
+   * Preserve hash only when the URL intentionally includes one and the target exists.
+   */
+  const settleRouteScroll = ({ preferHash = true } = {}) => {
+    if (preferHash && scrollToHashTarget()) return;
+    resetScrollToTop();
+  };
+
+  const scheduleRouteScroll = ({ preferHash = true } = {}) => {
+    settleRouteScroll({ preferHash });
+    window.requestAnimationFrame(() => {
+      settleRouteScroll({ preferHash });
+      window.requestAnimationFrame(() => settleRouteScroll({ preferHash }));
+    });
+  };
+
+  const hydrateDeferredPicture = (root) => {
+    if (!root) return;
+    root.querySelectorAll('source[data-srcset]').forEach((source) => {
+      if (source.dataset.srcset) {
+        source.srcset = source.dataset.srcset;
+        delete source.dataset.srcset;
+      }
+    });
+    root.querySelectorAll('img[data-src]').forEach((img) => {
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        delete img.dataset.src;
+      }
+      img.dataset.hydrated = '1';
     });
   };
 
   // Route router logic
   const handleRouting = async () => {
     const path = window.location.pathname;
+    const routeHash = window.location.hash;
+    const wantsHash = Boolean(routeHash && routeHash !== '#');
     hideAllViews();
     syncHomeIntroForRoute(path);
+    if (!wantsHash) resetScrollToTop();
     
     if (path === '/' || path === '/index.html') {
       homeView.style.display = 'block';
@@ -637,6 +697,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (deferHomePageView) {
           trackStorefrontEvent("page_view", { path: "/" });
         }
+        scheduleRouteScroll({ preferHash: wantsHash });
       });
       updateSEO(
         "WallTravel | Experiências Incríveis",
@@ -674,6 +735,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         header.classList.add('scrolled');
         if (comoFuncionaView) {
           comoFuncionaView.style.display = 'block';
+          hydrateDeferredPicture(comoFuncionaView.querySelector('[data-route-hydrate="como-funciona"]'));
           comoFuncionaView.querySelectorAll('.fade-in-section').forEach((el) => {
             el.classList.add('is-visible');
           });
@@ -683,9 +745,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           "Como funciona | WallTravel",
           "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem, com critério e presença."
         );
-        if (window.location.hash) {
-          window.requestAnimationFrame(() => window.setTimeout(scrollToHashTarget, 60));
-        }
       } else {
         // Unknown route → 404 (do not silently fall back to Home)
         packageView.style.display = 'block';
@@ -698,6 +757,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       handleHeaderScroll();
     }
     syncFloatWhatsApp(path);
+    scheduleRouteScroll({ preferHash: wantsHash });
   };
 
   function syncFloatWhatsApp(path) {
@@ -777,28 +837,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           e.preventDefault();
           window.history.pushState(null, '', path + hash);
           handleRouting();
-          
-          if (!hash) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else {
-            setTimeout(() => {
-              const target = document.querySelector(hash);
-              if (target) {
-                const headerHeight = header.offsetHeight;
-                window.scrollTo({
-                  top: target.getBoundingClientRect().top + window.scrollY - headerHeight,
-                  behavior: 'smooth'
-                });
-              }
-            }, 100);
-          }
         }
       }
     }
   });
 
   // Listen for browser forward/backward buttons
-  window.addEventListener('popstate', handleRouting);
+  window.addEventListener('popstate', () => {
+    handleRouting();
+  });
 
   // ==========================================================================
   // 5. VIEW RENDER FUNCTIONS (VITRINE, CATEGORIES & PACKAGES DETAIL)

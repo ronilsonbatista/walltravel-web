@@ -10,7 +10,6 @@
 
   <!-- First paint: cream + wordmark before stylesheet or JS (no white flash) -->
   <link rel="preload" href="/assets/03_tipografia/01_titulo/FacultyGlyphic-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="preload" href="/images/vitrine/africa-do-sul.webp" as="image" type="image/webp" fetchpriority="high">
   <style id="wt-critical-cream">
     html{background-color:#F6F1E8;color:#16170F}
     body{background-color:#F6F1E8;margin:0}
@@ -80,6 +79,22 @@
     (function () {
       var path = location.pathname || "/";
       var isHome = path === "/" || path === "/index.html";
+      try {
+        if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      } catch (e0) {}
+      if (!location.hash) {
+        try { window.scrollTo(0, 0); } catch (eScroll) {}
+      }
+      if (isHome) {
+        var preload = document.createElement("link");
+        preload.rel = "preload";
+        preload.as = "image";
+        preload.href = "/images/vitrine/africa-do-sul.webp";
+        preload.type = "image/webp";
+        preload.setAttribute("fetchpriority", "high");
+        preload.setAttribute("data-hero-preload", "/images/vitrine/africa-do-sul.webp");
+        document.head.appendChild(preload);
+      }
       var skip = !isHome;
       try {
         if (sessionStorage.getItem("wt_immersive_intro_played") === "1") skip = true;
@@ -109,6 +124,7 @@
             root.dataset.introPhase = "hero-live";
             var late = document.getElementById("wt-home-intro-mount");
             if (late) late.replaceChildren();
+            try { window.scrollTo(0, 0); } catch (eLate) {}
           }, 1500);
         });
       }
@@ -254,6 +270,8 @@
           var theme = document.querySelector('meta[name="theme-color"]');
           if (theme) theme.setAttribute("content", "#3F4328");
           root.dataset.introState = "hero-live";
+          // Hold used overflow:hidden; pin to top so releasing never reveals mid-page.
+          try { window.scrollTo(0, 0); } catch (eTop) {}
           try { document.dispatchEvent(new CustomEvent("wt:hero-live")); } catch (err2) {}
           resolve(true);
         };
@@ -298,8 +316,8 @@
     <div class="hero-slideshow" id="hero-slideshow">
       <div class="hero-slide active" data-index="0" data-slide-id="africa-do-sul">
         <picture>
-          <source type="image/webp" srcset="/images/vitrine/africa-do-sul.webp">
-          <img src="/images/vitrine/africa-do-sul.jpg" alt="Safari na África do Sul" class="hero-slide-img" width="1600" height="1600" decoding="async" fetchpriority="high">
+          <source type="image/webp" data-srcset="/images/vitrine/africa-do-sul.webp">
+          <img data-src="/images/vitrine/africa-do-sul.jpg" alt="Safari na África do Sul" class="hero-slide-img" width="1600" height="1600" decoding="async" fetchpriority="high">
         </picture>
       </div>
       <div class="hero-slide" data-index="1" data-slide-id="maldivas">
@@ -347,6 +365,24 @@
         </picture>
       </div>
     </div>
+    <script>
+      (function () {
+        var path = location.pathname || "/";
+        if (path !== "/" && path !== "/index.html") return;
+        var slide = document.querySelector(".hero-slide[data-index='0']");
+        if (!slide) return;
+        slide.querySelectorAll("source[data-srcset]").forEach(function (source) {
+          source.srcset = source.getAttribute("data-srcset");
+          source.removeAttribute("data-srcset");
+        });
+        var img = slide.querySelector("img[data-src]");
+        if (img) {
+          img.src = img.getAttribute("data-src");
+          img.removeAttribute("data-src");
+          img.dataset.hydrated = "1";
+        }
+      })();
+    </script>
 
     <!-- Per-slide overlay (strength driven by data-hero-overlay on .hero) -->
     <div class="hero-overlay" id="hero-overlay" aria-hidden="true"></div>
@@ -508,10 +544,10 @@
   <div id="como-funciona-view" class="page-view" style="display: none;">
     <div class="como-funciona-page">
       <header class="como-funciona-mast">
-        <picture>
-          <source media="(max-width: 768px)" srcset="/images/vitrine/australia-uluru-mobile.webp" type="image/webp">
-          <source type="image/webp" srcset="/images/vitrine/australia-uluru.webp">
-          <img src="/images/vitrine/australia-uluru.jpg" alt="Uluru ao entardecer, no outback australiano" width="2000" height="1333" decoding="async" fetchpriority="high">
+        <picture data-route-hydrate="como-funciona">
+          <source media="(max-width: 768px)" data-srcset="/images/vitrine/australia-uluru-mobile.webp" type="image/webp">
+          <source type="image/webp" data-srcset="/images/vitrine/australia-uluru.webp">
+          <img data-src="/images/vitrine/australia-uluru.jpg" alt="Uluru ao entardecer, no outback australiano" width="2000" height="1333" decoding="async" fetchpriority="high">
         </picture>
         <div class="como-funciona-mast-overlay" aria-hidden="true"></div>
         <div class="como-funciona-mast-content section-container">
