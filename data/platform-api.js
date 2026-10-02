@@ -295,7 +295,7 @@ export function mapProduct(apiProduct) {
     ctaLabel: apiProduct.ctaLabel || "Planejar minha viagem",
     ctaWhatsappMessage:
       apiProduct.ctaWhatsappMessage ||
-      `Olá! Gostaria de planejar a experiência ${apiProduct.name} com a WallTravel.`,
+      `Olá! Vim pela vitrine do site e tenho interesse no pacote "${apiProduct.name}".`,
     seoTitle: apiProduct.seoTitle || null,
     seoDescription: apiProduct.seoDescription || null,
   };

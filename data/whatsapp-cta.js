@@ -1,85 +1,101 @@
 /**
  * Central WhatsApp CTA builder.
+ * Prefills `text=` from click origin: vitrine | grupo | site.
  * User-visible message is separate from analytics attribution.
  */
 
 import { getWhatsappNumber } from "./platform-api.js";
 
-/** Configurable templates (CMS Site Settings can override via window.__WT_WA_TEMPLATES__). */
-const DEFAULT_TEMPLATES = {
-  HOME: "Olá! Gostaria de planejar minha próxima viagem personalizada com a WallTravel.",
-  HOME_SLIDE: (entity) =>
-    `Olá! Gostaria de planejar uma viagem para ${entity || "este destino"} com a WallTravel.`,
-  VITRINE: "Olá! Quero explorar a vitrine WallTravel e planejar uma experiência sob medida.",
-  VITRINE_CATEGORY: (entity) =>
-    `Olá! Gostaria de conhecer as experiências da categoria ${entity || ""} da WallTravel.`.trim(),
-  VITRINE_PRODUCT: (entity) =>
-    `Olá! Gostaria de planejar a experiência ${entity || ""} com a WallTravel.`.trim(),
-  GROUP: (entity) =>
-    `Olá! Quero saber mais sobre ${entity || "esta viagem em grupo"} da WallTravel.`,
-  GROUP_COMING_SOON: (entity) =>
-    `Olá! Quero ser avisado quando ${entity || "este grupo"} da WallTravel abrir.`,
-  HONEYMOON: "Olá! Gostaria de planejar uma viagem de lua de mel com a WallTravel.",
-  SERVICE: (entity) =>
-    `Olá! Gostaria de saber mais sobre ${entity || "os serviços"} com a WallTravel.`,
-  ABOUT: "Olá! Gostaria de saber mais sobre a WallTravel.",
-  GENERIC: "Olá! Gostaria de falar com um especialista WallTravel.",
-};
+/** @typedef {'vitrine' | 'grupo' | 'site'} WhatsAppContext */
 
-function templates() {
-  const override =
-    typeof window !== "undefined" && window.__WT_WA_TEMPLATES__
-      ? window.__WT_WA_TEMPLATES__
-      : null;
-  return { ...DEFAULT_TEMPLATES, ...(override || {}) };
+/**
+ * Contextual PT-BR templates. No em dash in copy.
+ * @param {WhatsAppContext} context
+ * @param {string} [title]
+ * @param {{ comingSoon?: boolean }} [opts]
+ */
+export function messageForContext(context, title, opts = {}) {
+  const name = String(title || "").trim();
+  const ctx = normalizeContext(context);
+
+  if (ctx === "vitrine") {
+    if (name) {
+      return `Olá! Vim pela vitrine do site e tenho interesse no pacote "${name}".`;
+    }
+    return "Olá! Vim pela vitrine do site e gostaria de planejar uma experiência sob medida.";
+  }
+
+  if (ctx === "grupo") {
+    if (opts.comingSoon) {
+      if (name) {
+        return `Olá! Vim pela página de viagens em grupo e quero ser avisado quando a expedição "${name}" abrir.`;
+      }
+      return "Olá! Vim pela página de viagens em grupo e quero ser avisado quando novas expedições abrirem.";
+    }
+    if (name) {
+      return `Olá! Vim pela página de viagens em grupo e quero saber mais sobre a expedição "${name}".`;
+    }
+    return "Olá! Vim pela página de viagens em grupo e gostaria de falar com um especialista.";
+  }
+
+  // site (default): header, float, home, como-funciona, sobre, etc.
+  if (name) {
+    return `Olá! Vim pelo site da WallTravel e tenho interesse em "${name}".`;
+  }
+  return "Olá! Vim pelo site da WallTravel e gostaria de falar com um especialista.";
 }
 
-function resolveMessage({ pageType, entity, customMessage, placement }) {
-  if (customMessage && String(customMessage).trim()) {
-    return String(customMessage).trim();
-  }
-  const t = templates();
+/**
+ * @param {string} [pageType]
+ * @param {string} [placement]
+ * @returns {WhatsAppContext}
+ */
+export function contextFromPageType(pageType, placement) {
   const type = String(pageType || "GENERIC").toUpperCase();
-  const name = entity?.name || entity?.title || entity?.slug || "";
+  const place = String(placement || "").toLowerCase();
 
-  switch (type) {
-    case "HOME":
-      if (placement === "slide" || placement === "hero-slide") {
-        const fn = t.HOME_SLIDE;
-        return typeof fn === "function" ? fn(name) : t.HOME;
-      }
-      return t.HOME;
-    case "VITRINE":
-      if (placement === "category") {
-        const fn = t.VITRINE_CATEGORY;
-        return typeof fn === "function" ? fn(name) : t.VITRINE;
-      }
-      if (placement === "product" || placement === "package") {
-        const fn = t.VITRINE_PRODUCT;
-        return typeof fn === "function" ? fn(name) : t.VITRINE;
-      }
-      return t.VITRINE;
-    case "GROUP":
-    case "GROUPS": {
-      const comingSoon = Boolean(entity?.comingSoon);
-      const fn = comingSoon ? t.GROUP_COMING_SOON : t.GROUP;
-      return typeof fn === "function" ? fn(name || entity?.name) : t.GENERIC;
-    }
-    case "COMING_SOON": {
-      const fn = t.GROUP_COMING_SOON;
-      return typeof fn === "function" ? fn(name) : t.GENERIC;
-    }
-    case "HONEYMOON":
-      return t.HONEYMOON;
-    case "SERVICE": {
-      const fn = t.SERVICE;
-      return typeof fn === "function" ? fn(name) : t.GENERIC;
-    }
-    case "ABOUT":
-      return t.ABOUT;
-    default:
-      return t.GENERIC;
+  if (type === "VITRINE" || place === "product" || place === "package" || place === "category") {
+    return "vitrine";
   }
+  if (type === "GROUP" || type === "GROUPS" || type === "COMING_SOON") {
+    return "grupo";
+  }
+  return "site";
+}
+
+function normalizeContext(context) {
+  const c = String(context || "site").toLowerCase();
+  if (c === "vitrine" || c === "grupo" || c === "site") return c;
+  if (c === "group" || c === "groups") return "grupo";
+  if (c === "package" || c === "product") return "vitrine";
+  return "site";
+}
+
+/**
+ * Shared WhatsApp URL helper.
+ * @param {object} opts
+ * @param {string} [opts.phone] digits or formatted number
+ * @param {WhatsAppContext} [opts.context]
+ * @param {string} [opts.title] package or expedition name
+ * @param {boolean} [opts.comingSoon]
+ * @param {string} [opts.customMessage] full override (forms / rare cases)
+ * @returns {{ href: string, message: string, number: string, context: WhatsAppContext }}
+ */
+export function buildWhatsAppUrl({
+  phone,
+  context = "site",
+  title,
+  comingSoon = false,
+  customMessage,
+} = {}) {
+  const number = String(phone || getWhatsappNumber()).replace(/\D/g, "");
+  const ctx = normalizeContext(context);
+  const message =
+    customMessage && String(customMessage).trim()
+      ? String(customMessage).trim()
+      : messageForContext(ctx, title, { comingSoon });
+  const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+  return { href, message, number, context: ctx };
 }
 
 /**
@@ -91,29 +107,49 @@ function resolveMessage({ pageType, entity, customMessage, placement }) {
  * @param {string} [opts.placement] nav | hero | float | slide | form | …
  * @param {string} [opts.customMessage] overrides template
  * @param {string} [opts.number] WhatsApp digits
+ * @param {WhatsAppContext} [opts.context] explicit context (wins over pageType map)
  * @returns {{ href: string, message: string, number: string, analytics: object }}
  */
 export function buildWhatsAppCTA(opts = {}) {
-  const number = String(opts.number || getWhatsappNumber()).replace(/\D/g, "");
   const entity =
     typeof opts.entity === "string" ? { name: opts.entity } : opts.entity || null;
   const path =
     opts.path ||
     (typeof window !== "undefined" ? window.location?.pathname || "/" : "/");
-  const message = resolveMessage({
-    pageType: opts.pageType,
-    entity,
-    customMessage: opts.customMessage,
-    placement: opts.placement,
+  const comingSoon =
+    Boolean(entity?.comingSoon) ||
+    String(opts.pageType || "").toUpperCase() === "COMING_SOON";
+
+  // Category listings name a category, not a package. Avoid "pacote" wording.
+  const placement = String(opts.placement || "").toLowerCase();
+  const isCategoryListing =
+    placement === "category" ||
+    placement === "category-empty" ||
+    placement === "category-filter-empty";
+  const title = entity?.name || entity?.title || "";
+  const context = opts.context || contextFromPageType(opts.pageType, opts.placement);
+
+  let customMessage = opts.customMessage;
+  if (!customMessage && isCategoryListing && title && context === "vitrine") {
+    customMessage = `Olá! Vim pela vitrine do site e gostaria de um roteiro sob medida na categoria "${title}".`;
+  }
+
+  const built = buildWhatsAppUrl({
+    phone: opts.number,
+    context,
+    title: isCategoryListing ? undefined : title,
+    comingSoon,
+    customMessage,
   });
-  const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+
   return {
-    href,
-    message,
-    number,
+    href: built.href,
+    message: built.message,
+    number: built.number,
     analytics: {
       source: opts.source || "storefront",
       pageType: opts.pageType || "GENERIC",
+      context: built.context,
       path,
       entity: entity?.slug || entity?.name || null,
       placement: opts.placement || null,
@@ -130,6 +166,7 @@ export function hydrateWhatsAppCTAs(root = document) {
       path: el.getAttribute("data-wa-path") || undefined,
       placement: el.getAttribute("data-wa-placement") || undefined,
       customMessage: el.getAttribute("data-wa-message") || undefined,
+      context: el.getAttribute("data-wa-context") || undefined,
       entity: el.getAttribute("data-wa-entity")
         ? { name: el.getAttribute("data-wa-entity") }
         : null,

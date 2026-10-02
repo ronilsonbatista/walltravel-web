@@ -468,9 +468,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
           const cta = buildWhatsAppCTA({
             pageType: 'HOME',
+            context: 'site',
             placement: 'hero-slide',
             entity: { name: slideInfo.title, slug: slideInfo.id },
-            customMessage: slideInfo.ctaWhatsappMessage,
             source: 'home-hero-slide',
           });
           cardCtaEl.href = cta.href;
@@ -812,34 +812,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     let placement = "float";
     let entityName = "";
 
+    let context = "site";
+
     if (path.startsWith("/grupos/") && path !== "/grupos/") {
       pageType = "GROUP";
+      context = "grupo";
       entityName =
         document.querySelector("[data-wt-group-template] h1")?.textContent?.trim() ||
         path.split("/").filter(Boolean).pop() ||
         "";
     } else if (path === "/grupos" || path === "/grupos/") {
       pageType = "GROUP";
-      entityName = "expedições em grupo";
+      context = "grupo";
+      // List page: generic group context, no expedition title.
+      entityName = "";
     } else if (path.startsWith("/viagens/") || path.startsWith("/pacote/")) {
       pageType = "VITRINE";
+      context = "vitrine";
       placement = "product";
       entityName =
         document.querySelector("#package-view h1, .group-detail h1")?.textContent?.trim() ||
         "";
     } else if (path.startsWith("/vitrine/")) {
       pageType = "VITRINE";
+      context = "vitrine";
       placement = "category";
       entityName =
         document.querySelector("#category-view h1, .category-hero-left h1")?.textContent?.trim() ||
         "";
     } else if (path.startsWith("/vitrine")) {
       pageType = "VITRINE";
-    } else if (path.startsWith("/como-funciona")) {
+      context = "vitrine";
+    } else if (path.startsWith("/como-funciona") || path.startsWith("/sobre")) {
       pageType = "ABOUT";
+      context = "site";
     }
 
     float.setAttribute("data-wa-page-type", pageType);
+    float.setAttribute("data-wa-context", context);
     float.setAttribute("data-wa-placement", placement);
     if (entityName) float.setAttribute("data-wa-entity", entityName);
     else float.removeAttribute("data-wa-entity");
@@ -962,7 +972,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="wt-vitrine-bespoke-inner">
           <h2>Não encontrou o que procura?</h2>
           <p>Conte o que você imagina. Um especialista WallTravel monta a viagem com você.</p>
-          <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'vitrine-bespoke', source: 'vitrine-empty-intent' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">Falar com um especialista</a>
+          <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', context: 'vitrine', placement: 'vitrine-bespoke', source: 'vitrine-empty-intent' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">Falar com um especialista</a>
         </div>
       </section>
     `;
@@ -1004,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <h1 class="section-title" style="margin-bottom: 1.2rem; text-align: left;">${esc(category.title || category.name)}</h1>
             <p style="color: var(--color-text-muted); margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.6;">${esc(category.description)}</p>
-            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category', entity: { name: category.name, slug: category.slug }, source: 'category-hero' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">
+            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', context: 'vitrine', placement: 'category', entity: { name: category.name, slug: category.slug }, source: 'category-hero' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist">
               Falar com especialista
             </a>
           </div>
@@ -1038,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="empty-state-view wt-filter-empty">
             <h2 class="empty-state-title" style="font-size: 1.5rem; color: var(--color-text);">Não encontramos uma viagem com esses filtros.</h2>
             <p class="empty-state-desc">Podemos criar uma opção sob medida para você.</p>
-            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category-empty', entity: { name: category.name, slug: category.slug }, customMessage: `Olá! Gostaria de solicitar um roteiro sob medida para a categoria ${category.name}.`, source: 'category-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
+            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', context: 'vitrine', placement: 'category-empty', entity: { name: category.name, slug: category.slug }, source: 'category-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
           </div>
         ` : `
           <div class="packages-grid" id="category-packages-grid">
@@ -1078,7 +1088,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="package-card-ctas">
                       <a href="/viagens/${esc(pkg.slug)}" class="btn-outline">Ver detalhes</a>
-                      <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'product', entity: { name: pkg.name, slug: pkg.slug }, customMessage: pkg.ctaWhatsappMessage, source: 'category-card' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp">
+                      <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', context: 'vitrine', placement: 'product', entity: { name: pkg.name, slug: pkg.slug }, source: 'category-card' }).href}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="whatsapp">
                         <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.88 14c-.24.69-1.23 1.26-1.7 1.32-.47.06-.94.24-3.04-.6-2.52-1.01-4.14-3.57-4.26-3.73-.12-.17-.99-1.31-.99-2.5 0-1.19.62-1.77.84-2.01.22-.24.47-.3.63-.3.16 0 .32.01.46.01.15 0 .35-.06.55.42.2.49.69 1.68.75 1.8.06.12.1.26.02.42-.08.17-.12.27-.24.41-.12.14-.26.32-.37.43-.13.13-.26.27-.11.53.15.26.67 1.1 1.43 1.78.98.88 1.81 1.15 2.07 1.28.26.13.41.11.56-.06.15-.17.65-.75.82-1.01.17-.26.34-.22.57-.14.24.08 1.5.71 1.76.84.26.13.43.2.49.31.06.12.06.69-.18 1.38z"/></svg>
                         WhatsApp
                       </a>
@@ -1131,7 +1141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           emptyEl.innerHTML = `
             <h2 class="empty-state-title" style="font-size: 1.5rem; color: var(--color-text);">Não encontramos uma viagem com esses filtros.</h2>
             <p class="empty-state-desc">Podemos criar uma opção sob medida para você.</p>
-            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', placement: 'category-filter-empty', entity: { name: category.name, slug: category.slug }, source: 'category-filter-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
+            <a href="${buildWhatsAppCTA({ pageType: 'VITRINE', context: 'vitrine', placement: 'category-filter-empty', entity: { name: category.name, slug: category.slug }, source: 'category-filter-empty' }).href}" target="_blank" rel="noopener" class="btn-primary">Falar com especialista</a>
           `;
           categoryView.querySelector('#category-packages-container')?.appendChild(emptyEl);
         }
