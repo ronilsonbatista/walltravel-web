@@ -2710,6 +2710,12 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   fill: var(--color-primary-light);
 }
 
+.package-card-fixed-dates {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
 .package-card-price {
   font-family: var(--font-body);
   font-size: 0.88rem;
@@ -5266,6 +5272,12 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   color: var(--color-text-muted);
   font-size: 0.9rem;
   margin-bottom: 1rem;
+}
+.experience-detail .experience-fixed-dates,
+.experience-detail .experience-origins-lede {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 0.75rem;
 }
 .experience-detail .experience-cta-row {
   display: flex;
