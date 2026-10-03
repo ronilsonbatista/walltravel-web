@@ -32,6 +32,7 @@ import {
 import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
 import { publicPackageTags } from './data/platform-api.js';
+import { formatFixedDateRange, hasFixedDates } from './data/fixed-dates.js';
 import {
   renderDestinationExplorer,
   playPageIntro,
@@ -1068,6 +1069,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <span class="filter-label">Filtrar:</span>
         <input type="search" id="category-search" placeholder="Buscar viagem…" style="min-width:12rem;padding:0.45rem 0.75rem;border:1px solid var(--color-border,#ddd);border-radius:0.4rem;font:inherit;" />
         <button class="filter-btn active" data-filter="todos" type="button">Todos</button>
+        <button class="filter-btn" data-filter="datas-fixas" type="button">Datas fixas</button>
         <button class="filter-btn" data-filter="lua-de-mel" type="button">Lua de Mel</button>
         <button class="filter-btn" data-filter="natureza" type="button">Natureza</button>
         <button class="filter-btn" data-filter="praia" type="button">Praia</button>
@@ -1093,8 +1095,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="packages-grid" id="category-packages-grid">
             ${packages.map(pkg => {
               const visibleTags = publicPackageTags(pkg.tags);
+              const fixedLabel = hasFixedDates(pkg)
+                ? formatFixedDateRange(pkg.fixedStartDate, pkg.fixedEndDate)
+                : "";
               return `
-              <div class="package-card" data-tags="${esc(visibleTags.join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}">
+              <div class="package-card" data-tags="${esc(visibleTags.join(',').toLowerCase())}" data-name="${esc((pkg.name || '').toLowerCase())}" data-date-mode="${esc(pkg.dateMode === 'FIXED' || pkg.hasFixedDates ? 'FIXED' : 'FLEXIBLE')}">
                 <div class="package-card-img-wrapper">
                   <img src="${esc(pkg.image)}" alt="${esc(pkg.name)}" class="package-card-img" width="800" height="600" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 33vw" onerror="this.onerror=null; this.src='/images/vitrine/fallback.svg';">
                 </div>
@@ -1115,6 +1120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         ${esc(pkg.duration)}
                       </div>
                     </div>
+                    ${fixedLabel ? `<p class="package-card-fixed-dates">Datas fixas: ${esc(fixedLabel)}</p>` : ""}
                   </div>
 
                   <div>
@@ -1156,7 +1162,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const name = card.getAttribute('data-name') || '';
         let tagOk = activeFilter === 'todos';
         if (!tagOk) {
-          if (activeFilter === 'lua-de-mel') {
+          if (activeFilter === 'datas-fixas') {
+            tagOk = (card.getAttribute('data-date-mode') || '') === 'FIXED';
+          } else if (activeFilter === 'lua-de-mel') {
             tagOk = tags.includes('lua-de-mel') || tags.includes('romance');
           } else {
             tagOk = tags.includes(activeFilter);

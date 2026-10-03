@@ -103,6 +103,9 @@ export async function fetchPublicProducts(params = {}) {
   if (params.q) q.set("q", params.q);
   if (params.tag) q.set("tag", params.tag);
   if (params.featured === true) q.set("featured", "true");
+  if (params.dateMode) q.set("dateMode", params.dateMode);
+  if (params.datasFixas === true) q.set("datasFixas", "1");
+  if (params.origin) q.set("origin", params.origin);
   const qs = q.toString();
   const body = await getJson(
     `/api/public/storefront${qs ? `?${qs}` : ""}`,
@@ -298,5 +301,25 @@ export function mapProduct(apiProduct) {
       `Olá! Vim pela vitrine do site e tenho interesse no planejamento "${apiProduct.name}".`,
     seoTitle: apiProduct.seoTitle || null,
     seoDescription: apiProduct.seoDescription || null,
+    dateMode: apiProduct.dateMode === "FIXED" ? "FIXED" : "FLEXIBLE",
+    hasFixedDates: Boolean(apiProduct.hasFixedDates),
+    fixedStartDate: apiProduct.fixedStartDate || null,
+    fixedEndDate: apiProduct.fixedEndDate || null,
+    departureScope:
+      apiProduct.departureScope === "ORIGINS" ? "ORIGINS" : "ALL_BRAZIL",
+    departureOrigins: Array.isArray(apiProduct.departureOrigins)
+      ? apiProduct.departureOrigins
+      : [],
+    originPrices: Array.isArray(apiProduct.originPrices)
+      ? apiProduct.originPrices.map((row) => ({
+          uf: row.uf,
+          label: row.label || row.uf,
+          priceFrom:
+            row.priceFrom == null || row.priceFrom === ""
+              ? null
+              : Number(row.priceFrom),
+          paymentNote: row.paymentNote || null,
+        }))
+      : [],
   };
 }

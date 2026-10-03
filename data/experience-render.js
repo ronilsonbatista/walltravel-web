@@ -15,6 +15,7 @@ import {
   ImmersiveHero,
   StickyConversionCTA,
 } from "./immersive/primitives.js";
+import { formatFixedDateRange, hasFixedDates } from "./fixed-dates.js";
 
 function heroSlidesFromPackage(pkg) {
   const imgs = [];
@@ -56,7 +57,9 @@ function experienceSubnav(pkg) {
   if (pkg.gallery?.length) links.push(["#group-gallery", "Galeria"]);
   if (pkg.itinerary?.length) links.push(["#group-itinerary", "Roteiro"]);
   if (pkg.included?.length || pkg.notIncluded?.length) links.push(["#exp-includes", "Incluso"]);
-  if (pkg.priceFrom != null || pkg.importantNotes?.length) links.push(["#exp-investment", "Investimento"]);
+  if (pkg.priceFrom != null || pkg.importantNotes?.length || pkg.originPrices?.length) {
+    links.push(["#exp-investment", "Investimento"]);
+  }
   links.push(["#exp-cta", "Contato"]);
   if (links.length < 3) return "";
   return `<nav class="group-subnav" data-group-subnav aria-label="Seções da experiência">
@@ -83,6 +86,19 @@ function renderAbout(pkg, esc) {
 
 function renderExperiencePricing(pkg, esc, priceUnitLabel) {
   const price = formatMoney(pkg.priceFrom, pkg.currency || "BRL");
+  const dateLabel = hasFixedDates(pkg)
+    ? formatFixedDateRange(pkg.fixedStartDate, pkg.fixedEndDate)
+    : "";
+  const origins = Array.isArray(pkg.originPrices) ? pkg.originPrices : [];
+  const originRows = origins
+    .filter((row) => row && row.priceFrom != null)
+    .map((row) => {
+      const money = formatMoney(row.priceFrom, pkg.currency || "BRL");
+      const place = row.label || row.uf || "";
+      const note = row.paymentNote ? ` (${row.paymentNote})` : "";
+      return `<li><strong>${esc(place)}</strong>: ${esc(money || "")} por pessoa${esc(note)}</li>`;
+    })
+    .join("");
   return `<section class="group-section experience-investment" id="exp-investment" data-reveal>
     <span class="section-tag">Investimento</span>
     <h2 class="package-section-title">A partir de</h2>
@@ -91,6 +107,17 @@ function renderExperiencePricing(pkg, esc, priceUnitLabel) {
         ? `<p class="experience-price">${esc(price)}</p>
            <p class="experience-price-unit">${esc(priceUnitLabel)}</p>`
         : `<p class="experience-price">Sob consulta</p>`
+    }
+    ${
+      dateLabel
+        ? `<p class="experience-fixed-dates">Datas fixas: ${esc(dateLabel)}</p>`
+        : ""
+    }
+    ${
+      originRows
+        ? `<p class="experience-origins-lede">Valores por cidade de saída no Brasil:</p>
+           <ul class="sidebar-notes-list experience-origin-prices">${originRows}</ul>`
+        : ""
     }
     ${
       pkg.importantNotes?.length
@@ -166,6 +193,12 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
   const introHtml = "";
 
   const highlights = packageHighlights(pkg, esc);
+  const dateLabel = hasFixedDates(pkg)
+    ? formatFixedDateRange(pkg.fixedStartDate, pkg.fixedEndDate)
+    : "";
+  const heroMeta = [pkg.destination, pkg.duration, dateLabel ? `Datas fixas ${dateLabel}` : ""]
+    .filter(Boolean)
+    .join(" · ");
   const heroHtml = ImmersiveHero({
     carouselHtml: renderTravelHeroCarousel(slides, esc),
     overlay: "strong",
@@ -178,7 +211,7 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
         </div>
         <h1 data-reveal>${esc(pkg.name)}</h1>
         <p class="group-hero-sub" data-reveal>
-          ${esc([pkg.destination, pkg.duration].filter(Boolean).join(" · "))}
+          ${esc(heroMeta)}
         </p>
       `,
   });
