@@ -125,17 +125,42 @@ export async function fetchPublicProductBySlug(slug) {
   return body.item;
 }
 
+/** Paris à noite — capa editorial da categoria Europa (home + /vitrine). */
+export const EUROPA_PARIS_NIGHT_COVER_URL =
+  "https://www.walltravel.com.br/images/vitrine/europa-paris-noite.jpg";
+
+/** Capas fracas/erradas ainda vistas em produção para Europa (ex.: Grécia). */
+const WEAK_EUROPA_COVER_MARKERS = [
+  "grecia-atenas-santorini",
+  "/images/vitrine/europa.jpg",
+  "/images/vitrine/europa.webp",
+];
+
+/** Resolve capa Europa: troca capa fraca por Paris à noite; preserva URL curada. */
+export function resolveEuropaCategoryCover(coverImageUrl) {
+  const url = typeof coverImageUrl === "string" ? coverImageUrl.trim() : "";
+  if (!url) return EUROPA_PARIS_NIGHT_COVER_URL;
+  if (WEAK_EUROPA_COVER_MARKERS.some((m) => url.includes(m))) {
+    return EUROPA_PARIS_NIGHT_COVER_URL;
+  }
+  return url;
+}
+
 /** Map Public API category → legacy vitrine category shape. */
 export function mapCategory(apiCat) {
   const count =
     apiCat.productCount ?? apiCat.experienceCount ?? apiCat.packageCount ?? 0;
+  const rawCover = apiCat.coverImageUrl || null;
   return {
     id: apiCat.slug,
     slug: apiCat.slug,
     name: apiCat.name,
     title: apiCat.title || apiCat.name,
     description: apiCat.description || "",
-    image: apiCat.coverImageUrl || null,
+    image:
+      apiCat.slug === "europa"
+        ? resolveEuropaCategoryCover(rawCover)
+        : rawCover,
     featured: Boolean(apiCat.featured),
     order: apiCat.sortOrder ?? apiCat.order ?? 100,
     packageCount: count,
