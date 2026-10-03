@@ -658,6 +658,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   /** Bumps on every navigation so late async paints cannot flash the previous slug. */
   let routeToken = 0;
 
+  /** True while the parent /vitrine list chrome is mounted (soft date-filter updates allowed). */
+  let onVitrineList = false;
+
+  const isVitrineListPath = (path) => path === '/vitrine' || path === '/vitrine/';
+
   const hideAllViews = () => {
     homeView.style.display = 'none';
     vitrineView.style.display = 'none';
@@ -795,7 +800,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const routeSearch = window.location.search || "";
     const routeHash = window.location.hash;
     const wantsHash = Boolean(routeHash && routeHash !== '#');
+
+    // Parent date filters on /vitrine: update only the results region — keep mast/filters chrome.
+    if (
+      isVitrineListPath(path) &&
+      onVitrineList &&
+      vitrineView.querySelector("[data-vitrine-grid]")
+    ) {
+      ++routeToken;
+      paintVitrineResults(routeSearch);
+      syncFloatWhatsApp(path);
+      handleHeaderScroll();
+      return;
+    }
+
     const token = ++routeToken;
+    onVitrineList = false;
     hideAllViews();
     syncHomeIntroForRoute(path);
     if (!wantsHash) resetScrollToTop();
@@ -826,10 +846,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       clearInterval(autoplayInterval);
       
-      if (path === '/vitrine' || path === '/vitrine/') {
+      if (isVitrineListPath(path)) {
         resetRouteView(vitrineView);
         vitrineView.style.display = 'block';
         renderVitrine(routeSearch);
+        onVitrineList = true;
         handleHeaderScroll();
       } else if (path.startsWith('/vitrine/')) {
         resetRouteView(categoryView);
@@ -995,7 +1016,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ==========================================================================
 
   // A. Render main Category Vitrine (/vitrine)
-  const renderVitrine = (search = window.location.search || "") => {
+  // Chrome (mast + filter shell) mounts once; date-filter toggles only repaint results below.
+  const collectVitrineListing = (search = "") => {
     const dateMode = parseVitrineDateMode(search);
     const dateQuery = vitrineDateQuery(dateMode);
     const allCategories = getCategories();
@@ -1007,11 +1029,66 @@ document.addEventListener('DOMContentLoaded', async () => {
     const fromPackages = Array.isArray(matchingPackages) ? matchingPackages.length : 0;
     const fromCategories = categories.reduce((sum, cat) => sum + (Number(cat.packageCount) || 0), 0);
     const tripCount = fromPackages > 0 ? fromPackages : fromCategories;
+    const activeCategories = categories.filter((cat) => (Number(cat.packageCount) || 0) > 0);
+    return { dateMode, dateQuery, categories, tripCount, activeCategories };
+  };
+
+  const vitrineSummaryCountHtml = (tripCount) => {
+    if (tripCount > 0) {
+      return `<strong>${tripCount}</strong>
+            <span class="wt-vitrine-summary-label">${tripCount === 1 ? "viagem para explorar" : "viagens para explorar"}</span>`;
+    }
+    return `<span class="wt-vitrine-summary-label">Seleção WallTravel: fale com um especialista para explorar o que está disponível agora.</span>`;
+  };
+
+  const vitrineDestChipsHtml = (activeCategories, dateQuery) =>
+    activeCategories
+      .slice(0, 8)
+      .map(
+        (cat) =>
+          `<a class="wt-vitrine-chip" href="/vitrine/${esc(cat.slug)}${esc(dateQuery)}">${esc(cat.name)}</a>`,
+      )
+      .join("");
+
+  const paintVitrineResults = (search = window.location.search || "") => {
+    const { dateMode, dateQuery, categories, tripCount, activeCategories } =
+      collectVitrineListing(search);
+
     trackStorefrontEvent("vitrine_view", {
       source: getStorefrontSource(),
       dateMode: dateMode || "all",
     });
-    
+
+    vitrineView.querySelectorAll("[data-vitrine-date-mode]").forEach((chip) => {
+      const mode = chip.getAttribute("data-vitrine-date-mode") || "";
+      const active = mode === dateMode;
+      chip.classList.toggle("is-active", active);
+      chip.setAttribute("aria-current", active ? "true" : "false");
+    });
+
+    const summaryCount = vitrineView.querySelector("[data-vitrine-summary-count]");
+    if (summaryCount) summaryCount.innerHTML = vitrineSummaryCountHtml(tripCount);
+
+    const destChips = vitrineView.querySelector("[data-vitrine-dest-chips]");
+    if (destChips) {
+      destChips.innerHTML = vitrineDestChipsHtml(activeCategories, dateQuery);
+      destChips.hidden = activeCategories.length === 0;
+    }
+
+    const grid = vitrineView.querySelector("[data-vitrine-grid]");
+    if (grid) {
+      grid.innerHTML = categories
+        .map((cat) => renderVitrineCategoryCard(cat, esc, { hrefSuffix: dateQuery }))
+        .join("");
+    }
+
+    handleHeaderScroll();
+  };
+
+  const renderVitrine = (search = window.location.search || "") => {
+    const { dateMode, dateQuery, categories, tripCount, activeCategories } =
+      collectVitrineListing(search);
+
     updateSEO(
       VITRINE_MAST_TITLE,
       "Catálogo WallTravel de viagens sob medida, por destino, estilo e perfil."
@@ -1019,19 +1096,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Darker Asia mast (not a landmark cliché); white title stays readable.
     const leadImage = "/images/vitrine/asia-kyoto.webp";
-    const activeCategories = categories.filter((cat) => (Number(cat.packageCount) || 0) > 0);
-    const summaryChips = activeCategories
-      .slice(0, 8)
-      .map(
-        (cat) =>
-          `<a class="wt-vitrine-chip" href="/vitrine/${esc(cat.slug)}${esc(dateQuery)}">${esc(cat.name)}</a>`,
-      )
-      .join("");
     const dateChip = (mode, href, label) =>
-      `<a class="wt-vitrine-chip wt-vitrine-date-chip${dateMode === mode ? " is-active" : ""}" href="${href}" aria-current="${dateMode === mode ? "true" : "false"}">${label}</a>`;
+      `<a class="wt-vitrine-chip wt-vitrine-date-chip${dateMode === mode ? " is-active" : ""}" href="${href}" data-vitrine-date-mode="${esc(mode)}" aria-current="${dateMode === mode ? "true" : "false"}">${label}</a>`;
 
     vitrineView.innerHTML = `
-      <figure class="wt-vitrine-mast">
+      <figure class="wt-vitrine-mast" data-vitrine-chrome="mast">
         <picture>
           <source media="(max-width: 768px)" srcset="/images/vitrine/asia-kyoto-mobile.webp" type="image/webp">
           <img src="${esc(leadImage)}" alt="Ásia, vitrine WallTravel" width="2000" height="1335" decoding="async" fetchpriority="high">
@@ -1041,7 +1110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <p>${esc(VITRINE_MAST_SUB)}</p>
         </figcaption>
       </figure>
-      <div class="vitrine-header wt-vitrine-header" data-reveal>
+      <div class="vitrine-header wt-vitrine-header" data-reveal data-vitrine-chrome="header">
         <div class="breadcrumb">
           <a href="/">Início</a>
           <span class="breadcrumb-separator">/</span>
@@ -1049,30 +1118,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
         <p class="wt-vitrine-lede">${esc(VITRINE_LEDE)}</p>
         <div class="wt-vitrine-summary" aria-label="Resumo da vitrine">
-          ${
-            tripCount > 0
-              ? `<p class="wt-vitrine-summary-count">
-            <strong>${tripCount}</strong>
-            <span class="wt-vitrine-summary-label">${tripCount === 1 ? "viagem para explorar" : "viagens para explorar"}</span>
-          </p>`
-              : `<p class="wt-vitrine-summary-count">
-            <span class="wt-vitrine-summary-label">Seleção WallTravel: fale com um especialista para explorar o que está disponível agora.</span>
-          </p>`
-          }
-          <div class="wt-vitrine-date-filters" role="group" aria-label="Filtrar por tipo de data">
+          <p class="wt-vitrine-summary-count" data-vitrine-summary-count>
+            ${vitrineSummaryCountHtml(tripCount)}
+          </p>
+          <div class="wt-vitrine-date-filters" role="group" aria-label="Filtrar por tipo de data" data-vitrine-chrome="date-filters">
             ${dateChip("", "/vitrine", "Todas")}
             ${dateChip("FIXED", "/vitrine?datas=fixas", "Datas fixas")}
             ${dateChip("FLEXIBLE", "/vitrine?datas=flexiveis", "Datas flexíveis")}
           </div>
-          ${summaryChips ? `<div class="wt-vitrine-chips" aria-label="Destinos">${summaryChips}</div>` : ""}
+          <div class="wt-vitrine-chips" aria-label="Destinos" data-vitrine-dest-chips${activeCategories.length === 0 ? " hidden" : ""}>${vitrineDestChipsHtml(activeCategories, dateQuery)}</div>
         </div>
       </div>
       
-      <div class="vitrine-grid wt-vitrine-grid">
+      <div class="vitrine-grid wt-vitrine-grid" data-vitrine-grid>
         ${categories.map((cat) => renderVitrineCategoryCard(cat, esc, { hrefSuffix: dateQuery })).join('')}
       </div>
 
-      <section class="wt-vitrine-bespoke" data-reveal>
+      <section class="wt-vitrine-bespoke" data-reveal data-vitrine-chrome="bespoke">
         <div class="wt-vitrine-bespoke-inner">
           <h2>Não encontrou o que procura?</h2>
           <p>Conte o que você imagina. Um especialista WallTravel monta a viagem com você.</p>
@@ -1080,6 +1142,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       </section>
     `;
+    // Full mount also paints event + active chip state via shared results helper.
+    trackStorefrontEvent("vitrine_view", {
+      source: getStorefrontSource(),
+      dateMode: dateMode || "all",
+    });
     vitrineView.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-revealed"));
     handleHeaderScroll();
   };
