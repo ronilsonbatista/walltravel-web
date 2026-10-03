@@ -7097,6 +7097,10 @@ html.wt-intro-done:not(.wt-hero-live) .group-hero-slide.is-active .group-hero-im
   color: var(--color-text-muted);
 }
 
+.wt-vitrine-chips[hidden] {
+  display: none !important;
+}
+
 .wt-vitrine-chips {
   display: flex;
   flex-wrap: wrap;
