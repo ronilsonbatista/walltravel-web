@@ -32,7 +32,7 @@ export function renderDestinoCard(cat, esc, { href }) {
 /**
  * Vitrine category card.
  */
-export function renderVitrineCategoryCard(cat, esc) {
+export function renderVitrineCategoryCard(cat, esc, { hrefSuffix = "" } = {}) {
   const count = cat.packageCount || 0;
   const countLabel = `${count} ${count === 1 ? "viagem" : "viagens"}`;
   const noImgClass = cat.image ? "" : " category-card--no-image";
@@ -41,8 +41,9 @@ export function renderVitrineCategoryCard(cat, esc) {
         <img src="${esc(cat.image)}" alt="${esc(cat.name)}" class="category-card-img" width="800" height="600" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 33vw" ${imgOnErrorAttr()}>
       </div>`
     : "";
+  const href = `/vitrine/${esc(cat.slug)}${esc(hrefSuffix)}`;
 
-  return `<a href="/vitrine/${esc(cat.slug)}" class="category-card${noImgClass}">
+  return `<a href="${href}" class="category-card${noImgClass}">
     ${imgBlock}
     <div class="category-card-content">
       <div>
