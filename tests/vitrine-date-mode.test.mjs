@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   VITRINE_LEDE,
+  VITRINE_MAST_SUB,
   filterCategoriesByDateMode,
   packageMatchesDateMode,
   parseVitrineDateMode,
@@ -76,5 +77,14 @@ describe("vitrine date mode filtering", () => {
     assert.doesNotMatch(VITRINE_LEDE, /—/);
     assert.doesNotMatch(VITRINE_LEDE, /pacote/i);
     assert.doesNotMatch(VITRINE_LEDE, /alguém/i);
+  });
+
+  it("keeps the approved vitrine mast sub copy", () => {
+    assert.equal(
+      VITRINE_MAST_SUB,
+      "Uma seleção de viagens pensadas pela WallTravel, prontas para serem personalizadas do seu jeito.",
+    );
+    assert.doesNotMatch(VITRINE_MAST_SUB, /pacote/i);
+    assert.doesNotMatch(VITRINE_MAST_SUB, /Experiências escolhidas/i);
   });
 });

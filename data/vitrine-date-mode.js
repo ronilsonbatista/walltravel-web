@@ -7,7 +7,7 @@ export const VITRINE_LEDE =
 export const VITRINE_MAST_TITLE = "Vitrine de viagens";
 
 export const VITRINE_MAST_SUB =
-  "Experiências escolhidas pela WallTravel, por destino e estilo. Um especialista ajusta o planejamento com você.";
+  "Uma seleção de viagens pensadas pela WallTravel, prontas para serem personalizadas do seu jeito.";
 
 /**
  * @param {string} [search]
