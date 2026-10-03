@@ -5,6 +5,7 @@ import {
   getCategoryBySlug, 
   getPackagesByCategory,
   getPackages,
+  getPackageBySlug,
   hydrateStorefront,
   getStorefrontSource,
   getStorefrontHydrateError,
@@ -13,6 +14,7 @@ import {
 import {
   hydrateGroups,
   getGroups,
+  getGroupSummaryBySlug,
   resolveGroupBySlug,
 } from './data/groups-helpers.js';
 import {
@@ -33,6 +35,15 @@ import { getWhatsappNumber } from './data/platform-api.js';
 import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
 import { publicPackageTags } from './data/platform-api.js';
 import { formatFixedDateRange, hasFixedDates } from './data/fixed-dates.js';
+import {
+  VITRINE_LEDE,
+  VITRINE_MAST_SUB,
+  VITRINE_MAST_TITLE,
+  filterCategoriesByDateMode,
+  packageMatchesDateMode,
+  parseVitrineDateMode,
+  vitrineDateQuery,
+} from './data/vitrine-date-mode.js';
 import {
   renderDestinationExplorer,
   playPageIntro,
@@ -644,6 +655,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const groupsView = document.getElementById('groups-view');
   const comoFuncionaView = document.getElementById('como-funciona-view');
 
+  /** Bumps on every navigation so late async paints cannot flash the previous slug. */
+  let routeToken = 0;
+
   const hideAllViews = () => {
     homeView.style.display = 'none';
     vitrineView.style.display = 'none';
@@ -656,6 +670,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const oldSticky = document.querySelector('.sticky-bottom-bar');
     if (oldSticky) oldSticky.remove();
   };
+
+  /** Immediate blank shell so the previous hero/title/media never paints on route change. */
+  const resetRouteView = (element, { label = "Carregando…" } = {}) => {
+    if (!element) return;
+    if (groupExperienceCleanup && (element === packageView || element === groupsView)) {
+      groupExperienceCleanup();
+      groupExperienceCleanup = null;
+    }
+    const sticky = element.querySelector?.(".sticky-bottom-bar");
+    if (sticky) sticky.remove();
+    element.replaceChildren();
+    element.innerHTML = `
+      <div class="wt-route-shell" aria-busy="true" aria-live="polite">
+        <p class="wt-route-shell-label">${esc(label)}</p>
+      </div>
+    `;
+  };
+
+  const isCurrentRoute = (token) => token === routeToken;
 
   const isHomePathname = (path) => path === '/' || path === '/index.html';
 
@@ -759,8 +792,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Route router logic
   const handleRouting = async () => {
     const path = window.location.pathname;
+    const routeSearch = window.location.search || "";
     const routeHash = window.location.hash;
     const wantsHash = Boolean(routeHash && routeHash !== '#');
+    const token = ++routeToken;
     hideAllViews();
     syncHomeIntroForRoute(path);
     if (!wantsHash) resetScrollToTop();
@@ -792,30 +827,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       clearInterval(autoplayInterval);
       
       if (path === '/vitrine' || path === '/vitrine/') {
+        resetRouteView(vitrineView);
         vitrineView.style.display = 'block';
-        renderVitrine();
+        renderVitrine(routeSearch);
         handleHeaderScroll();
       } else if (path.startsWith('/vitrine/')) {
+        resetRouteView(categoryView);
         categoryView.style.display = 'block';
         let categorySlug = path.substring('/vitrine/'.length);
         if (categorySlug.endsWith('/')) categorySlug = categorySlug.slice(0, -1);
-        renderCategory(categorySlug);
+        renderCategory(categorySlug, routeSearch);
         handleHeaderScroll();
       } else if (path.startsWith('/pacote/') || path.startsWith('/viagens/')) {
         handleHeaderScroll();
+        resetRouteView(packageView);
         packageView.style.display = 'block';
+        packageView.dataset.routeSlug = "";
         const prefix = path.startsWith('/viagens/') ? '/viagens/' : '/pacote/';
         let packageSlug = path.substring(prefix.length);
         if (packageSlug.endsWith('/')) packageSlug = packageSlug.slice(0, -1);
-        await renderPackage(packageSlug);
+        await renderPackage(packageSlug, token);
+        if (!isCurrentRoute(token)) return;
       } else if (path === '/grupos' || path === '/grupos/') {
+        resetRouteView(groupsView);
         groupsView.style.display = 'block';
-        await renderGroupsList();
+        await renderGroupsList(token);
+        if (!isCurrentRoute(token)) return;
       } else if (path.startsWith('/grupos/')) {
+        resetRouteView(groupsView);
         groupsView.style.display = 'block';
+        groupsView.dataset.routeSlug = "";
         let groupSlug = path.substring('/grupos/'.length);
         if (groupSlug.endsWith('/')) groupSlug = groupSlug.slice(0, -1);
-        await renderGroupPage(groupSlug);
+        await renderGroupPage(groupSlug, token);
+        if (!isCurrentRoute(token)) return;
       } else if (path === '/como-funciona' || path === '/como-funciona/') {
         header.classList.add('scrolled');
         if (comoFuncionaView) {
@@ -832,6 +877,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
       } else {
         // Unknown route → 404 (do not silently fall back to Home)
+        resetRouteView(packageView, { label: "" });
         packageView.style.display = 'block';
         renderEmptyState(
           packageView,
@@ -841,6 +887,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       handleHeaderScroll();
     }
+    if (!isCurrentRoute(token)) return;
     syncFloatWhatsApp(path);
     scheduleRouteScroll({ preferHash: wantsHash });
   };
@@ -930,7 +977,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens') || path.startsWith('/grupos') || path.startsWith('/como-funciona')) {
           e.preventDefault();
-          window.history.pushState(null, '', path + hash);
+          // Preserve query (?datas=fixas) so parent date filters survive SPA navigation.
+          window.history.pushState(null, '', path + url.search + hash);
           handleRouting();
         }
       }
@@ -947,16 +995,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ==========================================================================
 
   // A. Render main Category Vitrine (/vitrine)
-  const renderVitrine = () => {
-    const categories = getCategories();
+  const renderVitrine = (search = window.location.search || "") => {
+    const dateMode = parseVitrineDateMode(search);
+    const dateQuery = vitrineDateQuery(dateMode);
+    const allCategories = getCategories();
     const packages = typeof getPackages === "function" ? getPackages() : [];
-    const fromPackages = Array.isArray(packages) ? packages.length : 0;
+    const categories = filterCategoriesByDateMode(allCategories, packages, dateMode);
+    const matchingPackages = dateMode
+      ? packages.filter((pkg) => packageMatchesDateMode(pkg, dateMode))
+      : packages;
+    const fromPackages = Array.isArray(matchingPackages) ? matchingPackages.length : 0;
     const fromCategories = categories.reduce((sum, cat) => sum + (Number(cat.packageCount) || 0), 0);
     const tripCount = fromPackages > 0 ? fromPackages : fromCategories;
-    trackStorefrontEvent("vitrine_view", { source: getStorefrontSource() });
+    trackStorefrontEvent("vitrine_view", {
+      source: getStorefrontSource(),
+      dateMode: dateMode || "all",
+    });
     
     updateSEO(
-      "Vitrine de viagens",
+      VITRINE_MAST_TITLE,
       "Catálogo WallTravel de viagens sob medida, por destino, estilo e perfil."
     );
 
@@ -967,9 +1024,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       .slice(0, 8)
       .map(
         (cat) =>
-          `<a class="wt-vitrine-chip" href="/vitrine/${esc(cat.slug)}">${esc(cat.name)}</a>`,
+          `<a class="wt-vitrine-chip" href="/vitrine/${esc(cat.slug)}${esc(dateQuery)}">${esc(cat.name)}</a>`,
       )
       .join("");
+    const dateChip = (mode, href, label) =>
+      `<a class="wt-vitrine-chip wt-vitrine-date-chip${dateMode === mode ? " is-active" : ""}" href="${href}" aria-current="${dateMode === mode ? "true" : "false"}">${label}</a>`;
 
     vitrineView.innerHTML = `
       <figure class="wt-vitrine-mast">
@@ -978,8 +1037,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           <img src="${esc(leadImage)}" alt="Ásia, vitrine WallTravel" width="2000" height="1335" decoding="async" fetchpriority="high">
         </picture>
         <figcaption>
-          <h1>Vitrine de viagens</h1>
-          <p>Viagens selecionadas pela WallTravel, por destino e estilo. Personalizáveis com um especialista.</p>
+          <h1>${esc(VITRINE_MAST_TITLE)}</h1>
+          <p>${esc(VITRINE_MAST_SUB)}</p>
         </figcaption>
       </figure>
       <div class="vitrine-header wt-vitrine-header" data-reveal>
@@ -988,7 +1047,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-active">Vitrine</span>
         </div>
-        <p class="wt-vitrine-lede">Explore o que já está disponível. Se não encontrar o que imagina, falamos e montamos sob medida.</p>
+        <p class="wt-vitrine-lede">${esc(VITRINE_LEDE)}</p>
         <div class="wt-vitrine-summary" aria-label="Resumo da vitrine">
           ${
             tripCount > 0
@@ -1000,12 +1059,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="wt-vitrine-summary-label">Seleção WallTravel: fale com um especialista para explorar o que está disponível agora.</span>
           </p>`
           }
-          ${summaryChips ? `<div class="wt-vitrine-chips">${summaryChips}</div>` : ""}
+          <div class="wt-vitrine-date-filters" role="group" aria-label="Filtrar por tipo de data">
+            ${dateChip("", "/vitrine", "Todas")}
+            ${dateChip("FIXED", "/vitrine?datas=fixas", "Datas fixas")}
+            ${dateChip("FLEXIBLE", "/vitrine?datas=flexiveis", "Datas flexíveis")}
+          </div>
+          ${summaryChips ? `<div class="wt-vitrine-chips" aria-label="Destinos">${summaryChips}</div>` : ""}
         </div>
       </div>
       
       <div class="vitrine-grid wt-vitrine-grid">
-        ${categories.map((cat) => renderVitrineCategoryCard(cat, esc)).join('')}
+        ${categories.map((cat) => renderVitrineCategoryCard(cat, esc, { hrefSuffix: dateQuery })).join('')}
       </div>
 
       <section class="wt-vitrine-bespoke" data-reveal>
@@ -1021,7 +1085,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // B. Render dynamic Category page (/vitrine/[categorySlug])
-  const renderCategory = (slug) => {
+  // Datas fixas / flexíveis live on the parent /vitrine filter — not as a category chip.
+  const renderCategory = (slug, search = window.location.search || "") => {
     const category = getCategoryBySlug(slug);
     
     if (!category) {
@@ -1029,9 +1094,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    trackStorefrontEvent("category_view", { slug, source: getStorefrontSource() });
+    const dateMode = parseVitrineDateMode(search);
+    const dateQuery = vitrineDateQuery(dateMode);
+    trackStorefrontEvent("category_view", {
+      slug,
+      source: getStorefrontSource(),
+      dateMode: dateMode || "all",
+    });
     
-    const packages = getPackagesByCategory(slug);
+    const packages = getPackagesByCategory(slug).filter((pkg) =>
+      packageMatchesDateMode(pkg, dateMode),
+    );
     
     updateSEO(
       category.title || category.name,
@@ -1040,15 +1113,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     // Setup Category Hero and Packages lists
+    categoryView.dataset.routeSlug = slug;
     categoryView.innerHTML = `
       <!-- Category Premium Hero Section (Off-White Background) -->
-      <section class="category-hero">
+      <section class="category-hero" data-category-slug="${esc(slug)}">
         <div class="category-hero-container">
           <div class="category-hero-left">
             <div class="breadcrumb">
               <a href="/">Início</a>
               <span class="breadcrumb-separator">/</span>
-              <a href="/vitrine">Vitrine</a>
+              <a href="/vitrine${esc(dateQuery)}">Vitrine</a>
               <span class="breadcrumb-separator">/</span>
               <span class="breadcrumb-active">${esc(category.name)}</span>
             </div>
@@ -1064,12 +1138,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       </section>
 
-      <!-- Search + tag filters -->
+      <!-- Search + tag filters (date mode is parent-level on /vitrine) -->
       <div class="filter-bar" id="category-filter-bar">
         <span class="filter-label">Filtrar:</span>
         <input type="search" id="category-search" placeholder="Buscar viagem…" style="min-width:12rem;padding:0.45rem 0.75rem;border:1px solid var(--color-border,#ddd);border-radius:0.4rem;font:inherit;" />
         <button class="filter-btn active" data-filter="todos" type="button">Todos</button>
-        <button class="filter-btn" data-filter="datas-fixas" type="button">Datas fixas</button>
         <button class="filter-btn" data-filter="lua-de-mel" type="button">Lua de Mel</button>
         <button class="filter-btn" data-filter="natureza" type="button">Natureza</button>
         <button class="filter-btn" data-filter="praia" type="button">Praia</button>
@@ -1162,9 +1235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const name = card.getAttribute('data-name') || '';
         let tagOk = activeFilter === 'todos';
         if (!tagOk) {
-          if (activeFilter === 'datas-fixas') {
-            tagOk = (card.getAttribute('data-date-mode') || '') === 'FIXED';
-          } else if (activeFilter === 'lua-de-mel') {
+          if (activeFilter === 'lua-de-mel') {
             tagOk = tags.includes('lua-de-mel') || tags.includes('romance');
           } else {
             tagOk = tags.includes(activeFilter);
@@ -1213,12 +1284,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // C. Render experience detail (/viagens/[slug] · /pacote/[slug] alias) — Groups visual family
-  const renderPackage = async (slug) => {
+  const paintPackageDetail = async (pkg, token) => {
+    if (!pkg || !isCurrentRoute(token)) return;
+    const category = getCategoryBySlug(pkg.categorySlug) || { name: "Vitrine", slug: "vitrine" };
+    const renderExperienceDetailPage = await loadExperienceRenderer();
+    if (!isCurrentRoute(token)) return;
+    const bindGroupExperience = await loadGroupExperienceBinder();
+    if (!isCurrentRoute(token)) return;
     if (groupExperienceCleanup) {
       groupExperienceCleanup();
       groupExperienceCleanup = null;
     }
+    packageView.dataset.routeSlug = pkg.slug;
+    packageView.innerHTML = renderExperienceDetailPage(pkg, category, esc, WA);
+    groupExperienceCleanup = bindGroupExperience(packageView);
+    handleHeaderScroll();
+  };
+
+  const renderPackage = async (slug, token = routeToken) => {
+    // Paint list cache for THIS slug immediately; never leave the previous trip on screen.
+    const listed = getPackageBySlug(slug);
+    if (listed && isCurrentRoute(token)) {
+      updateSEO(
+        listed.seoTitle || listed.name,
+        listed.seoDescription || `${listed.destination} – ${listed.duration}. ${listed.shortDescription || listed.description}`,
+        listed.image,
+      );
+      await paintPackageDetail(listed, token);
+    }
+
     const pkg = await resolvePackageBySlug(slug);
+    if (!isCurrentRoute(token)) return;
 
     if (!pkg) {
       renderEmptyState(packageView, "Experiência não encontrada", "Desculpe, a viagem procurada não foi localizada ou ainda não está publicada.");
@@ -1235,15 +1331,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       pkg.image
     );
 
-    const category = getCategoryBySlug(pkg.categorySlug) || { name: "Vitrine", slug: "vitrine" };
-    const renderExperienceDetailPage = await loadExperienceRenderer();
-    const bindGroupExperience = await loadGroupExperienceBinder();
-    packageView.innerHTML = renderExperienceDetailPage(pkg, category, esc, WA);
-    groupExperienceCleanup = bindGroupExperience(packageView);
-    handleHeaderScroll();
+    await paintPackageDetail(pkg, token);
   };
 
-  const renderGroupsList = async () => {
+  const renderGroupsList = async (token = routeToken) => {
     if (groupExperienceCleanup) {
       groupExperienceCleanup();
       groupExperienceCleanup = null;
@@ -1253,19 +1344,49 @@ document.addEventListener('DOMContentLoaded', async () => {
       "Expedições em grupo",
       "Expedições em grupo pequeno com curadoria WallTravel: destinos com intenção e logística completa.",
     );
+    if (!isCurrentRoute(token)) return;
     groupsView.innerHTML = renderGroupsCatalog(groups, esc);
     bindGroupForms(groupsView, WA);
     const bindGroupExperience = await loadGroupExperienceBinder();
+    if (!isCurrentRoute(token)) return;
     groupExperienceCleanup = bindGroupExperience(groupsView);
     handleHeaderScroll();
   };
 
-  const renderGroupPage = async (slug) => {
+  const paintGroupDetail = async (group, token) => {
+    if (!group || !isCurrentRoute(token)) return;
     if (groupExperienceCleanup) {
       groupExperienceCleanup();
       groupExperienceCleanup = null;
     }
+    groupsView.dataset.routeSlug = group.slug;
+    groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);
+    bindGroupForms(groupsView, WA);
+    const bindGroupExperience = await loadGroupExperienceBinder();
+    if (!isCurrentRoute(token)) return;
+    groupExperienceCleanup = bindGroupExperience(groupsView);
+    handleHeaderScroll();
+  };
+
+  const renderGroupPage = async (slug, token = routeToken) => {
+    if (groupExperienceCleanup) {
+      groupExperienceCleanup();
+      groupExperienceCleanup = null;
+    }
+    const summary = getGroupSummaryBySlug(slug);
+    if (summary && isCurrentRoute(token)) {
+      updateSEO(
+        summary.seoTitle || summary.name,
+        summary.seoDescription ||
+          summary.shortDescription ||
+          `Viagem em grupo WallTravel: ${summary.name}.`,
+        summary.coverImageUrl,
+      );
+      await paintGroupDetail(summary, token);
+    }
+
     const group = await resolveGroupBySlug(slug);
+    if (!isCurrentRoute(token)) return;
     if (!group) {
       renderEmptyState(
         groupsView,
@@ -1283,13 +1404,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       `Viagem em grupo WallTravel: ${group.name}.`;
     updateSEO(seoTitle, seoDesc, group.coverImageUrl);
 
-    groupsView.innerHTML = renderGroupDetailPage(group, esc, WA);
-    bindGroupForms(groupsView, WA);
-    const bindGroupExperience = await loadGroupExperienceBinder();
-    groupExperienceCleanup = bindGroupExperience(groupsView);
+    await paintGroupDetail(group, token);
+    if (!isCurrentRoute(token)) return;
     trackStorefrontEvent("group_view", { groupSlug: group.slug, slug: group.slug });
     trackStorefrontEvent("viagem_view", { slug: group.slug });
-    handleHeaderScroll();
   };
 
   // Helper to render beautiful error/empty views
