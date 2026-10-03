@@ -35,6 +35,50 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/" }
+    {
+      "source": "/viagens/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|Discordbot|TelegramBot|SkypeUriPreview|Iframely).*"
+        }
+      ],
+      "destination": "/api/og-meta?kind=product&slug=:slug"
+    },
+    {
+      "source": "/pacote/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|Discordbot|TelegramBot|SkypeUriPreview|Iframely).*"
+        }
+      ],
+      "destination": "/api/og-meta?kind=product&slug=:slug"
+    },
+    {
+      "source": "/grupos/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|Discordbot|TelegramBot|SkypeUriPreview|Iframely).*"
+        }
+      ],
+      "destination": "/api/og-meta?kind=group&slug=:slug"
+    },
+    {
+      "source": "/vitrine/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|Discordbot|TelegramBot|SkypeUriPreview|Iframely).*"
+        }
+      ],
+      "destination": "/api/og-meta?kind=vitrine&slug=:slug"
+    },
+    { "source": "/((?!assets/|api/).*)", "destination": "/" }
   ]
 }

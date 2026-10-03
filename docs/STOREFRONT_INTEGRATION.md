@@ -10,6 +10,7 @@
 | Ownership | Catalog = Platform; home hero/honeymoon copy = Web (local JSON) |
 | Fallback | On API failure / missing env → local `data/vitrine.json` + sticky notice |
 | Routes | `/vitrine`, `/vitrine/:category`, `/viagens/:slug` (+ `/pacote/:slug` alias) |
+| OG / social | Bot User-Agents rewrite to `/api/og-meta` (Edge) with absolute `og:image` from Platform covers; see project doc `og-image-por-rota` |
 | Events | `data/storefront-events.js` — Phase 14 hooks only (`walltravel:storefront`) |
 
 ## Local

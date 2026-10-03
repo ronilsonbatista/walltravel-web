@@ -202,36 +202,75 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ==========================================================================
   // DYNAMIC SEO META-TAGS HELPER
   // ==========================================================================
+  const CANONICAL_ORIGIN = "https://www.walltravel.com.br";
+  const DEFAULT_OG_IMAGE = `${CANONICAL_ORIGIN}/images/vitrine/noronha.jpg`;
+
+  const absoluteMetaUrl = (value) => {
+    const raw = String(value || "").trim();
+    if (!raw) return DEFAULT_OG_IMAGE;
+    if (/^https?:\/\//i.test(raw)) return raw;
+    if (raw.startsWith("//")) return `https:${raw}`;
+    const host = (window.location.hostname || "").toLowerCase();
+    const origin =
+      host === "www.walltravel.com.br" || host === "walltravel.com.br"
+        ? CANONICAL_ORIGIN
+        : window.location.origin;
+    return raw.startsWith("/") ? `${origin}${raw}` : `${origin}/${raw}`;
+  };
+
+  const ensureMeta = (selector, attrs) => {
+    let el = document.querySelector(selector);
+    if (!el) {
+      el = document.createElement("meta");
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      document.head.appendChild(el);
+    }
+    return el;
+  };
+
   const updateSEO = (title, description, ogImage) => {
     const cleanTitle = String(title || "")
       .replace(/\s*\|\s*WallTravel\s*$/i, "")
       .trim() || "WallTravel";
-    document.title = `${cleanTitle} | WallTravel`;
-    
-    // Meta Description
+    const fullTitle = `${cleanTitle} | WallTravel`;
+    document.title = fullTitle;
+
+    const desc = description || "";
+    const image = absoluteMetaUrl(ogImage || DEFAULT_OG_IMAGE);
+    const pageUrl = `${window.location.origin}${window.location.pathname || "/"}`;
+
     let descMeta = document.querySelector('meta[name="description"]');
     if (!descMeta) {
-      descMeta = document.createElement('meta');
-      descMeta.name = 'description';
+      descMeta = document.createElement("meta");
+      descMeta.name = "description";
       document.head.appendChild(descMeta);
     }
-    descMeta.content = description;
-    
-    // OG Title
-    let ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.content = cleanTitle;
-    
-    // OG Description
-    let ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.content = description;
-    
-    // OG Image
-    let ogImg = document.querySelector('meta[property="og:image"]');
-    if (ogImg) ogImg.content = ogImage || '/images/vitrine/noronha.jpg';
-    
-    // Twitter Image
-    let twImg = document.querySelector('meta[name="twitter:image"]');
-    if (twImg) twImg.content = ogImage || '/images/vitrine/noronha.jpg';
+    descMeta.content = desc;
+
+    const ogTitle = ensureMeta('meta[property="og:title"]', { property: "og:title" });
+    ogTitle.setAttribute("content", fullTitle);
+
+    const ogDesc = ensureMeta('meta[property="og:description"]', {
+      property: "og:description",
+    });
+    ogDesc.setAttribute("content", desc);
+
+    const ogImg = ensureMeta('meta[property="og:image"]', { property: "og:image" });
+    ogImg.setAttribute("content", image);
+
+    const ogUrl = ensureMeta('meta[property="og:url"]', { property: "og:url" });
+    ogUrl.setAttribute("content", pageUrl);
+
+    const twTitle = ensureMeta('meta[name="twitter:title"]', { name: "twitter:title" });
+    twTitle.setAttribute("content", fullTitle);
+
+    const twDesc = ensureMeta('meta[name="twitter:description"]', {
+      name: "twitter:description",
+    });
+    twDesc.setAttribute("content", desc);
+
+    const twImg = ensureMeta('meta[name="twitter:image"]', { name: "twitter:image" });
+    twImg.setAttribute("content", image);
   };
 
   /** Staging / preview: noindex. Production host stays indexable unless VITE_NOINDEX=true. */
