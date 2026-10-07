@@ -4,6 +4,7 @@
   "shortDescription": "Uma expedição por Atenas, Mykonos, Santorini e Corfu para apenas 10 viajantes, com acompanhamento WallTravel durante toda a jornada.",
   "destinationLabel": "Atenas · Mykonos · Santorini · Corfu",
   "durationLabel": "13 dias · 12 noites",
+  "departureLabel": "Saída oficial de São Paulo",
   "departureDate": "2027-09-12",
   "returnDate": "2027-09-24",
   "daysCount": 13,
@@ -323,7 +324,7 @@
     },
     {
       "question": "O voo do Brasil está incluso?",
-      "answer": "Não. A expedição cobre tudo em terra na Grécia, mais os voos internos e os ferries. A WallTravel cota o voo internacional para o grupo e ajuda você a escolher."
+      "answer": "Não. O planejamento cobre o que acontece em terra na Grécia, mais os voos internos e os ferries. A saída oficial do grupo é de São Paulo: a equipe cotiza o voo internacional a partir daí e ajuda você a escolher."
     },
     {
       "question": "Como funciona a alimentação?",
