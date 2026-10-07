@@ -236,6 +236,7 @@ export function mapGroup(apiGroup) {
     shortDescription: apiGroup.shortDescription ?? null,
     destinationLabel: apiGroup.destinationLabel ?? null,
     durationLabel: apiGroup.durationLabel ?? null,
+    departureLabel: apiGroup.departureLabel ?? null,
     departureDate: apiGroup.departureDate ?? null,
     returnDate: apiGroup.returnDate ?? null,
     daysCount: apiGroup.daysCount ?? null,

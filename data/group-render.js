@@ -44,6 +44,19 @@ function formatTripDates(departureDate, returnDate) {
   return `${dep.getDate()} de ${MONTHS_PT[dep.getMonth()]} a ${ret.getDate()} de ${MONTHS_PT[ret.getMonth()]} de ${ret.getFullYear()}`;
 }
 
+/**
+ * Hero meta line for official Brazil departure (same style as destinations).
+ * Prefers CMS/local `departureLabel`; Greece keeps the approved copy as fallback.
+ */
+function heroDepartureLabel(group) {
+  const fromCms = String(group?.departureLabel || "").trim();
+  if (fromCms) return fromCms;
+  if (/^grecia$/i.test(String(group?.slug || ""))) {
+    return "Saída oficial de São Paulo";
+  }
+  return "";
+}
+
 /** Thin wrapper. Prefer buildWhatsAppCTA with context/entity when possible. */
 function waLink(WA, message, opts = {}) {
   return buildWhatsAppCTA({
@@ -997,6 +1010,7 @@ export function renderGroupDetailPage(group, esc, WA) {
   }
 
   const dates = formatTripDates(group.departureDate, group.returnDate);
+  const departureMeta = heroDepartureLabel(group);
   const heroHtml = ImmersiveHero({
     carouselHtml: HeroCarousel({ slides, name: group.name, esc }),
     overlay: "strong",
@@ -1010,6 +1024,7 @@ export function renderGroupDetailPage(group, esc, WA) {
         ${dates ? `<p class="group-hero-dates" data-reveal>${esc(dates)}</p>` : ""}
         ${group.durationLabel ? `<p class="group-hero-duration" data-reveal>${esc(group.durationLabel)}</p>` : ""}
         ${group.destinationLabel ? `<p class="group-hero-dest" data-reveal>${esc(group.destinationLabel)}</p>` : ""}
+        ${departureMeta ? `<p class="group-hero-dest" data-reveal>${esc(departureMeta)}</p>` : ""}
         ${
           group.groupSize != null
             ? `<p class="group-hero-capacity" data-reveal>Apenas ${esc(String(group.groupSize))} viajantes</p>`
