@@ -74,13 +74,60 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const bootPathEarly = window.location.pathname;
   const bootIsHomeEarly = bootPathEarly === "/" || bootPathEarly === "/index.html";
-  // Deep-link boot: hide home before awaiting storefront so África hero never paints.
-  // Critical CSS (html:not(.wt-route-home) #home-view) already covers first paint;
-  // this is a JS belt-and-suspenders before the async hydrate gate.
-  if (!bootIsHomeEarly) {
+
+  const viewIdForPath = (path) => {
+    if (path === "/vitrine" || path === "/vitrine/") return "vitrine-view";
+    if (path.startsWith("/vitrine/")) return "category-view";
+    if (path.startsWith("/pacote/") || path.startsWith("/viagens/")) return "package-view";
+    if (path === "/grupos" || path === "/grupos/" || path.startsWith("/grupos/")) {
+      return "groups-view";
+    }
+    if (path === "/como-funciona" || path === "/como-funciona/") return "como-funciona-view";
+    return null;
+  };
+
+  const clearBootPending = () => {
+    document.documentElement.classList.remove("wt-boot-pending");
+  };
+
+  /**
+   * Deep-link first paint: keep home hidden, reveal the target route shell, and hold
+   * the footer (wt-boot-pending) until handleRouting paints real content.
+   * Critical CSS + inline script in index.html already cover pre-module paint;
+   * this re-applies before the async hydrate gate.
+   */
+  const paintDeepLinkBootShell = (path) => {
+    document.documentElement.classList.add("wt-boot-pending");
+    document.documentElement.classList.remove("wt-route-home");
     const homeEl = document.getElementById("home-view");
     if (homeEl) homeEl.style.display = "none";
-    document.documentElement.classList.remove("wt-route-home");
+    document.querySelectorAll(".page-view").forEach((el) => {
+      if (el.id !== viewIdForPath(path)) el.style.display = "none";
+    });
+    const id = viewIdForPath(path);
+    const el = id ? document.getElementById(id) : null;
+    if (!el) return;
+    el.style.display = "block";
+    if (id !== "como-funciona-view" && !el.querySelector(".wt-route-shell") && el.children.length === 0) {
+      el.innerHTML = `
+        <div class="wt-route-shell" aria-busy="true" aria-live="polite">
+          <p class="wt-route-shell-label">Carregando…</p>
+        </div>
+      `;
+    }
+    try {
+      window.scrollTo(0, 0);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  // Deep-link boot: hide home before awaiting storefront so África hero never paints,
+  // and show a neutral route shell so the footer is not the primary first paint.
+  if (!bootIsHomeEarly) {
+    paintDeepLinkBootShell(bootPathEarly);
+  } else {
+    clearBootPending();
   }
   let homeIntroPromise = Promise.resolve(false);
   if (bootIsHomeEarly && document.querySelector("[data-wt-page-intro][data-intro-preset='home']")) {
@@ -919,6 +966,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!isCurrentRoute(token)) return;
     syncFloatWhatsApp(path);
     scheduleRouteScroll({ preferHash: wantsHash });
+    // Route content is in the DOM — allow footer/float and drop the boot hold.
+    clearBootPending();
   };
 
   function syncFloatWhatsApp(path) {
