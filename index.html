@@ -14,15 +14,17 @@
     html{background-color:#F6F1E8;color:#16170F}
     body{background-color:#F6F1E8;margin:0}
     html.wt-intro-skip #wt-home-intro-mount{display:none!important}
+    /* Deep-links: never paint home hero (África do Sul) while storefront/router boot. */
+    html:not(.wt-route-home) #home-view{display:none!important}
     html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:#ffffff;border-bottom:1px solid rgba(63,67,40,0.12);box-shadow:0 8px 28px rgba(63,67,40,0.06)}
     html.wt-intro-skip .logo-svg{filter:none}
     html.wt-route-home.wt-intro-skip .header:not(.scrolled){background:transparent;border-bottom:1px solid rgba(255,255,255,0.1);box-shadow:none}
     html.wt-route-home.wt-intro-skip .header:not(.scrolled) .logo-svg{filter:brightness(0) invert(1)}
-    html.wt-intro-skip .hero{position:relative;height:100svh;min-height:100svh;overflow:hidden;background:#3F4328}
-    html.wt-intro-skip .hero-slideshow,html.wt-intro-skip .hero-slide.active{position:absolute;inset:0}
-    html.wt-intro-skip .hero-slide{opacity:0}
-    html.wt-intro-skip .hero-slide.active{opacity:1}
-    html.wt-intro-skip .hero-slide-img{width:100%;height:100%;object-fit:cover;display:block}
+    html.wt-route-home.wt-intro-skip .hero{position:relative;height:100svh;min-height:100svh;overflow:hidden;background:#3F4328}
+    html.wt-route-home.wt-intro-skip .hero-slideshow,html.wt-route-home.wt-intro-skip .hero-slide.active{position:absolute;inset:0}
+    html.wt-route-home.wt-intro-skip .hero-slide{opacity:0}
+    html.wt-route-home.wt-intro-skip .hero-slide.active{opacity:1}
+    html.wt-route-home.wt-intro-skip .hero-slide-img{width:100%;height:100%;object-fit:cover;display:block}
     html.wt-intro-hold #wt-home-intro-mount [data-wt-page-intro]{
       position:fixed;inset:0;z-index:9000;display:grid;place-items:center;
       background:#F6F1E8;color:#16170F;overflow:hidden
@@ -109,8 +111,11 @@
         root.classList.add("wt-intro-skip", "wt-hero-live");
         root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
         root.dataset.introPhase = "hero-live";
-        var theme = document.querySelector('meta[name="theme-color"]');
-        if (theme) theme.setAttribute("content", "#3F4328");
+        // Dark theme-color is home-hero only; deep-links stay cream until the route paints.
+        if (isHome) {
+          var theme = document.querySelector('meta[name="theme-color"]');
+          if (theme) theme.setAttribute("content", "#3F4328");
+        }
       } else {
         root.classList.add("wt-intro-hold", "wt-intro-pending");
         root.dataset.introPhase = "boot";

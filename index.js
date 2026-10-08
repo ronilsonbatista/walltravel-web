@@ -74,6 +74,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const bootPathEarly = window.location.pathname;
   const bootIsHomeEarly = bootPathEarly === "/" || bootPathEarly === "/index.html";
+  // Deep-link boot: hide home before awaiting storefront so África hero never paints.
+  // Critical CSS (html:not(.wt-route-home) #home-view) already covers first paint;
+  // this is a JS belt-and-suspenders before the async hydrate gate.
+  if (!bootIsHomeEarly) {
+    const homeEl = document.getElementById("home-view");
+    if (homeEl) homeEl.style.display = "none";
+    document.documentElement.classList.remove("wt-route-home");
+  }
   let homeIntroPromise = Promise.resolve(false);
   if (bootIsHomeEarly && document.querySelector("[data-wt-page-intro][data-intro-preset='home']")) {
     homeIntroPromise = playPageIntro(document.getElementById("home-view") || document);
