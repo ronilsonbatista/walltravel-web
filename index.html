@@ -16,6 +16,17 @@
     html.wt-intro-skip #wt-home-intro-mount{display:none!important}
     /* Deep-links: never paint home hero (África do Sul) while storefront/router boot. */
     html:not(.wt-route-home) #home-view{display:none!important}
+    /* Deep-links: hide footer/float until the route shell paints (avoids footer-first flash). */
+    html.wt-boot-pending footer,
+    html.wt-boot-pending .whatsapp-float{display:none!important}
+    html.wt-boot-pending .wt-route-shell{
+      min-height:calc(100svh - 5rem);display:flex;align-items:center;justify-content:center;
+      padding:6rem 1.25rem 4rem;background:#F6F1E8;box-sizing:border-box
+    }
+    html.wt-boot-pending .wt-route-shell-label{
+      margin:0;font:500 .75rem/1.4 system-ui,sans-serif;letter-spacing:.06em;
+      text-transform:uppercase;color:#6b6e5c
+    }
     html.wt-intro-skip .header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:#ffffff;border-bottom:1px solid rgba(63,67,40,0.12);box-shadow:0 8px 28px rgba(63,67,40,0.06)}
     html.wt-intro-skip .logo-svg{filter:none}
     html.wt-route-home.wt-intro-skip .header:not(.scrolled){background:transparent;border-bottom:1px solid rgba(255,255,255,0.1);box-shadow:none}
@@ -107,6 +118,9 @@
       } catch (e2) {}
       var root = document.documentElement;
       root.classList.toggle("wt-route-home", isHome);
+      // Non-home cold load: hold footer until the target route paints (see wt-boot-pending CSS).
+      if (!isHome) root.classList.add("wt-boot-pending");
+      else root.classList.remove("wt-boot-pending");
       if (skip) {
         root.classList.add("wt-intro-skip", "wt-hero-live");
         root.classList.remove("wt-intro-hold", "wt-intro-pending", "wt-intro-active", "wt-intro-transition");
@@ -723,6 +737,37 @@
     </div>
   </div>
   </div> <!-- Fim de #main-content -->
+
+  <!-- Sync deep-link shell before module hydrate (footer stays hidden via wt-boot-pending). -->
+  <script>
+    (function () {
+      var path = location.pathname || "/";
+      var isHome = path === "/" || path === "/index.html";
+      if (isHome) return;
+      document.documentElement.classList.add("wt-boot-pending");
+      document.documentElement.classList.remove("wt-route-home");
+      var home = document.getElementById("home-view");
+      if (home) home.style.display = "none";
+      function viewIdFor(p) {
+        if (p === "/vitrine" || p === "/vitrine/") return "vitrine-view";
+        if (p.indexOf("/vitrine/") === 0) return "category-view";
+        if (p.indexOf("/pacote/") === 0 || p.indexOf("/viagens/") === 0) return "package-view";
+        if (p === "/grupos" || p === "/grupos/" || p.indexOf("/grupos/") === 0) return "groups-view";
+        if (p === "/como-funciona" || p === "/como-funciona/") return "como-funciona-view";
+        return null;
+      }
+      var id = viewIdFor(path);
+      var el = id && document.getElementById(id);
+      if (!el) return;
+      el.style.display = "block";
+      if (id !== "como-funciona-view" && el.children.length === 0) {
+        el.innerHTML =
+          '<div class="wt-route-shell" aria-busy="true" aria-live="polite">' +
+          '<p class="wt-route-shell-label">Carregando…</p></div>';
+      }
+      try { window.scrollTo(0, 0); } catch (eScroll) {}
+    })();
+  </script>
 
   <!-- ==========================================================================
        FOOTER
