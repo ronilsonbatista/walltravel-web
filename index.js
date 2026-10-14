@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return "groups-view";
     }
     if (path === "/como-funciona" || path === "/como-funciona/") return "como-funciona-view";
+    if (path === "/privacidade" || path === "/privacidade/") return "privacidade-view";
     return null;
   };
 
@@ -108,7 +109,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const el = id ? document.getElementById(id) : null;
     if (!el) return;
     el.style.display = "block";
-    if (id !== "como-funciona-view" && !el.querySelector(".wt-route-shell") && el.children.length === 0) {
+    if (
+      id !== "como-funciona-view" &&
+      id !== "privacidade-view" &&
+      !el.querySelector(".wt-route-shell") &&
+      el.children.length === 0
+    ) {
       el.innerHTML = `
         <div class="wt-route-shell" aria-busy="true" aria-live="polite">
           <p class="wt-route-shell-label">Carregando…</p>
@@ -709,6 +715,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const packageView = document.getElementById('package-view');
   const groupsView = document.getElementById('groups-view');
   const comoFuncionaView = document.getElementById('como-funciona-view');
+  const privacidadeView = document.getElementById('privacidade-view');
 
   /** Bumps on every navigation so late async paints cannot flash the previous slug. */
   let routeToken = 0;
@@ -725,6 +732,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     packageView.style.display = 'none';
     if (groupsView) groupsView.style.display = 'none';
     if (comoFuncionaView) comoFuncionaView.style.display = 'none';
+    if (privacidadeView) privacidadeView.style.display = 'none';
     
     // Clean up any sticky bottom bar that might be active
     const oldSticky = document.querySelector('.sticky-bottom-bar');
@@ -951,6 +959,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           "Como funciona | WallTravel",
           "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem, com critério e presença."
         );
+      } else if (path === '/privacidade' || path === '/privacidade/') {
+        header.classList.add('scrolled');
+        if (privacidadeView) {
+          privacidadeView.style.display = 'block';
+        }
+        updateSEO(
+          "Política de Privacidade | WallTravel",
+          "Como a WallTravel trata dados pessoais no site, no WhatsApp e no CRM, em conformidade com a LGPD."
+        );
       } else {
         // Unknown route → 404 (do not silently fall back to Home)
         resetRouteView(packageView, { label: "" });
@@ -1008,7 +1025,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (path.startsWith("/vitrine")) {
       pageType = "VITRINE";
       context = "vitrine";
-    } else if (path.startsWith("/como-funciona") || path.startsWith("/sobre")) {
+    } else if (
+      path.startsWith("/como-funciona") ||
+      path.startsWith("/sobre") ||
+      path.startsWith("/privacidade")
+    ) {
       pageType = "ABOUT";
       context = "site";
     }
@@ -1053,7 +1074,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
         }
         
-        if (path === '/' || path.startsWith('/vitrine') || path.startsWith('/pacote') || path.startsWith('/viagens') || path.startsWith('/grupos') || path.startsWith('/como-funciona')) {
+        if (
+          path === '/' ||
+          path.startsWith('/vitrine') ||
+          path.startsWith('/pacote') ||
+          path.startsWith('/viagens') ||
+          path.startsWith('/grupos') ||
+          path.startsWith('/como-funciona') ||
+          path.startsWith('/privacidade')
+        ) {
           e.preventDefault();
           // Preserve query (?datas=fixas) so parent date filters survive SPA navigation.
           window.history.pushState(null, '', path + url.search + hash);
