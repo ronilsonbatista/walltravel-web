@@ -16,7 +16,7 @@
   "priceEur": "5119",
   "quoteDate": "2026-10-26",
   "priceNote": "por pessoa · à vista, ou entrada + até 10x no cartão, com juros. O valor em real acompanha a cotação do dia.",
-  "coverImageUrl": "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
+  "coverImageUrl": "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
   "featured": true,
   "comingSoon": false,
   "ctaLabel": "Quero falar sobre a Grécia",
@@ -41,13 +41,13 @@
   "description": "12 a 24 de setembro de 2027 · 13 dias · 12 noites · grupo de apenas 10 pessoas.",
   "editorial": "A Grécia pede tempo. Por isso este roteiro não corre: duas noites em Atenas para ver a Acrópole com calma, três em Mykonos, três em Santorini, três em Corfu e uma última na capital antes de voltar. Entre uma ilha e outra, ferry pelo Egeu ou um voo curto, sempre com traslado privativo esperando.\n\nCorfu é o que quase nenhum grupo faz: a ilha do Jônico de praias de água transparente, falésias verdes e um centro histórico veneziano. E o grupo é de 10 pessoas de verdade, com hotel 4 estrelas em cada ilha, passeios privativos com guia em português e dias livres nos lugares certos.",
   "gallery": [
-    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
-    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/atenas-acropole.webp",
-    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/mykonos-little-venice.webp",
-    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/santorini-oia.webp",
-    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/santorini-domes.webp",
-    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/corfu.webp",
-    "https://dtxrizqsdmjfqvfmiano.supabase.co/storage/v1/object/public/storefront/groups/grecia/mykonos-chora.webp"
+    "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/hero-santorini.webp",
+    "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/atenas-acropole.webp",
+    "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/mykonos-little-venice.webp",
+    "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/santorini-oia.webp",
+    "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/santorini-domes.webp",
+    "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/corfu.webp",
+    "https://eryfwytpcqmkcmegtlua.supabase.co/storage/v1/object/public/storefront/groups/grecia/mykonos-chora.webp"
   ],
   "whyGroup": [
     {
