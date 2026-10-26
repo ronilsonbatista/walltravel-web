@@ -37,19 +37,17 @@ describe("filterExperienceInvestmentNotes", () => {
     ]);
   });
 
-  it("keeps PIX and parcelado lines for single-origin listings", () => {
+  it("keeps parcelado when single-origin PIX is only in originPrices", () => {
     const notes = filterExperienceInvestmentNotes(
-      [
-        "PIX: R$ 18.015 por pessoa.",
-        "Parcelado: 10x de R$ 2.008,58 (total R$ 20.086).",
-      ],
+      ["Parcelado: 10x de R$ 2.008,58 (total R$ 20.086)."],
       {
         dateLabel: "02/03/2027 a 16/03/2027",
-        origins: [],
+        origins: [
+          { uf: "SP", label: "São Paulo", priceFrom: 18015, paymentNote: "PIX" },
+        ],
       },
     );
     assert.deepEqual(notes, [
-      "PIX: R$ 18.015 por pessoa.",
       "Parcelado: 10x de R$ 2.008,58 (total R$ 20.086).",
     ]);
   });

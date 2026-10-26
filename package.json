@@ -8,7 +8,6 @@
     "build": "vite build",
     "preview": "vite preview --port 4173 --strictPort",
     "test": "node --test tests/og-meta-server.test.mjs tests/fixed-dates.test.mjs tests/vitrine-date-mode.test.mjs tests/itinerary-public.test.mjs tests/experience-pricing.test.mjs",
-    "build:japao-preview": "node scripts/build-japao-preview.mjs",
     "test:e2e": "playwright test",
     "typecheck": "node -e \"console.log('walltravel-web: no TypeScript project')\""
   },

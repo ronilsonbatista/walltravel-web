@@ -87,8 +87,8 @@ function renderAbout(pkg, esc) {
 }
 
 /**
- * Drop investment notes that already appear as fixed dates or origin+PIX rows.
- * Keeps payment lines like "PIX: …" / "Parcelado: …" when they are not city duplicates.
+ * Drop investment notes that already appear as fixed dates or origin+PIX rows
+ * (avoids repeating PIX / city prices already listed above).
  */
 export function filterExperienceInvestmentNotes(notes, { dateLabel = "", origins = [] } = {}) {
   const list = Array.isArray(notes) ? notes : [];
@@ -119,36 +119,25 @@ export function filterExperienceInvestmentNotes(notes, { dateLabel = "", origins
   });
 }
 
-function isPaymentInvestmentNote(note) {
-  return /^(pix|parcelado|à vista|a vista)\b/i.test(String(note || "").trim());
-}
-
 function renderExperiencePricing(pkg, esc, priceUnitLabel) {
   const price = formatMoney(pkg.priceFrom, pkg.currency || "BRL");
   const dateLabel = hasFixedDates(pkg)
     ? formatFixedDateRange(pkg.fixedStartDate, pkg.fixedEndDate)
     : "";
-  const origins = Array.isArray(pkg.originPrices)
-    ? pkg.originPrices.filter((row) => row && row.priceFrom != null)
-    : [];
-  // Single-origin listings already say the city in the title; skip the redundant list.
-  const showOriginList = origins.length > 1;
-  const originRows = showOriginList
-    ? origins
-        .map((row) => {
-          const money = formatMoney(row.priceFrom, pkg.currency || "BRL");
-          const place = row.label || row.uf || "";
-          const note = row.paymentNote ? ` (${row.paymentNote})` : "";
-          return `<li><strong>${esc(place)}</strong>: ${esc(money || "")} por pessoa${esc(note)}</li>`;
-        })
-        .join("")
-    : "";
+  const origins = Array.isArray(pkg.originPrices) ? pkg.originPrices : [];
+  const originRows = origins
+    .filter((row) => row && row.priceFrom != null)
+    .map((row) => {
+      const money = formatMoney(row.priceFrom, pkg.currency || "BRL");
+      const place = row.label || row.uf || "";
+      const note = row.paymentNote ? ` (${row.paymentNote})` : "";
+      return `<li><strong>${esc(place)}</strong>: ${esc(money || "")} por pessoa${esc(note)}</li>`;
+    })
+    .join("");
   const notes = filterExperienceInvestmentNotes(pkg.importantNotes, {
     dateLabel,
-    origins: showOriginList ? origins : [],
+    origins,
   });
-  const paymentNotes = notes.filter(isPaymentInvestmentNote);
-  const otherNotes = notes.filter((n) => !isPaymentInvestmentNote(n));
   return `<section class="group-section experience-investment" id="exp-investment" data-reveal>
     <span class="section-tag">Investimento</span>
     <h2 class="package-section-title">A partir de</h2>
@@ -170,14 +159,8 @@ function renderExperiencePricing(pkg, esc, priceUnitLabel) {
         : ""
     }
     ${
-      paymentNotes.length
-        ? `<p class="experience-payment-lede">Formas de pagamento:</p>
-           <ul class="sidebar-notes-list experience-payment-notes">${paymentNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
-        : ""
-    }
-    ${
-      otherNotes.length
-        ? `<ul class="sidebar-notes-list experience-notes">${otherNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
+      notes.length
+        ? `<ul class="sidebar-notes-list experience-notes">${notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
         : ""
     }
   </section>`;
