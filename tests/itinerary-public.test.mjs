@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   filterPublicItinerary,
+  isDisplayableItinerary,
   isHospedagemItineraryDay,
   mapGroup,
   mapProduct,
@@ -34,7 +35,7 @@ describe("hospedagem itinerary filter", () => {
     assert.equal(
       isHospedagemItineraryDay({
         day: 3,
-        title: "Bem-vindos — check-in na hospedagem",
+        title: "Bem-vindos - check-in na hospedagem",
       }),
       false,
     );
@@ -108,7 +109,7 @@ describe("hospedagem itinerary filter", () => {
     assert.equal(html, "");
   });
 
-  it("renderItineraryAccordion still shows real days", () => {
+  it("renderItineraryAccordion hides weak single activity day (Voos-only)", () => {
     const html = renderItineraryAccordion(
       {
         itinerary: [
@@ -123,8 +124,73 @@ describe("hospedagem itinerary filter", () => {
       },
       (s) => String(s),
     );
+    assert.equal(html, "");
+  });
+
+  it("renderItineraryAccordion shows real multi-day roteiro", () => {
+    const html = renderItineraryAccordion(
+      {
+        itinerary: [
+          { day: 1, title: "Hospedagem", description: "hotel" },
+          {
+            day: 2,
+            title: "Atenas e a Acrópole",
+            description: "passeio",
+            location: "Atenas",
+          },
+          {
+            day: 3,
+            title: "Ferry para Mykonos",
+            description: "travessia",
+            location: "Atenas → Mykonos",
+          },
+        ],
+      },
+      (s) => String(s),
+    );
     assert.match(html, /Sua jornada/);
-    assert.match(html, /Voos/);
+    assert.match(html, /Atenas e a Acrópole/);
+    assert.match(html, /Ferry para Mykonos/);
     assert.doesNotMatch(html, />Hospedagem</);
+  });
+});
+
+describe("isDisplayableItinerary (strong gate ≥2 activity days)", () => {
+  it("rejects empty, hotel-only, and single non-hotel day", () => {
+    assert.equal(isDisplayableItinerary([]), false);
+    assert.equal(isDisplayableItinerary(null), false);
+    assert.equal(
+      isDisplayableItinerary([{ day: 1, title: "Hospedagem" }]),
+      false,
+    );
+    assert.equal(
+      isDisplayableItinerary([
+        { day: 1, title: "Hospedagem" },
+        { day: 2, title: "Voos" },
+      ]),
+      false,
+    );
+    assert.equal(
+      isDisplayableItinerary([{ day: 1, title: "Voos" }]),
+      false,
+    );
+  });
+
+  it("accepts ≥2 non-hospedagem days", () => {
+    assert.equal(
+      isDisplayableItinerary([
+        { day: 1, title: "Bem-vindos à Grécia" },
+        { day: 2, title: "Atenas e a Acrópole" },
+      ]),
+      true,
+    );
+    assert.equal(
+      isDisplayableItinerary([
+        { day: 1, title: "Hospedagem" },
+        { day: 2, title: "Dia em Atenas" },
+        { day: 3, title: "Mykonos" },
+      ]),
+      true,
+    );
   });
 });
