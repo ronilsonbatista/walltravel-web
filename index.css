@@ -4707,6 +4707,8 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 .group-investment-band .group-investment-capacity,
 .group-investment-band .group-investment-hero-label,
 .group-investment-band .group-investment-hero-unit,
+.group-investment-band .group-investment-hero-eur,
+.group-investment-band .group-investment-hero-quote,
 .group-investment-band .group-subheading,
 .group-investment-band p,
 .group-investment-band li,
@@ -5543,6 +5545,21 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   line-height: 1.05;
   color: var(--color-text);
   margin: 0.35rem 0 0.4rem;
+}
+
+.group-investment-hero-eur {
+  margin: 0.85rem 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.group-investment-hero-quote {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
 }
 
 .group-investment-card {

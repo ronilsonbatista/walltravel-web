@@ -15,6 +15,14 @@ function formatMoney(priceFrom, currency = "BRL") {
   return `${sym} ${n.toLocaleString("pt-BR")}`;
 }
 
+/** Format CMS/local ISO date (YYYY-MM-DD) as DD/MM/AAAA for cotação label. */
+function formatQuoteDatePt(quoteDate) {
+  const raw = String(quoteDate || "").trim();
+  const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  return `${m[3]}/${m[2]}/${m[1]}`;
+}
+
 const MONTHS_PT = [
   "janeiro",
   "fevereiro",
@@ -557,6 +565,14 @@ export function renderInvestment(group, esc) {
       : "";
 
   const heroPrice = formatMoney(group.priceFrom, group.currency);
+  const eurPrice = formatMoney(group.priceEur, "EUR");
+  const quoteDateLabel = formatQuoteDatePt(group.quoteDate);
+  const eurSecondary = eurPrice
+    ? `<p class="group-investment-hero-eur">Planejamento cotado em euro: ${esc(eurPrice)}</p>`
+    : "";
+  const quoteSecondary = quoteDateLabel
+    ? `<p class="group-investment-hero-quote">Cotação em ${esc(quoteDateLabel)}</p>`
+    : "";
 
   return `<section class="group-band group-band--light group-investment-band" id="group-investment" data-reveal>
     <div class="section-container group-band-inner">
@@ -569,6 +585,8 @@ export function renderInvestment(group, esc) {
               <span class="group-investment-hero-label">A partir de</span>
               <p class="group-investment-hero-value">${esc(heroPrice)}</p>
               <span class="group-investment-hero-unit">por pessoa</span>
+              ${eurSecondary}
+              ${quoteSecondary}
             </div>`
           : ""
       }
