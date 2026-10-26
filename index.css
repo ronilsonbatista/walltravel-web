@@ -4767,6 +4767,7 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   margin: 0.15rem 0 0;
   width: 100%;
   line-height: 1.5;
+  color: #fff;
 }
 
 .group-investment-band .group-payment-methods {
