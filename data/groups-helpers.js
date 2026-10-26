@@ -8,6 +8,7 @@ import {
   mapGroup,
   getPlatformApiBase,
 } from "./platform-api.js";
+import { applyGreciaLockedPricing } from "./grecia-pricing.js";
 
 const LOCAL_DETAILS = {
   grecia: greciaLocal,
@@ -15,30 +16,8 @@ const LOCAL_DETAILS = {
   italia: italiaLocal,
 };
 
-/**
- * Storefront pricing for Grécia lives in groups-local until the CMS is updated.
- * Overlay keeps BRL/EUR/cotação correct when the Platform API still has the old amount.
- */
-function applyLocalPricingOverlay(group) {
-  if (!group?.slug || group.slug !== "grecia") return group;
-  const local = LOCAL_DETAILS.grecia;
-  if (!local || local.priceFrom == null) return group;
-  return {
-    ...group,
-    priceFrom: local.priceFrom,
-    currency: local.currency ?? group.currency,
-    priceNote: local.priceNote ?? group.priceNote,
-    priceEur: local.priceEur ?? group.priceEur ?? null,
-    quoteDate: local.quoteDate ?? group.quoteDate ?? null,
-    investmentOptions: Array.isArray(local.investmentOptions)
-      ? local.investmentOptions
-      : group.investmentOptions,
-    ctaWhatsappMessage: local.ctaWhatsappMessage ?? group.ctaWhatsappMessage,
-  };
-}
-
 function mapGroupWithLocalPricing(item) {
-  return applyLocalPricingOverlay(mapGroup(item));
+  return applyGreciaLockedPricing(mapGroup(item));
 }
 
 /** @type {"platform" | "local"} */

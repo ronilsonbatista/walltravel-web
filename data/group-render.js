@@ -3,6 +3,7 @@ import {
   filterPublicItinerary,
   isDisplayableItinerary,
 } from "./platform-api.js";
+import { applyGreciaLockedPricing } from "./grecia-pricing.js";
 import {
   HeroCarousel,
   StickyConversionCTA,
@@ -554,6 +555,7 @@ export function renderItineraryAccordion(group, esc) {
 }
 
 export function renderInvestment(group, esc) {
+  group = applyGreciaLockedPricing(group);
   if (!group.investmentOptions?.length && !group.priceFrom) return "";
   const options = group.investmentOptions?.length
     ? group.investmentOptions
@@ -960,6 +962,7 @@ function renderHeroCarouselV2(group, esc, slides) {
 }
 
 export function renderGroupDetailPage(group, esc, WA) {
+  group = applyGreciaLockedPricing(group);
   const price = formatMoney(group.priceFrom, group.currency);
   const slides = heroGallery(group);
   const waSticky = groupWaHref(group, WA, "sticky");
