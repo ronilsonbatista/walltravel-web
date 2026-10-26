@@ -86,21 +86,69 @@ function renderAbout(pkg, esc) {
   </section>`;
 }
 
+/**
+ * Drop investment notes that already appear as fixed dates or origin+PIX rows.
+ * Keeps payment lines like "PIX: …" / "Parcelado: …" when they are not city duplicates.
+ */
+export function filterExperienceInvestmentNotes(notes, { dateLabel = "", origins = [] } = {}) {
+  const list = Array.isArray(notes) ? notes : [];
+  const originPlaces = origins
+    .map((row) => String(row?.label || row?.uf || "").trim().toLowerCase())
+    .filter(Boolean);
+  const hasOriginPixRows = origins.some((row) =>
+    /\bpix\b/i.test(String(row?.paymentNote || "")),
+  );
+
+  return list.filter((raw) => {
+    const note = String(raw || "").trim();
+    if (!note) return false;
+    const lower = note.toLowerCase();
+
+    if (dateLabel && /^datas\s+fixas\b/i.test(note)) return false;
+
+    if (hasOriginPixRows) {
+      const mentionsOrigin = originPlaces.some((place) => {
+        const token = place.split(/\s+/)[0];
+        return token && lower.includes(token);
+      });
+      if (mentionsOrigin && /\bpix\b/i.test(lower)) return false;
+      if (/a vitrine mostra o valor a partir/i.test(lower)) return false;
+    }
+
+    return true;
+  });
+}
+
+function isPaymentInvestmentNote(note) {
+  return /^(pix|parcelado|à vista|a vista)\b/i.test(String(note || "").trim());
+}
+
 function renderExperiencePricing(pkg, esc, priceUnitLabel) {
   const price = formatMoney(pkg.priceFrom, pkg.currency || "BRL");
   const dateLabel = hasFixedDates(pkg)
     ? formatFixedDateRange(pkg.fixedStartDate, pkg.fixedEndDate)
     : "";
-  const origins = Array.isArray(pkg.originPrices) ? pkg.originPrices : [];
-  const originRows = origins
-    .filter((row) => row && row.priceFrom != null)
-    .map((row) => {
-      const money = formatMoney(row.priceFrom, pkg.currency || "BRL");
-      const place = row.label || row.uf || "";
-      const note = row.paymentNote ? ` (${row.paymentNote})` : "";
-      return `<li><strong>${esc(place)}</strong>: ${esc(money || "")} por pessoa${esc(note)}</li>`;
-    })
-    .join("");
+  const origins = Array.isArray(pkg.originPrices)
+    ? pkg.originPrices.filter((row) => row && row.priceFrom != null)
+    : [];
+  // Single-origin listings already say the city in the title; skip the redundant list.
+  const showOriginList = origins.length > 1;
+  const originRows = showOriginList
+    ? origins
+        .map((row) => {
+          const money = formatMoney(row.priceFrom, pkg.currency || "BRL");
+          const place = row.label || row.uf || "";
+          const note = row.paymentNote ? ` (${row.paymentNote})` : "";
+          return `<li><strong>${esc(place)}</strong>: ${esc(money || "")} por pessoa${esc(note)}</li>`;
+        })
+        .join("")
+    : "";
+  const notes = filterExperienceInvestmentNotes(pkg.importantNotes, {
+    dateLabel,
+    origins: showOriginList ? origins : [],
+  });
+  const paymentNotes = notes.filter(isPaymentInvestmentNote);
+  const otherNotes = notes.filter((n) => !isPaymentInvestmentNote(n));
   return `<section class="group-section experience-investment" id="exp-investment" data-reveal>
     <span class="section-tag">Investimento</span>
     <h2 class="package-section-title">A partir de</h2>
@@ -122,8 +170,14 @@ function renderExperiencePricing(pkg, esc, priceUnitLabel) {
         : ""
     }
     ${
-      pkg.importantNotes?.length
-        ? `<ul class="sidebar-notes-list experience-notes">${pkg.importantNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
+      paymentNotes.length
+        ? `<p class="experience-payment-lede">Formas de pagamento:</p>
+           <ul class="sidebar-notes-list experience-payment-notes">${paymentNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
+        : ""
+    }
+    ${
+      otherNotes.length
+        ? `<ul class="sidebar-notes-list experience-notes">${otherNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
         : ""
     }
   </section>`;

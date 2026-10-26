@@ -79,6 +79,6 @@
       ],
       "destination": "/api/og-meta?kind=vitrine&slug=:slug"
     },
-    { "source": "/((?!assets/|api/).*)", "destination": "/" }
+    { "source": "/((?!assets/|api/|preview/).*)", "destination": "/" }
   ]
 }
