@@ -15,18 +15,44 @@ const LOCAL_DETAILS = {
   italia: italiaLocal,
 };
 
+/**
+ * Storefront pricing for Grécia lives in groups-local until the CMS is updated.
+ * Overlay keeps BRL/EUR/cotação correct when the Platform API still has the old amount.
+ */
+function applyLocalPricingOverlay(group) {
+  if (!group?.slug || group.slug !== "grecia") return group;
+  const local = LOCAL_DETAILS.grecia;
+  if (!local || local.priceFrom == null) return group;
+  return {
+    ...group,
+    priceFrom: local.priceFrom,
+    currency: local.currency ?? group.currency,
+    priceNote: local.priceNote ?? group.priceNote,
+    priceEur: local.priceEur ?? group.priceEur ?? null,
+    quoteDate: local.quoteDate ?? group.quoteDate ?? null,
+    investmentOptions: Array.isArray(local.investmentOptions)
+      ? local.investmentOptions
+      : group.investmentOptions,
+    ctaWhatsappMessage: local.ctaWhatsappMessage ?? group.ctaWhatsappMessage,
+  };
+}
+
+function mapGroupWithLocalPricing(item) {
+  return applyLocalPricingOverlay(mapGroup(item));
+}
+
 /** @type {"platform" | "local"} */
 let source = "local";
 /** @type {string | null} */
 let hydrateError = null;
 
-let groups = localIndex.map((item) => mapGroup(item)).filter(Boolean);
+let groups = localIndex.map((item) => mapGroupWithLocalPricing(item)).filter(Boolean);
 const detailCache = new Map();
 
 function useLocalGroups(reason) {
   source = "local";
   hydrateError = reason;
-  groups = localIndex.map((item) => mapGroup(item)).filter(Boolean);
+  groups = localIndex.map((item) => mapGroupWithLocalPricing(item)).filter(Boolean);
   detailCache.clear();
 }
 
@@ -55,14 +81,14 @@ export async function hydrateGroups(options = {}) {
       useLocalGroups("empty_api");
       return { source, error: hydrateError };
     }
-    groups = apiItems.map(mapGroup).filter(Boolean);
+    groups = apiItems.map(mapGroupWithLocalPricing).filter(Boolean);
     source = "platform";
     hydrateError = null;
 
     if (detailPromise && prefetchSlug) {
       const detail = await detailPromise;
       if (detail) {
-        const mapped = mapGroup(detail);
+        const mapped = mapGroupWithLocalPricing(detail);
         if (mapped) detailCache.set(prefetchSlug, mapped);
       }
     }
@@ -95,13 +121,13 @@ export async function resolveGroupBySlug(slug) {
 
   if (source === "platform") {
     try {
-      const item = mapGroup(await fetchPublicGroupBySlug(slug));
+      const item = mapGroupWithLocalPricing(await fetchPublicGroupBySlug(slug));
       if (item) detailCache.set(slug, item);
       return item;
     } catch {
       const local = LOCAL_DETAILS[slug];
       if (local) {
-        const mapped = mapGroup(local);
+        const mapped = mapGroupWithLocalPricing(local);
         detailCache.set(slug, mapped);
         return mapped;
       }
@@ -111,7 +137,7 @@ export async function resolveGroupBySlug(slug) {
 
   const local = LOCAL_DETAILS[slug];
   if (!local) return null;
-  const mapped = mapGroup(local);
+  const mapped = mapGroupWithLocalPricing(local);
   detailCache.set(slug, mapped);
   return mapped;
 }

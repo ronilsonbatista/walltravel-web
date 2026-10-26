@@ -270,6 +270,8 @@ export function mapGroup(apiGroup) {
     priceUnit: apiGroup.priceUnit ?? "PER_PERSON",
     currency: apiGroup.currency ?? "BRL",
     priceNote: apiGroup.priceNote ?? null,
+    priceEur: apiGroup.priceEur ?? apiGroup.price_eur ?? null,
+    quoteDate: apiGroup.quoteDate ?? apiGroup.quote_date ?? null,
     coverImageUrl: apiGroup.coverImageUrl || null,
     featured: Boolean(apiGroup.featured),
     comingSoon: Boolean(apiGroup.comingSoon),

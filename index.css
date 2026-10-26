@@ -4702,29 +4702,30 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   color: var(--text-inverse);
 }
 
+.group-investment-band,
 .group-investment-band .section-tag,
 .group-investment-band .group-band-title,
 .group-investment-band .group-investment-capacity,
 .group-investment-band .group-investment-hero-label,
 .group-investment-band .group-investment-hero-unit,
+.group-investment-band .group-investment-hero-value,
+.group-investment-band .group-investment-hero-eur,
+.group-investment-band .group-investment-hero-quote,
 .group-investment-band .group-subheading,
 .group-investment-band p,
 .group-investment-band li,
+.group-investment-band strong,
+.group-investment-band .group-investment-card-title,
+.group-investment-band .group-investment-card h3,
 .group-investment-band .group-investment-card-desc,
+.group-investment-band .group-investment-card > p,
+.group-investment-band .group-investment-price,
 .group-investment-band .group-investment-note,
 .group-investment-band .group-price-note,
 .group-investment-band .group-payment-methods,
-.group-investment-band .group-payment-desc {
-  color: rgba(255, 252, 245, 0.92);
-}
-
-.group-investment-band .group-band-title,
-.group-investment-band .group-investment-hero-value,
-.group-investment-band .group-investment-card-title,
-.group-investment-band .group-investment-card h3,
-.group-investment-band .group-investment-price,
 .group-investment-band .group-payment-methods .group-subheading,
-.group-investment-band .group-payment-list strong {
+.group-investment-band .group-payment-list strong,
+.group-investment-band .group-payment-desc {
   color: #fff;
 }
 
@@ -4771,7 +4772,6 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   margin-top: clamp(3.25rem, 6vw, 4.5rem);
   padding-top: clamp(1.75rem, 3.5vw, 2.25rem);
   border-top: 1px solid rgba(255, 252, 245, 0.22);
-  color: rgba(255, 252, 245, 0.92);
 }
 
 .group-investment-band .group-payment-list {
@@ -4785,13 +4785,11 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 .group-investment-band .group-payment-list li {
   display: grid;
   gap: 0.2rem;
-  color: rgba(255, 252, 245, 0.92);
 }
 
 .group-investment-band .group-payment-desc {
   display: block;
   margin-left: 0;
-  color: rgba(255, 252, 245, 0.9);
   line-height: 1.5;
 }
 
@@ -5545,6 +5543,21 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   margin: 0.35rem 0 0.4rem;
 }
 
+.group-investment-hero-eur {
+  margin: 0.85rem 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.group-investment-hero-quote {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+
 .group-investment-card {
   border-top: 1px solid var(--border-color);
   padding: 1.35rem 1.25rem 0;
@@ -5583,6 +5596,34 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   font-size: 0.9rem;
   color: var(--color-text-muted);
   margin-top: 0.5rem;
+}
+
+/* Investimento band: solid white copy (no muted / opacity gray on dark olive). */
+.group-investment-band,
+.group-investment-band .section-tag,
+.group-investment-band .group-band-title,
+.group-investment-band .group-investment-capacity,
+.group-investment-band .group-investment-hero-label,
+.group-investment-band .group-investment-hero-unit,
+.group-investment-band .group-investment-hero-value,
+.group-investment-band .group-investment-hero-eur,
+.group-investment-band .group-investment-hero-quote,
+.group-investment-band .group-subheading,
+.group-investment-band p,
+.group-investment-band li,
+.group-investment-band strong,
+.group-investment-band .group-investment-card-title,
+.group-investment-band .group-investment-card h3,
+.group-investment-band .group-investment-card-desc,
+.group-investment-band .group-investment-card > p,
+.group-investment-band .group-investment-price,
+.group-investment-band .group-investment-note,
+.group-investment-band .group-price-note,
+.group-investment-band .group-payment-methods,
+.group-investment-band .group-payment-methods .group-subheading,
+.group-investment-band .group-payment-list strong,
+.group-investment-band .group-payment-desc {
+  color: #fff;
 }
 
 .group-payment-methods {
