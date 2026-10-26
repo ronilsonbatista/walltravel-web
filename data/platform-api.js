@@ -114,10 +114,10 @@ export function filterPublicItinerary(itinerary) {
 }
 
 /**
- * Strong gate for the public "Sua jornada" section.
+ * Strong gate for the public "Sua jornada" section on group pages (/grupos/...).
  * Requires ≥2 non-hospedagem days so weak pages (hotel dump, single "Voos"
- * logistics day) stay hidden. Literal inventory rule was ≥2 cadastrados + 1
- * non-hotel; strong gate matches real roteiros (e.g. grupos/grecia).
+ * logistics day) stay hidden. Experience pages (/viagens/...) never render
+ * roteiro regardless of day count.
  */
 export function isDisplayableItinerary(days) {
   return filterPublicItinerary(days).length >= 2;
