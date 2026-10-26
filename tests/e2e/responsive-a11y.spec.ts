@@ -144,7 +144,7 @@ test("greece conversion journey order and investment price", async ({ page }) =>
     "group-form",
   ]);
 
-  await expect(page.locator(".group-investment-hero-value")).toContainText("30.500,44");
+  await expect(page.locator(".group-investment-hero-value")).toContainText("32.899,00");
   await expect(page.locator(".group-investment-hero-eur")).toContainText("€ 5.119");
   await expect(page.locator(".group-investment-hero-quote")).toContainText(
     "Cotação em 26/10/2026",

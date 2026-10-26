@@ -12,7 +12,11 @@ function formatMoney(priceFrom, currency = "BRL") {
   const n = Number(String(priceFrom).replace(",", "."));
   if (!Number.isFinite(n)) return String(priceFrom);
   const sym = currency === "USD" ? "US$" : currency === "EUR" ? "€" : "R$";
-  return `${sym} ${n.toLocaleString("pt-BR")}`;
+  const opts =
+    currency === "BRL"
+      ? { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+      : { maximumFractionDigits: 2 };
+  return `${sym} ${n.toLocaleString("pt-BR", opts)}`;
 }
 
 /** Format CMS/local ISO date (YYYY-MM-DD) as DD/MM/AAAA for cotação label. */
