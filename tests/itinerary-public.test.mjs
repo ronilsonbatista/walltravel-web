@@ -7,6 +7,7 @@ import {
   mapGroup,
   mapProduct,
 } from "../data/platform-api.js";
+import { renderExperienceDetailPage } from "../data/experience-render.js";
 import { renderItineraryAccordion } from "../data/group-render.js";
 
 describe("hospedagem itinerary filter", () => {
@@ -192,5 +193,37 @@ describe("isDisplayableItinerary (strong gate ≥2 activity days)", () => {
       ]),
       true,
     );
+  });
+});
+
+describe("roteiro groups-only (experiências never show Sua jornada)", () => {
+  const esc = (s) => String(s);
+  const multiDayItinerary = [
+    { day: 1, title: "Bem-vindos", description: "chegada", location: "Atenas" },
+    { day: 2, title: "Acrópole", description: "passeio", location: "Atenas" },
+    { day: 3, title: "Mykonos", description: "ilha", location: "Mykonos" },
+  ];
+
+  it("experience page hides accordion and Roteiro nav even with displayable days", () => {
+    assert.equal(isDisplayableItinerary(multiDayItinerary), true);
+    const html = renderExperienceDetailPage(
+      {
+        slug: "multi-day-demo",
+        name: "Demo Multi",
+        destination: "Atenas",
+        duration: "5 dias",
+        description: "Uma experiência completa.",
+        included: ["Guia"],
+        priceFrom: 1000,
+        itinerary: multiDayItinerary,
+      },
+      { name: "Europa", slug: "europa" },
+      esc,
+      "5511999999999",
+    );
+    assert.doesNotMatch(html, /Sua jornada/);
+    assert.doesNotMatch(html, /id="group-itinerary"/);
+    assert.doesNotMatch(html, />Roteiro</);
+    assert.match(html, /Sobre a viagem/);
   });
 });

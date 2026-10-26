@@ -1,18 +1,15 @@
 /**
  * Experience landing (/viagens/[slug]) — TravelDetailShell + shared immersive primitives.
  * Modules render only when data exists. Exact CMS/local copy; no invented fields.
+ * "Sua jornada" / Roteiro is groups-only (/grupos/...); never rendered here even when
+ * the product has itinerary days in CMS.
  */
 import {
   formatMoney,
-  renderItineraryAccordion,
   renderIncludesExcludes,
   renderTravelHeroCarousel,
   renderTravelGallery,
 } from "./group-render.js";
-import {
-  filterPublicItinerary,
-  isDisplayableItinerary,
-} from "./platform-api.js";
 import { buildWhatsAppCTA } from "./whatsapp-cta.js";
 import {
   TravelDetailShell,
@@ -59,7 +56,6 @@ function experienceSubnav(pkg) {
   const links = [];
   if (pkg.description) links.push(["#exp-about", "Sobre"]);
   if (pkg.gallery?.length) links.push(["#group-gallery", "Galeria"]);
-  if (isDisplayableItinerary(pkg.itinerary)) links.push(["#group-itinerary", "Roteiro"]);
   if (pkg.included?.length || pkg.notIncluded?.length) links.push(["#exp-includes", "Incluso"]);
   if (pkg.priceFrom != null || pkg.importantNotes?.length || pkg.originPrices?.length) {
     links.push(["#exp-investment", "Investimento"]);
@@ -214,20 +210,6 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
         : "Por pessoa em acomodação dupla";
   const waSticky = packageWaHref(pkg, WA, "sticky");
 
-  const publicItinerary = filterPublicItinerary(pkg.itinerary);
-  const showItinerary = isDisplayableItinerary(publicItinerary);
-  const itineraryGroup = {
-    itinerary: publicItinerary.map((d) => ({
-      day: d.day,
-      title: d.title,
-      description: d.description || "",
-      location: d.location || pkg.destination || "",
-      highlights: d.highlights || [],
-      overnight: d.overnight || null,
-      dateLabel: d.dateLabel || null,
-    })),
-  };
-
   const includesGroup = {
     includes: pkg.included || pkg.includes || [],
     excludes: pkg.notIncluded || pkg.excludes || [],
@@ -267,7 +249,6 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
       </div>
       ${pkg.gallery?.length ? renderTravelGallery(pkg.gallery, pkg.name, esc) : ""}
       <div class="section-container">
-        ${showItinerary ? renderItineraryAccordion(itineraryGroup, esc) : ""}
         ${includesHtml ? `<div id="exp-includes">${includesHtml}</div>` : ""}
         ${renderExperiencePricing(pkg, esc, priceUnitLabel)}
         ${renderExperienceCta(pkg, esc, WA)}
