@@ -1,4 +1,5 @@
 import { buildWhatsAppCTA, messageForContext } from "./whatsapp-cta.js";
+import { filterPublicItinerary } from "./platform-api.js";
 import {
   HeroCarousel,
   StickyConversionCTA,
@@ -165,7 +166,7 @@ function renderHighlights(group, esc) {
 function renderSubnav(group) {
   const links = [];
   if (group.whyGroup?.length) links.push(["#group-why", "Por quê"]);
-  if (group.routeStops?.length || group.itinerary?.length) {
+  if (group.routeStops?.length || filterPublicItinerary(group.itinerary).length) {
     links.push(["#group-itinerary", "Roteiro"]);
   }
   if (group.gallery?.length) links.push(["#group-gallery", "Galeria"]);
@@ -434,8 +435,9 @@ function transportCueMarkup(transportNext, esc) {
  * Ferry/flight cues from CMS routeStops.transportNext matched to destination groups.
  */
 export function renderItineraryAccordion(group, esc) {
-  if (!group.itinerary?.length) return "";
-  const days = group.itinerary;
+  // Defense in depth: mapGroup/mapProduct already strip hospedagem days.
+  const days = filterPublicItinerary(group.itinerary);
+  if (!days.length) return "";
   const total = days.length;
   const totalLabel = String(total).padStart(2, "0");
   const destGroups = groupItineraryByDestination(days);

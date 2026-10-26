@@ -9,6 +9,7 @@ import {
   renderTravelHeroCarousel,
   renderTravelGallery,
 } from "./group-render.js";
+import { filterPublicItinerary } from "./platform-api.js";
 import { buildWhatsAppCTA } from "./whatsapp-cta.js";
 import {
   TravelDetailShell,
@@ -52,10 +53,11 @@ function packageHighlights(pkg, esc) {
 }
 
 function experienceSubnav(pkg) {
+  const publicItinerary = filterPublicItinerary(pkg.itinerary);
   const links = [];
   if (pkg.description) links.push(["#exp-about", "Sobre"]);
   if (pkg.gallery?.length) links.push(["#group-gallery", "Galeria"]);
-  if (pkg.itinerary?.length) links.push(["#group-itinerary", "Roteiro"]);
+  if (publicItinerary.length) links.push(["#group-itinerary", "Roteiro"]);
   if (pkg.included?.length || pkg.notIncluded?.length) links.push(["#exp-includes", "Incluso"]);
   if (pkg.priceFrom != null || pkg.importantNotes?.length || pkg.originPrices?.length) {
     links.push(["#exp-investment", "Investimento"]);
@@ -173,8 +175,9 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
         : "Por pessoa em acomodação dupla";
   const waSticky = packageWaHref(pkg, WA, "sticky");
 
+  const publicItinerary = filterPublicItinerary(pkg.itinerary);
   const itineraryGroup = {
-    itinerary: (pkg.itinerary || []).map((d) => ({
+    itinerary: publicItinerary.map((d) => ({
       day: d.day,
       title: d.title,
       description: d.description || "",
@@ -224,7 +227,7 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
       </div>
       ${pkg.gallery?.length ? renderTravelGallery(pkg.gallery, pkg.name, esc) : ""}
       <div class="section-container">
-        ${pkg.itinerary?.length ? renderItineraryAccordion(itineraryGroup, esc) : ""}
+        ${publicItinerary.length ? renderItineraryAccordion(itineraryGroup, esc) : ""}
         ${includesHtml ? `<div id="exp-includes">${includesHtml}</div>` : ""}
         ${renderExperiencePricing(pkg, esc, priceUnitLabel)}
         ${renderExperienceCta(pkg, esc, WA)}

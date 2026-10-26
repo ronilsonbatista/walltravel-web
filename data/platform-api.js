@@ -89,6 +89,30 @@ export function publicPackageTags(tags) {
   return (Array.isArray(tags) ? tags : []).filter(isPublicPackageTag);
 }
 
+/**
+ * Lodging-only itinerary rows (CMS title/type "Hospedagem") stay editable in
+ * admin but must never appear on the public vitrine "Sua jornada" section.
+ * Match exact title (trimmed, case-insensitive) or explicit type/kind fields.
+ */
+const HOSPEDAGEM_TYPE_RE = /^(hospedagem|lodging)$/i;
+
+export function isHospedagemItineraryDay(day) {
+  if (!day || typeof day !== "object") return false;
+  const title = String(day.title ?? "").trim();
+  if (title && HOSPEDAGEM_TYPE_RE.test(title)) return true;
+  for (const key of ["type", "kind", "dayType", "dayKind"]) {
+    const value = String(day[key] ?? "").trim();
+    if (value && HOSPEDAGEM_TYPE_RE.test(value)) return true;
+  }
+  return false;
+}
+
+/** Strip hospedagem days for public consumers (products + groups). */
+export function filterPublicItinerary(itinerary) {
+  if (!Array.isArray(itinerary)) return [];
+  return itinerary.filter((day) => !isHospedagemItineraryDay(day));
+}
+
 export async function fetchPublicCategories() {
   const body = await getJson("/api/public/storefront/categories");
   if (!body?.ok || !Array.isArray(body.items)) {
@@ -256,7 +280,7 @@ export function mapGroup(apiGroup) {
     gallery: Array.isArray(apiGroup.gallery) ? apiGroup.gallery : [],
     whyGroup: Array.isArray(apiGroup.whyGroup) ? apiGroup.whyGroup : [],
     routeStops: Array.isArray(apiGroup.routeStops) ? apiGroup.routeStops : [],
-    itinerary: Array.isArray(apiGroup.itinerary) ? apiGroup.itinerary : [],
+    itinerary: filterPublicItinerary(apiGroup.itinerary),
     investmentOptions: Array.isArray(apiGroup.investmentOptions)
       ? apiGroup.investmentOptions
       : [],
@@ -310,13 +334,11 @@ export function mapProduct(apiProduct) {
     tags: publicPackageTags(apiProduct.tags),
     included: Array.isArray(apiProduct.includes) ? apiProduct.includes : [],
     notIncluded: Array.isArray(apiProduct.excludes) ? apiProduct.excludes : [],
-    itinerary: Array.isArray(apiProduct.itinerary)
-      ? apiProduct.itinerary.map((d) => ({
-          day: d.day,
-          title: d.title,
-          description: d.description || "",
-        }))
-      : [],
+    itinerary: filterPublicItinerary(apiProduct.itinerary).map((d) => ({
+      day: d.day,
+      title: d.title,
+      description: d.description || "",
+    })),
     importantNotes: Array.isArray(apiProduct.importantNotes)
       ? apiProduct.importantNotes
       : [],
