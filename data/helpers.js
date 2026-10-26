@@ -5,6 +5,7 @@ import {
   fetchPublicProductBySlug,
   mapCategory,
   mapProduct,
+  sortPackagesByCadastro,
   getPlatformApiBase,
 } from "./platform-api.js";
 import { trackStorefrontEvent } from "./storefront-events.js";
@@ -62,7 +63,8 @@ export async function hydrateStorefront(options = {}) {
 
     const [apiCats, apiProducts] = await listPromise;
     categories = apiCats.map(mapCategory).filter(categoryHasInventory);
-    packages = apiProducts.map(mapProduct);
+    // Ordem de cadastro: mais recente primeiro (API + client contract).
+    packages = sortPackagesByCadastro(apiProducts.map(mapProduct));
     source = "platform";
     hydrateError = null;
     trackStorefrontEvent("storefront_api_ok", {
@@ -78,6 +80,7 @@ export async function hydrateStorefront(options = {}) {
         const idx = packages.findIndex((p) => p.slug === prefetchSlug);
         if (idx >= 0) packages[idx] = { ...packages[idx], ...mapped };
         else packages.push(mapped);
+        packages = sortPackagesByCadastro(packages);
       }
     }
 

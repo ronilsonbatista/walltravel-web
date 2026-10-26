@@ -306,6 +306,20 @@ export function mapGroup(apiGroup) {
   });
 }
 
+/**
+ * Public vitrine order: cadastro (createdAt) newest-first.
+ * Platform list already returns this order; re-sort so client filters /
+ * prefetch merges keep the same contract.
+ */
+export function sortPackagesByCadastro(packages) {
+  return [...(Array.isArray(packages) ? packages : [])].sort((a, b) => {
+    const ta = Date.parse(a?.createdAt || "") || 0;
+    const tb = Date.parse(b?.createdAt || "") || 0;
+    if (tb !== ta) return tb - ta;
+    return String(a?.slug || "").localeCompare(String(b?.slug || ""));
+  });
+}
+
 /** Map Public API product summary/detail → legacy package shape. */
 export function mapProduct(apiProduct) {
   const price =
@@ -317,6 +331,7 @@ export function mapProduct(apiProduct) {
     slug: apiProduct.slug,
     categorySlug: apiProduct.categorySlug || "",
     name: apiProduct.name,
+    createdAt: apiProduct.createdAt || apiProduct.publishedAt || null,
     destination: apiProduct.destinationLabel || "",
     duration: apiProduct.durationLabel || "",
     type: apiProduct.experienceType || "",
