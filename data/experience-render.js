@@ -86,6 +86,39 @@ function renderAbout(pkg, esc) {
   </section>`;
 }
 
+/**
+ * Drop investment notes that already appear as fixed dates or origin+PIX rows
+ * (avoids repeating PIX / city prices already listed above).
+ */
+export function filterExperienceInvestmentNotes(notes, { dateLabel = "", origins = [] } = {}) {
+  const list = Array.isArray(notes) ? notes : [];
+  const originPlaces = origins
+    .map((row) => String(row?.label || row?.uf || "").trim().toLowerCase())
+    .filter(Boolean);
+  const hasOriginPixRows = origins.some((row) =>
+    /\bpix\b/i.test(String(row?.paymentNote || "")),
+  );
+
+  return list.filter((raw) => {
+    const note = String(raw || "").trim();
+    if (!note) return false;
+    const lower = note.toLowerCase();
+
+    if (dateLabel && /^datas\s+fixas\b/i.test(note)) return false;
+
+    if (hasOriginPixRows) {
+      const mentionsOrigin = originPlaces.some((place) => {
+        const token = place.split(/\s+/)[0];
+        return token && lower.includes(token);
+      });
+      if (mentionsOrigin && /\bpix\b/i.test(lower)) return false;
+      if (/a vitrine mostra o valor a partir/i.test(lower)) return false;
+    }
+
+    return true;
+  });
+}
+
 function renderExperiencePricing(pkg, esc, priceUnitLabel) {
   const price = formatMoney(pkg.priceFrom, pkg.currency || "BRL");
   const dateLabel = hasFixedDates(pkg)
@@ -101,6 +134,10 @@ function renderExperiencePricing(pkg, esc, priceUnitLabel) {
       return `<li><strong>${esc(place)}</strong>: ${esc(money || "")} por pessoa${esc(note)}</li>`;
     })
     .join("");
+  const notes = filterExperienceInvestmentNotes(pkg.importantNotes, {
+    dateLabel,
+    origins,
+  });
   return `<section class="group-section experience-investment" id="exp-investment" data-reveal>
     <span class="section-tag">Investimento</span>
     <h2 class="package-section-title">A partir de</h2>
@@ -122,8 +159,8 @@ function renderExperiencePricing(pkg, esc, priceUnitLabel) {
         : ""
     }
     ${
-      pkg.importantNotes?.length
-        ? `<ul class="sidebar-notes-list experience-notes">${pkg.importantNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
+      notes.length
+        ? `<ul class="sidebar-notes-list experience-notes">${notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
         : ""
     }
   </section>`;
