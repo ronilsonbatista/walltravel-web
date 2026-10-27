@@ -2,3 +2,5 @@
 # Preview host walltravel-web.vercel.app still gets X-Robots-Tag: noindex via vercel.json.
 User-agent: *
 Allow: /
+
+Sitemap: https://www.walltravel.com.br/sitemap.xml

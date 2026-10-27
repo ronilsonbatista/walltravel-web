@@ -126,22 +126,17 @@ async function flush(events) {
   const body = JSON.stringify({ events });
   const url = `${base}/api/public/analytics/events`;
 
-  try {
-    if (navigator.sendBeacon) {
-      const blob = new Blob([body], { type: "application/json" });
-      const ok = navigator.sendBeacon(url, blob);
-      if (ok) return;
-    }
-  } catch {
-    /* fall through */
-  }
-
+  // Cross-origin sendBeacon uses credentials:include and needs
+  // Access-Control-Allow-Credentials. Prefer omit-credentials fetch so
+  // telemetry works even when platform CORS is credentials-only partial.
   try {
     await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body,
       keepalive: true,
+      credentials: "omit",
+      mode: "cors",
     });
   } catch {
     events.forEach(enqueue);
