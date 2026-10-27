@@ -36,6 +36,10 @@ import { buildWhatsAppCTA, hydrateWhatsAppCTAs } from './data/whatsapp-cta.js';
 import { publicPackageTags } from './data/platform-api.js';
 import { formatFixedDateRange, hasFixedDates } from './data/fixed-dates.js';
 import {
+  cardMatchesActiveFilter,
+  visibleCategoryFilterChips,
+} from './data/category-filters.js';
+import {
   VITRINE_LEDE,
   VITRINE_MAST_SUB,
   VITRINE_MAST_TITLE,
@@ -1291,16 +1295,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       </section>
 
-      <!-- Search + tag filters (date mode is parent-level on /vitrine) -->
+      <!-- Search + tag filters (date mode is parent-level on /vitrine); hide chips with 0 catalog hits -->
       <div class="filter-bar" id="category-filter-bar">
         <span class="filter-label">Filtrar:</span>
         <input type="search" id="category-search" placeholder="Buscar viagem…" style="min-width:12rem;padding:0.45rem 0.75rem;border:1px solid var(--color-border,#ddd);border-radius:0.4rem;font:inherit;" />
         <button class="filter-btn active" data-filter="todos" type="button">Todos</button>
-        <button class="filter-btn" data-filter="lua-de-mel" type="button">Lua de Mel</button>
-        <button class="filter-btn" data-filter="natureza" type="button">Natureza</button>
-        <button class="filter-btn" data-filter="praia" type="button">Praia</button>
-        <button class="filter-btn" data-filter="luxo" type="button">Luxo</button>
-        <button class="filter-btn" data-filter="aventura" type="button">Aventura</button>
+        ${visibleCategoryFilterChips(packages)
+          .map(
+            (chip) =>
+              `<button class="filter-btn" data-filter="${esc(chip.id)}" type="button">${esc(chip.label)}</button>`,
+          )
+          .join("")}
       </div>
 
       <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 1.5rem;">
@@ -1386,14 +1391,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       packageCards.forEach(card => {
         const tags = card.getAttribute('data-tags') || '';
         const name = card.getAttribute('data-name') || '';
-        let tagOk = activeFilter === 'todos';
-        if (!tagOk) {
-          if (activeFilter === 'lua-de-mel') {
-            tagOk = tags.includes('lua-de-mel') || tags.includes('romance');
-          } else {
-            tagOk = tags.includes(activeFilter);
-          }
-        }
+        const tagOk = cardMatchesActiveFilter(activeFilter, tags);
         const qOk = !q || name.includes(q) || tags.includes(q);
         const show = tagOk && qOk;
         card.style.display = show ? 'flex' : 'none';

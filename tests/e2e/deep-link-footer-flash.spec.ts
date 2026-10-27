@@ -12,7 +12,7 @@ test.describe("deep-link footer first paint", () => {
     hasTouch: true,
   });
 
-  for (const path of ["/vitrine/europa", "/grupos/grecia", "/viagens/japao-essencial"]) {
+  for (const path of ["/vitrine/europa", "/grupos/grecia", "/viagens/japao-essencial-sao-paulo"]) {
     test(`cold load ${path} never shows footer as primary content`, async ({ page }) => {
       await page.addInitScript(() => {
         try {

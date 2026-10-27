@@ -34,7 +34,18 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/viagens/japao-essencial",
+      "destination": "/viagens/japao-essencial-sao-paulo",
+      "permanent": true
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
     {
       "source": "/viagens/:slug",
       "has": [
