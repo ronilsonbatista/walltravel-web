@@ -6,7 +6,7 @@
 
 import { getWhatsappNumber } from "./platform-api.js";
 
-/** @typedef {'vitrine' | 'grupo' | 'site'} WhatsAppContext */
+/** @typedef {'vitrine' | 'grupo' | 'site' | 'black'} WhatsAppContext */
 
 /**
  * Contextual PT-BR templates. No em dash in copy.
@@ -17,6 +17,13 @@ import { getWhatsappNumber } from "./platform-api.js";
 export function messageForContext(context, title, opts = {}) {
   const name = String(title || "").trim();
   const ctx = normalizeContext(context);
+
+  if (ctx === "black") {
+    if (name) {
+      return `Olá! Vim pela Black Wall Travel e tenho interesse no planejamento "${name}".`;
+    }
+    return "Olá! Vim pela Black Wall Travel e gostaria de planejar uma experiência sob medida.";
+  }
 
   if (ctx === "vitrine") {
     if (name) {
@@ -54,6 +61,9 @@ export function contextFromPageType(pageType, placement) {
   const type = String(pageType || "GENERIC").toUpperCase();
   const place = String(placement || "").toLowerCase();
 
+  if (type === "BLACK" || place.startsWith("black") || place === "home-black-banner") {
+    return "black";
+  }
   if (type === "VITRINE" || place === "product" || place === "package" || place === "category") {
     return "vitrine";
   }
@@ -65,9 +75,10 @@ export function contextFromPageType(pageType, placement) {
 
 function normalizeContext(context) {
   const c = String(context || "site").toLowerCase();
-  if (c === "vitrine" || c === "grupo" || c === "site") return c;
+  if (c === "vitrine" || c === "grupo" || c === "site" || c === "black") return c;
   if (c === "group" || c === "groups") return "grupo";
   if (c === "package" || c === "product") return "vitrine";
+  if (c === "black-wall" || c === "blackfriday" || c === "bf") return "black";
   return "site";
 }
 
