@@ -17,7 +17,10 @@ import {
 test("brand title is Black WallTravel", () => {
   assert.equal(BWT_BRAND_TITLE, "Black WallTravel");
   assert.equal(blackMastCopy().headline, "Black WallTravel");
-  assert.equal(blackMastCopy().lede, "");
+  assert.equal(
+    blackMastCopy().lede,
+    "Curadoria com cuidado: destino certo, no tempo certo.",
+  );
 });
 
 test("explicit bf tags enroll in catalog without seed", () => {

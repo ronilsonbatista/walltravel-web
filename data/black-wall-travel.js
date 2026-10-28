@@ -298,7 +298,7 @@ export function visibleBlackCountries(packages, segment) {
 export function blackMastCopy() {
   return {
     headline: BWT_BRAND_TITLE,
-    lede: "",
+    lede: "Curadoria com cuidado: destino certo, no tempo certo.",
   };
 }
 
