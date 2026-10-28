@@ -2579,6 +2579,7 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 }
 
 #vitrine-view.page-view,
+#black-view.page-view,
 #groups-view.page-view,
 #package-view.page-view,
 #como-funciona-view.page-view {
@@ -3487,6 +3488,7 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   }
 
   #vitrine-view.page-view,
+  #black-view.page-view,
   #category-view.page-view,
   #groups-view.page-view,
   #package-view.page-view,
@@ -7602,12 +7604,13 @@ html.wt-route-black footer.footer {
 
 .bwt-mast {
   position: relative;
-  min-height: clamp(280px, 42vh, 420px);
+  /* Full-bleed under fixed header (same pattern as .wt-vitrine-mast). */
+  min-height: clamp(300px, 44vh, 440px);
   display: flex;
   align-items: flex-end;
-  padding: 7rem 1.5rem 3rem;
+  padding: clamp(4.75rem, 10vw, 5.75rem) 1.5rem 2.5rem;
   background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0.2) 0%, rgba(10, 10, 10, 0.88) 70%, #0a0a0a 100%),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.35) 0%, rgba(10, 10, 10, 0.55) 28%, rgba(10, 10, 10, 0.88) 72%, #0a0a0a 100%),
     url("/images/vitrine/asia-kyoto.webp") center / cover no-repeat;
   overflow: hidden;
 }
@@ -8045,8 +8048,8 @@ html.wt-route-black footer.footer {
 
 @media (max-width: 768px) {
   .bwt-mast {
-    padding: 6rem 1.15rem 2.25rem;
-    min-height: 260px;
+    padding: 4.5rem 1.15rem 2rem;
+    min-height: 280px;
   }
 
   .bwt-home-banner {
