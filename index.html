@@ -204,6 +204,7 @@
       <nav class="nav-menu" id="nav-menu" aria-label="Principal">
         <ul class="nav-menu-list">
           <li><a href="/vitrine" class="nav-link">Vitrine</a></li>
+          <li><a href="/black" class="nav-link nav-link--bwt">Black</a></li>
           <li><a href="/grupos" class="nav-link">Expedições em grupo</a></li>
           <li><a href="/como-funciona" class="nav-link">Como funciona</a></li>
           <li><a href="/#sobre" class="nav-link">Sobre nós</a></li>
@@ -566,6 +567,7 @@
 
   <!-- Subpages View Containers (Dynamic SPA Views) -->
   <div id="vitrine-view" class="page-view" style="display: none;"></div>
+  <div id="black-view" class="page-view" style="display: none;"></div>
   <div id="category-view" class="page-view" style="display: none;"></div>
   <div id="package-view" class="page-view" style="display: none;"></div>
   <div id="groups-view" class="page-view" style="display: none;"></div>
@@ -886,6 +888,7 @@
       if (home) home.style.display = "none";
       function viewIdFor(p) {
         if (p === "/vitrine" || p === "/vitrine/") return "vitrine-view";
+        if (p === "/black" || p === "/black/" || p === "/black-wall-travel" || p === "/black-wall-travel/" || p.indexOf("/black/") === 0 || p.indexOf("/black-wall-travel/") === 0) return "black-view";
         if (p.indexOf("/vitrine/") === 0) return "category-view";
         if (p.indexOf("/pacote/") === 0 || p.indexOf("/viagens/") === 0) return "package-view";
         if (p === "/grupos" || p === "/grupos/" || p.indexOf("/grupos/") === 0) return "groups-view";
