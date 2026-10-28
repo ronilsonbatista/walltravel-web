@@ -7,66 +7,109 @@ import {
   visibleBlackCountries,
   parseBlackFilters,
   blackFilterQuery,
+  getBlackCatalogPackages,
+  hasExplicitBlackTag,
+  blackMastCopy,
   BWT_SEGMENTS,
+  BWT_BRAND_TITLE,
 } from "../data/black-wall-travel.js";
 
-test("nacional packages have no country secondary filter need", () => {
-  const meta = resolveBlackMeta({
-    slug: "fernando-de-noronha",
-    categorySlug: "nacionais",
-    tags: ["nacionais", "luxo"],
-    destination: "Fernando de Noronha, Brasil",
-  });
-  assert.equal(meta.segment, "nacional");
-  assert.equal(meta.countrySlug, "brasil");
+test("brand title is Black WallTravel", () => {
+  assert.equal(BWT_BRAND_TITLE, "Black WallTravel");
+  assert.equal(blackMastCopy().headline, "Black WallTravel");
+  assert.equal(blackMastCopy().lede, "");
 });
 
-test("overlay maps Japão to primavera + country", () => {
-  const meta = resolveBlackMeta({
-    slug: "japao-essencial-sao-paulo",
-    categorySlug: "asia",
-    tags: ["Japão", "Ásia"],
-  });
-  assert.equal(meta.segment, "primavera");
-  assert.equal(meta.countrySlug, "japao");
-});
-
-test("bf: tags from CMS win over defaults", () => {
-  const meta = resolveBlackMeta({
-    slug: "unknown-trip",
+test("explicit bf tags enroll in catalog without seed", () => {
+  const pkg = {
+    slug: "noruega-aurora-boreal",
     categorySlug: "europa",
-    tags: ["bf:inverno", "bf:pais:islandia"],
-  });
+    tags: ["bf:inverno", "bf:pais:noruega"],
+    name: "Noruega",
+  };
+  assert.equal(hasExplicitBlackTag(pkg), true);
+  const catalog = getBlackCatalogPackages([pkg], { seed: false });
+  assert.equal(catalog.length, 1);
+  assert.equal(catalog[0].black.segment, "inverno");
+  assert.equal(catalog[0].black.countrySlug, "noruega");
+});
+
+test("untagged products stay out of catalog when seed is off", () => {
+  const pkgs = [
+    { slug: "japao-essencial-sao-paulo", categorySlug: "asia", tags: ["Japão"], name: "JP" },
+    { slug: "fernando-de-noronha", categorySlug: "nacionais", tags: ["nacionais"], name: "Noronha" },
+  ];
+  assert.equal(getBlackCatalogPackages(pkgs, { seed: false }).length, 0);
+});
+
+test("seed mode maps overlay catalog for homolog filter testing", () => {
+  const pkgs = [
+    { slug: "japao-essencial-sao-paulo", categorySlug: "asia", tags: [], name: "JP SP" },
+    { slug: "punta-cana", categorySlug: "caribe", tags: [], name: "PC" },
+  ];
+  const catalog = getBlackCatalogPackages(pkgs, { seed: true });
+  assert.equal(catalog.length, 2);
+  assert.ok(catalog.some((p) => p.black.segment === "primavera" && p.black.countrySlug === "japao"));
+  assert.ok(catalog.some((p) => p.black.segment === "verao"));
+});
+
+test("cms bf tags win without overlay", () => {
+  const meta = resolveBlackMeta(
+    {
+      slug: "unknown-trip",
+      categorySlug: "europa",
+      tags: ["bf:inverno", "bf:pais:islandia"],
+    },
+    { allowOverlay: false },
+  );
   assert.equal(meta.segment, "inverno");
   assert.equal(meta.countrySlug, "islandia");
 });
 
-test("filterBlackPackages: nacional ignores country param", () => {
-  const pkgs = [
-    {
-      slug: "fernando-de-noronha",
-      categorySlug: "nacionais",
-      tags: ["nacionais"],
-      name: "Noronha",
-    },
+test("without seed, overlay alone does not invent meta segment", () => {
+  const meta = resolveBlackMeta(
     {
       slug: "japao-essencial-sao-paulo",
       categorySlug: "asia",
       tags: ["Japão"],
-      name: "Japão",
     },
-  ];
+    { allowOverlay: false },
+  );
+  assert.equal(meta.segment, null);
+});
+
+test("filterBlackPackages: nacional ignores country param", () => {
+  const pkgs = getBlackCatalogPackages(
+    [
+      {
+        slug: "fernando-de-noronha",
+        categorySlug: "nacionais",
+        tags: ["bf:nacional"],
+        name: "Noronha",
+      },
+      {
+        slug: "japao-essencial-sao-paulo",
+        categorySlug: "asia",
+        tags: ["bf:primavera", "bf:pais:japao"],
+        name: "Japão",
+      },
+    ],
+    { seed: false },
+  );
   const nacional = filterBlackPackages(pkgs, { segment: "nacional", country: "japao" });
   assert.equal(nacional.length, 1);
   assert.equal(nacional[0].slug, "fernando-de-noronha");
 });
 
-test("filterBlackPackages: season + country", () => {
-  const pkgs = [
-    { slug: "japao-essencial-sao-paulo", categorySlug: "asia", tags: [], name: "JP SP" },
-    { slug: "italia-classica", categorySlug: "europa", tags: [], name: "IT" },
-    { slug: "punta-cana", categorySlug: "caribe", tags: [], name: "PC" },
-  ];
+test("filterBlackPackages: season + country with seed", () => {
+  const pkgs = getBlackCatalogPackages(
+    [
+      { slug: "japao-essencial-sao-paulo", categorySlug: "asia", tags: [], name: "JP SP" },
+      { slug: "italia-classica", categorySlug: "europa", tags: [], name: "IT" },
+      { slug: "punta-cana", categorySlug: "caribe", tags: [], name: "PC" },
+    ],
+    { seed: true },
+  );
   const primaveraJapao = filterBlackPackages(pkgs, {
     segment: "primavera",
     country: "japao",
@@ -79,10 +122,13 @@ test("filterBlackPackages: season + country", () => {
 });
 
 test("visible segments hide outono when empty", () => {
-  const pkgs = [
-    { slug: "fernando-de-noronha", categorySlug: "nacionais", tags: ["nacionais"] },
-    { slug: "punta-cana", categorySlug: "caribe", tags: [] },
-  ];
+  const pkgs = getBlackCatalogPackages(
+    [
+      { slug: "fernando-de-noronha", categorySlug: "nacionais", tags: [], name: "N" },
+      { slug: "punta-cana", categorySlug: "caribe", tags: [], name: "P" },
+    ],
+    { seed: true },
+  );
   const segs = visibleBlackSegments(pkgs).map((s) => s.id);
   assert.ok(segs.includes("nacional"));
   assert.ok(segs.includes("verao"));
@@ -90,11 +136,14 @@ test("visible segments hide outono when empty", () => {
 });
 
 test("visible countries only under international season", () => {
-  const pkgs = [
-    { slug: "japao-essencial-sao-paulo", categorySlug: "asia", tags: [] },
-    { slug: "italia-classica", categorySlug: "europa", tags: [] },
-    { slug: "fernando-de-noronha", categorySlug: "nacionais", tags: ["nacionais"] },
-  ];
+  const pkgs = getBlackCatalogPackages(
+    [
+      { slug: "japao-essencial-sao-paulo", categorySlug: "asia", tags: [] },
+      { slug: "italia-classica", categorySlug: "europa", tags: [] },
+      { slug: "fernando-de-noronha", categorySlug: "nacionais", tags: [] },
+    ],
+    { seed: true },
+  );
   assert.deepEqual(visibleBlackCountries(pkgs, "nacional"), []);
   const countries = visibleBlackCountries(pkgs, "primavera").map((c) => c.id);
   assert.ok(countries.includes("japao"));

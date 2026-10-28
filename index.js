@@ -49,14 +49,13 @@ import {
   vitrineDateQuery,
 } from './data/vitrine-date-mode.js';
 import {
-  isBlackWallTravelEnabled,
   isBlackWallPath,
   markBlackCampaignSession,
   hasBlackCampaignSession,
   parseBlackFilters,
   renderBlackListingHtml,
-  renderHomeBlackBannerHtml,
-  renderVitrineBlackBridgeHtml,
+  getBlackCatalogPackages,
+  BWT_BRAND_TITLE,
 } from './data/black-wall-travel.js';
 import {
   renderDestinationExplorer,
@@ -166,7 +165,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Route-aware hydrate: do not block first paint on APIs the route does not need.
   // Still start both immediately so SPA navigations stay warm.
-  const blackEnabled = isBlackWallTravelEnabled();
   const needsStorefrontNow =
     bootIsHomeEarly ||
     bootPathEarly.startsWith("/vitrine") ||
@@ -241,26 +239,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const updateFooterDestinosLinks = () => {
     /* Destinos column removed from footer in V1 — keep hook for hydrate safety */
   };
-
-  const paintBlackCampaignEntries = () => {
-    document.querySelectorAll("[data-bwt-nav], [data-bwt-footer]").forEach((el) => {
-      el.hidden = !blackEnabled;
-    });
-    const homeMount = document.getElementById("bwt-home-banner-mount");
-    if (homeMount) {
-      if (blackEnabled) {
-        homeMount.hidden = false;
-        if (!homeMount.querySelector("[data-bwt-home-banner]")) {
-          homeMount.innerHTML = renderHomeBlackBannerHtml(esc);
-          hydrateWhatsAppCTAs(homeMount);
-        }
-      } else {
-        homeMount.hidden = true;
-        homeMount.replaceChildren();
-      }
-    }
-  };
-  paintBlackCampaignEntries();
 
   const paintCatalogHooks = () => {
     renderHomeDestinosExplorer();
@@ -771,7 +749,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     path === '/black-wall-travel/';
 
   const syncBlackRouteChrome = (path) => {
-    const onBlack = blackEnabled && isBlackWallPath(path);
+    const onBlack = isBlackWallPath(path);
     document.documentElement.classList.toggle('wt-route-black', onBlack);
     if (onBlack) markBlackCampaignSession();
   };
@@ -929,9 +907,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Black Wall Travel filters: soft update grid + chips, keep mast.
+    // Black WallTravel filters: soft update grid + chips, keep mast.
     if (
-      blackEnabled &&
       isBlackListPath(path) &&
       onBlackList &&
       blackView?.querySelector("[data-bwt-grid]")
@@ -988,7 +965,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderVitrine(routeSearch);
         onVitrineList = true;
         handleHeaderScroll();
-      } else if (blackEnabled && isBlackListPath(path)) {
+      } else if (isBlackListPath(path)) {
         if (blackView) {
           resetRouteView(blackView);
           blackView.style.display = 'block';
@@ -996,14 +973,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           onBlackList = true;
         }
         handleHeaderScroll();
-      } else if (isBlackWallPath(path) && !blackEnabled) {
-        resetRouteView(packageView, { label: "" });
-        packageView.style.display = 'block';
-        renderEmptyState(
-          packageView,
-          "Campanha indisponível",
-          "A Black Wall Travel está em homologação e não está ligada neste ambiente."
-        );
       } else if (path.startsWith('/vitrine/')) {
         resetRouteView(categoryView);
         categoryView.style.display = 'block';
@@ -1242,8 +1211,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!blackView) return;
     const filters = parseBlackFilters(search);
     const prevQ = blackView.querySelector("#bwt-search")?.value || "";
+    const catalog = getBlackCatalogPackages(getPackages());
     blackView.innerHTML = renderBlackListingHtml({
-      packages: getPackages(),
+      packages: catalog,
       filters,
       esc,
       searchQuery: prevQ,
@@ -1258,6 +1228,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       source: getStorefrontSource(),
       segment: filters.segment || "all",
       country: filters.country || "",
+      catalogSize: catalog.length,
     });
   };
 
@@ -1265,13 +1236,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!blackView) return;
     markBlackCampaignSession();
     const filters = parseBlackFilters(search);
+    const catalog = getBlackCatalogPackages(getPackages());
     updateSEO(
-      "Black Wall Travel | WallTravel",
-      "Vitrine WallTravel em modo Black Friday: planejamentos com filtros por Nacional e por estação.",
+      `${BWT_BRAND_TITLE} | WallTravel`,
+      "Black WallTravel: planejamentos com filtros por Nacional e por estação.",
       "/images/vitrine/asia-kyoto.webp",
     );
     blackView.innerHTML = renderBlackListingHtml({
-      packages: getPackages(),
+      packages: catalog,
       filters,
       esc,
       searchQuery: "",
@@ -1281,6 +1253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       source: getStorefrontSource(),
       segment: filters.segment || "all",
       country: filters.country || "",
+      catalogSize: catalog.length,
     });
     handleHeaderScroll();
   };
@@ -1370,7 +1343,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       `<a class="wt-vitrine-chip wt-vitrine-date-chip${dateMode === mode ? " is-active" : ""}" href="${href}" data-vitrine-date-mode="${esc(mode)}" aria-current="${dateMode === mode ? "true" : "false"}">${label}</a>`;
 
     vitrineView.innerHTML = `
-      ${blackEnabled ? renderVitrineBlackBridgeHtml(esc) : ""}
       <figure class="wt-vitrine-mast" data-vitrine-chrome="mast">
         <picture>
           <source media="(max-width: 768px)" srcset="/images/vitrine/asia-kyoto-mobile.webp" type="image/webp">
@@ -1630,14 +1602,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     packageView.dataset.routeSlug = pkg.slug;
     packageView.innerHTML = renderExperienceDetailPage(pkg, category, esc, WA);
     const fromBlack =
-      blackEnabled &&
-      (hasBlackCampaignSession() ||
-        new URLSearchParams(window.location.search).get("from") === "black");
+      hasBlackCampaignSession() ||
+      new URLSearchParams(window.location.search).get("from") === "black";
     if (fromBlack) {
       markBlackCampaignSession();
       const bar = document.createElement("aside");
       bar.className = "bwt-detail-bar";
-      bar.innerHTML = `<a href="/black">← Black Wall Travel</a><span>Campanha em homologação</span>`;
+      bar.innerHTML = `<a href="/black">← ${esc(BWT_BRAND_TITLE)}</a>`;
       packageView.prepend(bar);
     }
     groupExperienceCleanup = bindGroupExperience(packageView);

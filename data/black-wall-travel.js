@@ -1,7 +1,10 @@
 /**
- * Black Wall Travel — campaign skin + filter IA (homolog).
+ * Black WallTravel — campaign skin + filter IA.
  * Primary segments: Nacional | estações (Inverno, Verão, Primavera, Outono se houver dados).
  * Nacional: sem filtro de país. Internacionais por estação: filtro secundário por país.
+ *
+ * Catalog: empty until CMS/SQL seeds `bf:*` tags. Homolog overlay seed only with
+ * VITE_BLACK_WALL_SEED=true (never invent products in the default / prod path).
  */
 
 import overlay from "./black-wall-overlay.js";
@@ -10,6 +13,7 @@ import { formatFixedDateRange, hasFixedDates } from "./fixed-dates.js";
 import { buildWhatsAppCTA } from "./whatsapp-cta.js";
 
 export const BWT_SESSION_KEY = "wt_black_campaign";
+export const BWT_BRAND_TITLE = "Black WallTravel";
 
 export const BWT_SEGMENTS = [
   { id: "nacional", label: "Nacional" },
@@ -36,20 +40,18 @@ const CATEGORY_COUNTRY = {
 };
 
 /**
- * Homolog / preview only. Production host stays off unless flag is explicit.
+ * Homolog overlay seed (maps existing vitrine slugs). Off by default so production
+ * /black stays empty until SQL/CMS tags land.
  */
+export function isBlackWallSeedEnabled() {
+  const metaEnv = typeof import.meta !== "undefined" && import.meta.env ? import.meta.env : {};
+  const env = String(metaEnv.VITE_BLACK_WALL_SEED || "").toLowerCase();
+  return env === "true" || env === "1";
+}
+
+/** @deprecated Route /black is always available; entries (home/nav) stay removed. */
 export function isBlackWallTravelEnabled() {
-  const env = String(import.meta.env.VITE_BLACK_WALL_TRAVEL || "").toLowerCase();
-  if (env === "true" || env === "1") return true;
-  if (env === "false" || env === "0") return false;
-  if (import.meta.env.DEV) return true;
-  if (typeof window === "undefined") return false;
-  const host = window.location.hostname || "";
-  // Preview / staging hosts only — never walltravel.com.br without env flag.
-  if (/\.vercel\.app$/i.test(host)) return true;
-  if (/\bstaging\b/i.test(host)) return true;
-  if (/\.up\.railway\.app$/i.test(host)) return true;
-  return false;
+  return true;
 }
 
 export function isBlackWallPath(path) {
@@ -102,26 +104,39 @@ function slugifyCountry(label) {
     .replace(/^-|-$/g, "");
 }
 
+/** Explicit campaign tags from CMS/SQL (`bf:nacional`, `bf:verao`, `bf:pais:japao`, …). */
+export function hasExplicitBlackTag(pkg) {
+  const tags = publicPackageTags(pkg?.tags).map(normalizeTag);
+  return tags.some(
+    (t) =>
+      t === "bf:nacional" ||
+      [...SEGMENT_IDS].some((id) => t === `bf:${id}`) ||
+      t.startsWith("bf:pais:"),
+  );
+}
+
 /**
- * Resolve segment + country from CMS tags, then overlay, then category heuristics.
+ * Resolve segment + country.
  * @param {{ slug?: string, tags?: unknown, categorySlug?: string, destination?: string, name?: string }} pkg
+ * @param {{ allowOverlay?: boolean }} [opts]
  */
-export function resolveBlackMeta(pkg) {
+export function resolveBlackMeta(pkg, opts = {}) {
+  const allowOverlay = opts.allowOverlay === true;
   const slug = String(pkg?.slug || "");
   const tags = publicPackageTags(pkg?.tags).map(normalizeTag);
-  const overlayRow = overlay?.bySlug?.[slug] || null;
+  const overlayRow = allowOverlay ? overlay?.bySlug?.[slug] || null : null;
 
   let segment = null;
   let country = null;
   let countrySlug = null;
-  let source = "heuristic";
+  let source = "none";
 
   for (const tag of tags) {
-    if (tag === "bf:nacional" || tag === "nacional" || tag === "nacionais" || tag === "brasil") {
-      if (!segment) segment = "nacional";
-    }
     for (const id of SEGMENT_IDS) {
-      if (tag === `bf:${id}` || tag === id) segment = id;
+      if (tag === `bf:${id}`) {
+        segment = id;
+        source = "cms";
+      }
     }
     const pais = tag.match(/^bf:pais:(.+)$/);
     if (pais) {
@@ -130,38 +145,46 @@ export function resolveBlackMeta(pkg) {
         .split("-")
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
         .join(" ");
+      if (source === "none") source = "cms";
     }
   }
 
-  if (overlayRow) {
+  if (allowOverlay && overlayRow) {
     if (!segment && overlayRow.segment) segment = overlayRow.segment;
     if (!country && overlayRow.country) country = overlayRow.country;
     if (!countrySlug && overlayRow.countrySlug) countrySlug = overlayRow.countrySlug;
-    source = segment || country ? "overlay+tags" : source;
-    if (overlayRow.segment || overlayRow.country) source = "overlay";
+    if (overlayRow.segment || overlayRow.country) source = source === "cms" ? "cms+overlay" : "overlay";
   }
 
-  const cat = CATEGORY_COUNTRY[String(pkg?.categorySlug || "")];
-  if (cat) {
-    if (!segment && cat.segment) segment = cat.segment;
-    if (!country && cat.country) country = cat.country;
-    if (!countrySlug && cat.countrySlug) countrySlug = cat.countrySlug;
-    if (source === "heuristic" && (cat.segment || cat.country)) source = "category";
-  }
+  if (allowOverlay) {
+    const cat = CATEGORY_COUNTRY[String(pkg?.categorySlug || "")];
+    if (cat) {
+      if (!segment && cat.segment) segment = cat.segment;
+      if (!country && cat.country) country = cat.country;
+      if (!countrySlug && cat.countrySlug) countrySlug = cat.countrySlug;
+      if (source === "none" && (cat.segment || cat.country)) source = "category";
+    }
 
-  // Destination string heuristics (Brasil → nacional)
-  const dest = normalizeTag(pkg?.destination || "");
-  const name = normalizeTag(pkg?.name || "");
-  if (!segment && (dest.includes("brasil") || name.includes("noronha") || name.includes("chapada") || name.includes("bonito") || name.includes("gramado"))) {
-    segment = "nacional";
-    country = country || "Brasil";
-    countrySlug = countrySlug || "brasil";
-  }
+    const dest = normalizeTag(pkg?.destination || "");
+    const name = normalizeTag(pkg?.name || "");
+    if (
+      !segment &&
+      (dest.includes("brasil") ||
+        name.includes("noronha") ||
+        name.includes("chapada") ||
+        name.includes("bonito") ||
+        name.includes("gramado"))
+    ) {
+      segment = "nacional";
+      country = country || "Brasil";
+      countrySlug = countrySlug || "brasil";
+      source = "heuristic";
+    }
 
-  if (!segment) {
-    // Default international without season → primavera (broad travel window) so filters stay testable
-    segment = "primavera";
-    source = source === "heuristic" ? "default-primavera" : source;
+    if (!segment) {
+      segment = "primavera";
+      source = source === "none" ? "default-primavera" : source;
+    }
   }
 
   if (segment === "nacional") {
@@ -174,7 +197,7 @@ export function resolveBlackMeta(pkg) {
       .split("-")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
-  } else if (!country) {
+  } else if (segment && !country) {
     country = "Internacional";
     countrySlug = "internacional";
   }
@@ -182,9 +205,24 @@ export function resolveBlackMeta(pkg) {
   return { segment, country, countrySlug, source };
 }
 
-export function enrichPackageForBlack(pkg) {
-  const meta = resolveBlackMeta(pkg);
+export function enrichPackageForBlack(pkg, opts = {}) {
+  const allowOverlay =
+    typeof opts.allowOverlay === "boolean" ? opts.allowOverlay : isBlackWallSeedEnabled();
+  const meta = resolveBlackMeta(pkg, { allowOverlay });
   return { ...pkg, black: meta };
+}
+
+/**
+ * Catalog for /black: seeded overlay (homolog) or only CMS `bf:*` tagged items.
+ * Default path returns [] until SQL/docs seed tags.
+ */
+export function getBlackCatalogPackages(packages, opts = {}) {
+  const seed = opts.seed ?? isBlackWallSeedEnabled();
+  const list = Array.isArray(packages) ? packages : [];
+  const selected = seed ? list : list.filter(hasExplicitBlackTag);
+  return selected
+    .map((pkg) => enrichPackageForBlack(pkg, { allowOverlay: seed }))
+    .filter((pkg) => Boolean(pkg.black?.segment));
 }
 
 /**
@@ -214,11 +252,14 @@ export function blackFilterQuery({ segment = "", country = "" } = {}) {
  * @param {{ segment?: string, country?: string }} filters
  */
 export function filterBlackPackages(packages, filters = {}) {
-  const list = (Array.isArray(packages) ? packages : []).map(enrichPackageForBlack);
+  const list = (Array.isArray(packages) ? packages : []).map((pkg) =>
+    pkg?.black ? pkg : enrichPackageForBlack(pkg),
+  );
   const segment = filters.segment || "";
   const country = filters.country || "";
 
   return list.filter((pkg) => {
+    if (!pkg.black?.segment) return false;
     if (segment && pkg.black.segment !== segment) return false;
     if (segment && segment !== "nacional" && country) {
       if (pkg.black.countrySlug !== country) return false;
@@ -228,12 +269,14 @@ export function filterBlackPackages(packages, filters = {}) {
 }
 
 /**
- * Primary chips that have ≥1 listing (always include Nacional if any nacional exists).
+ * Primary chips that have ≥1 listing. When catalog empty, UI still shows full architecture.
  */
 export function visibleBlackSegments(packages) {
-  const enriched = (Array.isArray(packages) ? packages : []).map(enrichPackageForBlack);
+  const enriched = (Array.isArray(packages) ? packages : []).map((pkg) =>
+    pkg?.black ? pkg : enrichPackageForBlack(pkg),
+  );
   return BWT_SEGMENTS.filter((seg) =>
-    enriched.some((pkg) => pkg.black.segment === seg.id),
+    enriched.some((pkg) => pkg.black?.segment === seg.id),
   );
 }
 
@@ -245,7 +288,7 @@ export function visibleBlackCountries(packages, segment) {
   const enriched = filterBlackPackages(packages, { segment });
   const map = new Map();
   for (const pkg of enriched) {
-    const slug = pkg.black.countrySlug;
+    const slug = pkg.black?.countrySlug;
     if (!slug || map.has(slug)) continue;
     map.set(slug, { id: slug, label: pkg.black.country });
   }
@@ -254,9 +297,8 @@ export function visibleBlackCountries(packages, segment) {
 
 export function blackMastCopy() {
   return {
-    wordmark: "Black Wall Travel",
-    headline: "A vitrine em modo Black Friday.",
-    lede: "Todo o catálogo WallTravel, reunido com filtros por Nacional e por estação. Planeje com urgência e critério.",
+    headline: BWT_BRAND_TITLE,
+    lede: "",
   };
 }
 
@@ -269,8 +311,10 @@ export function renderBlackListingHtml({
   esc,
   searchQuery = "",
 }) {
-  const all = (Array.isArray(packages) ? packages : []).map(enrichPackageForBlack);
-  const segments = visibleBlackSegments(all);
+  const all = Array.isArray(packages) ? packages : [];
+  const catalogEmpty = all.length === 0;
+  // Keep full filter architecture even when empty (no inventário yet).
+  const segmentChips = catalogEmpty ? BWT_SEGMENTS : visibleBlackSegments(all);
   const filtered = filterBlackPackages(all, filters).filter((pkg) => {
     const q = String(searchQuery || "")
       .trim()
@@ -354,13 +398,35 @@ export function renderBlackListingHtml({
   const activeSegLabel =
     BWT_SEGMENTS.find((s) => s.id === filters.segment)?.label || "Todas";
 
+  const emptyHtml = catalogEmpty
+    ? `<div class="bwt-empty" data-bwt-empty="coming-soon">
+        <p class="bwt-empty-kicker">Em breve</p>
+        <h2>Planejamentos em preparação.</h2>
+        <p>A Black WallTravel abre com curadoria por Nacional e por estação. Enquanto isso, fale com um especialista.</p>
+        <a class="bwt-btn bwt-btn--primary" href="${esc(emptyWa.href)}" target="_blank" rel="noopener">Falar com especialista</a>
+      </div>`
+    : `<div class="bwt-empty" data-bwt-empty="filter">
+        <h2>Nenhum planejamento com esses filtros.</h2>
+        <p>Ajuste o segmento ou fale com um especialista WallTravel.</p>
+        <a class="bwt-btn bwt-btn--primary" href="${esc(emptyWa.href)}" target="_blank" rel="noopener">Falar com especialista</a>
+      </div>`;
+
+  const summaryHtml = catalogEmpty
+    ? `<p class="bwt-summary" data-bwt-summary>
+        <span class="bwt-summary-soon">Em breve</span>
+        <span>filtros prontos · catálogo em preparação</span>
+      </p>`
+    : `<p class="bwt-summary" data-bwt-summary>
+        <strong data-bwt-count>${filtered.length}</strong>
+        <span>${filtered.length === 1 ? "planejamento" : "planejamentos"} · filtro ${esc(activeSegLabel)}</span>
+      </p>`;
+
   return `
     <section class="bwt-mast" data-bwt-chrome="mast">
       <div class="bwt-mast-veil" aria-hidden="true"></div>
       <div class="bwt-mast-inner">
-        <p class="bwt-wordmark">${esc(copy.wordmark)}</p>
         <h1 class="bwt-headline">${esc(copy.headline)}</h1>
-        <p class="bwt-lede">${esc(copy.lede)}</p>
+        ${copy.lede ? `<p class="bwt-lede">${esc(copy.lede)}</p>` : ""}
       </div>
     </section>
 
@@ -368,17 +434,14 @@ export function renderBlackListingHtml({
       <div class="bwt-breadcrumb">
         <a href="/">Início</a>
         <span>/</span>
-        <span>Black Wall Travel</span>
+        <span>${esc(BWT_BRAND_TITLE)}</span>
       </div>
 
-      <p class="bwt-summary" data-bwt-summary>
-        <strong data-bwt-count>${filtered.length}</strong>
-        <span>${filtered.length === 1 ? "planejamento" : "planejamentos"} · filtro ${esc(activeSegLabel)}</span>
-      </p>
+      ${summaryHtml}
 
       <div class="bwt-filter-row" role="group" aria-label="Segmento">
         <a class="bwt-chip${!filters.segment ? " is-active" : ""}" href="${esc(base)}" data-bwt-seg="" aria-current="${!filters.segment ? "true" : "false"}">Todas</a>
-        ${segments.map(segChip).join("")}
+        ${segmentChips.map(segChip).join("")}
       </div>
 
       ${
@@ -392,28 +455,25 @@ export function renderBlackListingHtml({
             : ""
       }
 
-      <div class="bwt-search-row">
+      ${
+        catalogEmpty
+          ? ""
+          : `<div class="bwt-search-row">
         <label class="visually-hidden" for="bwt-search">Buscar planejamento</label>
         <input type="search" id="bwt-search" class="bwt-search" placeholder="Buscar planejamento…" value="${esc(searchQuery)}" autocomplete="off" />
         <a class="bwt-link-quiet" href="/vitrine">Ver vitrine clássica</a>
-      </div>
+      </div>`
+      }
     </div>
 
     <div class="bwt-grid" data-bwt-grid>
-      ${
-        cards ||
-        `<div class="bwt-empty">
-          <h2>Nenhum planejamento com esses filtros.</h2>
-          <p>Ajuste o segmento ou fale com um especialista WallTravel.</p>
-          <a class="bwt-btn bwt-btn--primary" href="${esc(emptyWa.href)}" target="_blank" rel="noopener">Falar com especialista</a>
-        </div>`
-      }
+      ${cards || emptyHtml}
     </div>
 
     <section class="bwt-bespoke">
       <div class="bwt-bespoke-inner">
-        <h2>Não encontrou o que imagina?</h2>
-        <p>Um especialista monta o planejamento com você, no tom Black Wall Travel.</p>
+        <h2>Quer ser avisado?</h2>
+        <p>Um especialista WallTravel acompanha você quando os planejamentos Black WallTravel entrarem.</p>
         <a class="bwt-btn bwt-btn--primary" href="${esc(
           buildWhatsAppCTA({
             pageType: "BLACK",
@@ -424,39 +484,5 @@ export function renderBlackListingHtml({
         )}" target="_blank" rel="noopener">Falar com especialista</a>
       </div>
     </section>
-  `;
-}
-
-export function renderHomeBlackBannerHtml(esc) {
-  const copy = blackMastCopy();
-  return `
-    <section class="bwt-home-banner fade-in-section is-visible" id="black-wall-travel" data-bwt-home-banner aria-label="Black Wall Travel">
-      <div class="bwt-home-banner-veil" aria-hidden="true"></div>
-      <div class="bwt-home-banner-inner">
-        <p class="bwt-wordmark">${esc(copy.wordmark)}</p>
-        <h2 class="bwt-home-headline">${esc(copy.headline)}</h2>
-        <p class="bwt-home-lede">Catálogo completo com filtros por Nacional e por estação. Homologação interna.</p>
-        <div class="bwt-home-ctas">
-          <a class="bwt-btn bwt-btn--primary" href="/black">Entrar na Black Wall Travel</a>
-          <a class="bwt-btn bwt-btn--ghost" href="${esc(
-            buildWhatsAppCTA({
-              pageType: "BLACK",
-              context: "black",
-              placement: "home-black-banner",
-              source: "home-black-banner",
-            }).href,
-          )}" target="_blank" rel="noopener" data-wa-cta data-wa-context="black" data-wa-page-type="BLACK" data-wa-placement="home-black-banner">Falar com especialista</a>
-        </div>
-      </div>
-    </section>
-  `;
-}
-
-export function renderVitrineBlackBridgeHtml(esc) {
-  return `
-    <aside class="bwt-vitrine-bridge" data-bwt-vitrine-bridge>
-      <p><strong>Black Wall Travel</strong> está aberta na homologação.</p>
-      <a href="/black">Entrar na campanha</a>
-    </aside>
   `;
 }

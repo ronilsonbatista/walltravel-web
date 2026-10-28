@@ -7927,10 +7927,26 @@ html.wt-route-black footer.footer {
   color: var(--bwt-text-muted);
 }
 
+.bwt-empty-kicker {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bwt-accent);
+  margin: 0 0 0.85rem;
+}
+
 .bwt-empty h2 {
   color: var(--bwt-text);
   font-family: var(--font-title);
   margin: 0 0 0.75rem;
+}
+
+.bwt-summary-soon {
+  font-family: var(--font-title);
+  color: var(--bwt-accent);
+  font-size: 1.15rem;
+  margin-right: 0.45rem;
 }
 
 .bwt-bespoke {
