@@ -7736,12 +7736,6 @@ html.wt-route-black footer.footer {
   margin-right: 0.25rem;
 }
 
-.bwt-filter-note {
-  font-size: 0.9rem;
-  color: var(--bwt-text-muted);
-  margin: 0 0 1rem;
-}
-
 .bwt-chip {
   display: inline-flex;
   align-items: center;
