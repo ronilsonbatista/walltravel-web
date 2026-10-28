@@ -399,10 +399,9 @@ export function renderBlackListingHtml({
     BWT_SEGMENTS.find((s) => s.id === filters.segment)?.label || "Todas";
 
   const emptyHtml = catalogEmpty
-    ? `<div class="bwt-empty" data-bwt-empty="coming-soon">
-        <p class="bwt-empty-kicker">Em breve</p>
+    ? `<div class="bwt-empty bwt-empty--preparing" data-bwt-empty="preparing">
         <h2>Planejamentos em preparação.</h2>
-        <p>A Black WallTravel abre com curadoria por Nacional e por estação. Enquanto isso, fale com um especialista.</p>
+        <p>Curadoria por Nacional e por estação. Enquanto isso, fale com um especialista.</p>
         <a class="bwt-btn bwt-btn--primary" href="${esc(emptyWa.href)}" target="_blank" rel="noopener">Falar com especialista</a>
       </div>`
     : `<div class="bwt-empty" data-bwt-empty="filter">
@@ -412,10 +411,7 @@ export function renderBlackListingHtml({
       </div>`;
 
   const summaryHtml = catalogEmpty
-    ? `<p class="bwt-summary" data-bwt-summary>
-        <span class="bwt-summary-soon">Em breve</span>
-        <span>filtros prontos · catálogo em preparação</span>
-      </p>`
+    ? ""
     : `<p class="bwt-summary" data-bwt-summary>
         <strong data-bwt-count>${filtered.length}</strong>
         <span>${filtered.length === 1 ? "planejamento" : "planejamentos"} · filtro ${esc(activeSegLabel)}</span>
@@ -430,7 +426,7 @@ export function renderBlackListingHtml({
       </div>
     </section>
 
-    <div class="bwt-shell" data-bwt-chrome="filters">
+    <div class="bwt-shell${catalogEmpty ? " bwt-shell--empty" : ""}" data-bwt-chrome="filters">
       <div class="bwt-breadcrumb">
         <a href="/">Início</a>
         <span>/</span>
@@ -466,7 +462,7 @@ export function renderBlackListingHtml({
       }
     </div>
 
-    <div class="bwt-grid" data-bwt-grid>
+    <div class="bwt-grid${cards ? "" : " bwt-grid--empty"}" data-bwt-grid>
       ${cards || emptyHtml}
     </div>
 

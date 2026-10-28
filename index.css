@@ -7673,6 +7673,19 @@ html.wt-route-black footer.footer {
   padding: 1.75rem 1.5rem 1rem;
 }
 
+.bwt-shell--empty {
+  padding-top: 1.35rem;
+  padding-bottom: 0.15rem;
+}
+
+.bwt-shell--empty .bwt-breadcrumb {
+  margin-bottom: 0.75rem;
+}
+
+.bwt-shell--empty .bwt-filter-row {
+  margin-bottom: 0.35rem;
+}
+
 .bwt-breadcrumb {
   display: flex;
   gap: 0.5rem;
@@ -7786,6 +7799,11 @@ html.wt-route-black footer.footer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.35rem;
+}
+
+.bwt-grid--empty {
+  padding: 0.75rem 1.5rem 1.75rem;
+  grid-template-columns: 1fr;
 }
 
 .bwt-card {
@@ -7923,36 +7941,42 @@ html.wt-route-black footer.footer {
 .bwt-empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 1.25rem 1rem 0.5rem;
   color: var(--bwt-text-muted);
+  max-width: 34rem;
+  margin: 0 auto;
 }
 
-.bwt-empty-kicker {
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--bwt-accent);
-  margin: 0 0 0.85rem;
+.bwt-empty--preparing {
+  padding: 1rem 1rem 0.25rem;
 }
 
 .bwt-empty h2 {
   color: var(--bwt-text);
   font-family: var(--font-title);
-  margin: 0 0 0.75rem;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  line-height: 1.2;
+  margin: 0 0 0.55rem;
 }
 
-.bwt-summary-soon {
-  font-family: var(--font-title);
-  color: var(--bwt-accent);
-  font-size: 1.15rem;
-  margin-right: 0.45rem;
+.bwt-empty p {
+  margin: 0 0 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.bwt-empty .bwt-btn {
+  margin-top: 0.15rem;
 }
 
 .bwt-bespoke {
   border-top: 1px solid var(--bwt-border);
-  padding: 3rem 1.5rem 4rem;
+  padding: 2.25rem 1.5rem 3rem;
   background: var(--bwt-bg-elevated);
+}
+
+#black-view:has(.bwt-grid--empty) .bwt-bespoke {
+  padding-top: 1.75rem;
 }
 
 .bwt-bespoke-inner {
