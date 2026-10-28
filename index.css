@@ -7674,16 +7674,16 @@ html.wt-route-black footer.footer {
 }
 
 .bwt-shell--empty {
-  padding-top: 1.35rem;
-  padding-bottom: 0.15rem;
+  padding-top: 1.15rem;
+  padding-bottom: 0;
 }
 
 .bwt-shell--empty .bwt-breadcrumb {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
 }
 
 .bwt-shell--empty .bwt-filter-row {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0;
 }
 
 .bwt-breadcrumb {
@@ -7802,7 +7802,7 @@ html.wt-route-black footer.footer {
 }
 
 .bwt-grid--empty {
-  padding: 0.75rem 1.5rem 1.75rem;
+  padding: 1.1rem 1.5rem 1.25rem;
   grid-template-columns: 1fr;
 }
 
@@ -7941,14 +7941,14 @@ html.wt-route-black footer.footer {
 .bwt-empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 1.25rem 1rem 0.5rem;
+  padding: 0.35rem 1rem 0.25rem;
   color: var(--bwt-text-muted);
-  max-width: 34rem;
+  max-width: 32rem;
   margin: 0 auto;
 }
 
 .bwt-empty--preparing {
-  padding: 1rem 1rem 0.25rem;
+  padding: 0.25rem 1rem 0.15rem;
 }
 
 .bwt-empty h2 {
