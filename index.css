@@ -7608,7 +7608,7 @@ html.wt-route-black footer.footer {
   min-height: clamp(300px, 44vh, 440px);
   display: flex;
   align-items: flex-end;
-  padding: clamp(4.75rem, 10vw, 5.75rem) 1.5rem 2.5rem;
+  padding: clamp(4.75rem, 10vw, 5.75rem) 1.5rem clamp(2rem, 4vw, 2.75rem);
   background:
     linear-gradient(180deg, rgba(10, 10, 10, 0.35) 0%, rgba(10, 10, 10, 0.55) 28%, rgba(10, 10, 10, 0.88) 72%, #0a0a0a 100%),
     url("/images/vitrine/asia-kyoto.webp") center / cover no-repeat;
@@ -7653,18 +7653,23 @@ html.wt-route-black footer.footer {
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--bwt-text);
-  margin: 0 0 0.85rem;
-  max-width: 16ch;
+  margin: 0 0 0.7rem;
+  max-width: 18ch;
 }
 
 .bwt-lede,
 .bwt-home-lede {
   font-family: var(--font-body);
-  font-size: 1.05rem;
-  line-height: 1.55;
+  font-size: clamp(0.98rem, 1.5vw, 1.08rem);
+  line-height: 1.5;
   color: var(--bwt-text-muted);
-  max-width: 42ch;
+  max-width: 36ch;
   margin: 0;
+}
+
+.bwt-mast-inner .bwt-lede {
+  margin-top: 0.15rem;
+  margin-bottom: 0.15rem;
 }
 
 .bwt-shell {
