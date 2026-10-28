@@ -446,9 +446,7 @@ export function renderBlackListingHtml({
               <span class="bwt-filter-label">País</span>
               ${countries.map(countryChip).join("")}
             </div>`
-          : filters.segment === "nacional"
-            ? `<p class="bwt-filter-note">Nacional: listagem direta, sem filtro por país.</p>`
-            : ""
+          : ""
       }
 
       ${
