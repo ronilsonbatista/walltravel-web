@@ -7521,7 +7521,11 @@ html.wt-intro-done:not(.wt-hero-live) .group-hero-slide.is-active .group-hero-im
   --bwt-border: #2a2a2a;
   --bwt-text: #f5f2ea;
   --bwt-text-muted: #b7b2a6;
-  --bwt-accent: #e8a838;
+  --bwt-accent: #e8a838; /* decorative accent only (mast marks, soft glows) */
+  /* CTAs + active chips: WallTravel brand green (same as .nav-cta) */
+  --bwt-cta: var(--surface-olive, #3f4328);
+  --bwt-cta-hover: var(--color-primary, #5c5e2e);
+  --bwt-cta-text: var(--text-inverse, #f6f1e8);
 }
 
 html.wt-route-black {
@@ -7577,9 +7581,16 @@ html.wt-route-black .nav-link--bwt {
 
 html.wt-route-black .header .nav-cta,
 html.wt-route-black .header.scrolled .nav-cta {
-  background: var(--bwt-accent);
-  color: #140f05;
-  border-color: var(--bwt-accent);
+  background: var(--bwt-cta);
+  color: var(--bwt-cta-text);
+  border-color: var(--bwt-cta);
+}
+
+html.wt-route-black .header .nav-cta:hover,
+html.wt-route-black .header.scrolled .nav-cta:hover {
+  background: var(--bwt-cta-hover);
+  color: var(--bwt-cta-text);
+  border-color: var(--bwt-cta-hover);
 }
 
 html.wt-route-black .header .menu-btn-bar,
@@ -7749,14 +7760,14 @@ html.wt-route-black footer.footer {
 }
 
 .bwt-chip:hover {
-  border-color: var(--bwt-accent);
-  color: var(--bwt-accent);
+  border-color: var(--bwt-cta);
+  color: var(--bwt-cta-text);
 }
 
 .bwt-chip.is-active {
-  background: var(--bwt-accent);
-  border-color: var(--bwt-accent);
-  color: #140f05;
+  background: var(--bwt-cta);
+  border-color: var(--bwt-cta);
+  color: var(--bwt-cta-text);
   font-weight: 600;
 }
 
@@ -7922,12 +7933,13 @@ html.wt-route-black footer.footer {
 }
 
 .bwt-btn--primary {
-  background: var(--bwt-accent);
-  color: #140f05;
+  background: var(--bwt-cta);
+  color: var(--bwt-cta-text);
 }
 
 .bwt-btn--primary:hover {
-  background: #f0ba55;
+  background: var(--bwt-cta-hover);
+  color: var(--bwt-cta-text);
 }
 
 .bwt-btn--ghost {
@@ -7937,8 +7949,8 @@ html.wt-route-black footer.footer {
 }
 
 .bwt-btn--ghost:hover {
-  border-color: var(--bwt-accent);
-  color: var(--bwt-accent);
+  border-color: var(--bwt-cta);
+  color: var(--bwt-cta-text);
 }
 
 .bwt-empty {
