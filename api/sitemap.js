@@ -12,6 +12,7 @@ const STATIC_PATHS = [
   "/vitrine",
   "/grupos",
   "/como-funciona",
+  "/institucional",
   "/privacidade",
 ];
 

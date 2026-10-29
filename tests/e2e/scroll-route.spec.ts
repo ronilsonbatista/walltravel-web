@@ -46,11 +46,9 @@ test.describe("SPA route scroll restoration", () => {
   });
 
   test("intentional hash links still scroll to the target", async ({ page }) => {
-    await page.goto("/vitrine");
+    await page.goto("/#sobre");
     await waitForRouteSettled(page);
-    await page.locator('a[href="/#sobre"]').first().click();
     await expect(page).toHaveURL(/\/#sobre$/);
-    await waitForRouteSettled(page);
     await expect
       .poll(async () =>
         page.evaluate(() => {
@@ -61,6 +59,15 @@ test.describe("SPA route scroll restoration", () => {
         }),
       )
       .toBe(true);
+  });
+
+  test("institucional deep-link opens at the top with hero copy", async ({ page }) => {
+    await page.goto("/institucional");
+    await waitForRouteSettled(page);
+    await expect(page).toHaveURL(/\/institucional\/?$/);
+    await expect(page.locator(".institucional-hero-brand")).toBeVisible();
+    await expect(page.locator(".institucional-hero-title")).toContainText(/Escolher bem muda tudo/);
+    await expect.poll(async () => page.evaluate(() => window.scrollY)).toBeLessThan(8);
   });
 
   test("hard load on non-home starts near the top", async ({ page }) => {
