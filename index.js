@@ -787,19 +787,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         el.setAttribute("aria-disabled", "true");
         if (el.tagName === "A") {
           el.removeAttribute("href");
-          el.classList.add("institucional-social-link--pending");
+          el.classList.add("institucional-social-pending");
         }
         return;
       }
       if (el.tagName === "A") {
         el.href = url;
         el.removeAttribute("aria-disabled");
-        el.classList.remove("institucional-social-link--pending");
+        el.classList.remove("institucional-social-pending");
       }
     };
     setLink("instagram", INSTITUCIONAL_INSTAGRAM_URL);
     setLink("google", INSTITUCIONAL_GOOGLE_REVIEWS_URL);
     setLink("reclame-aqui", INSTITUCIONAL_RECLAME_AQUI_URL);
+  };
+
+  let sectionObserver = null;
+  const revealFadeSections = (root = document) => {
+    const sections = root.querySelectorAll
+      ? root.querySelectorAll(".fade-in-section")
+      : [];
+    if (!sections.length) return;
+    if (!("IntersectionObserver" in window)) {
+      sections.forEach((section) => section.classList.add("is-visible"));
+      return;
+    }
+    if (!sectionObserver) {
+      sectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              sectionObserver.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.08,
+          rootMargin: "0px 0px -40px 0px",
+        }
+      );
+    }
+    sections.forEach((section) => {
+      section.classList.remove("is-visible");
+      sectionObserver.observe(section);
+    });
   };
 
   /** Immediate blank shell so the previous hero/title/media never paints on route change. */
@@ -1054,11 +1086,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         header.classList.add('scrolled');
         if (institucionalViewEl) {
           institucionalViewEl.style.display = 'block';
-          institucionalViewEl.querySelectorAll('.fade-in-section').forEach((el) => {
-            el.classList.add('is-visible');
-          });
+          hydrateDeferredPicture(
+            institucionalViewEl.querySelector('[data-route-hydrate="institucional"]')
+          );
           hydrateInstitucionalSocial(institucionalViewEl);
           hydrateWhatsAppCTAs(institucionalViewEl);
+          revealFadeSections(institucionalViewEl);
         }
         updateSEO(
           "Institucional | WallTravel",
@@ -1826,28 +1859,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ==========================================================================
   // 8. SCROLL REVEAL EFFECT (FADE IN SECTIONS)
   // ==========================================================================
-  const fadeSections = document.querySelectorAll('.fade-in-section');
-  if ('IntersectionObserver' in window) {
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          sectionObserver.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.08,
-      rootMargin: '0px 0px -40px 0px'
-    });
-
-    fadeSections.forEach(section => {
-      sectionObserver.observe(section);
-    });
-  } else {
-    fadeSections.forEach(section => {
-      section.classList.add('is-visible');
-    });
-  }
+  revealFadeSections(document);
 
   // ==========================================================================
   // 9. FLOATING WHATSAPP BUTTON SCROLL EFFECT

@@ -65,8 +65,9 @@ test.describe("SPA route scroll restoration", () => {
     await page.goto("/institucional");
     await waitForRouteSettled(page);
     await expect(page).toHaveURL(/\/institucional\/?$/);
-    await expect(page.locator(".institucional-hero-brand")).toBeVisible();
-    await expect(page.locator(".institucional-hero-title")).toContainText(/Escolher bem muda tudo/);
+    await expect(page.locator(".institucional-mast-brand")).toBeVisible();
+    await expect(page.locator(".institucional-mast-title")).toContainText(/Escolher bem muda tudo/);
+    await expect(page.locator("body")).not.toContainText(/01 \/ Viagens/i);
     await expect.poll(async () => page.evaluate(() => window.scrollY)).toBeLessThan(8);
   });
 

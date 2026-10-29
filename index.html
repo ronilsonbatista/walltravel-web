@@ -755,136 +755,143 @@
   </div>
 
   <!-- ==========================================================================
-       PAGE: INSTITUCIONAL (/institucional) — conteúdo do PDF, ritmo do site
+       PAGE: INSTITUCIONAL (/institucional) — editorial web, não clone do PDF
        ========================================================================== -->
   <div id="institucional-view" class="page-view" style="display: none;">
     <div class="institucional-page">
-      <header class="institucional-hero">
-        <div class="section-container institucional-hero-inner">
+      <header class="institucional-mast">
+        <picture data-route-hydrate="institucional">
+          <source media="(max-width: 768px)" data-srcset="/images/vitrine/noruega-aurora.webp" type="image/webp">
+          <source type="image/webp" data-srcset="/images/vitrine/noruega-aurora.webp">
+          <img data-src="/images/vitrine/noruega-aurora.jpg" alt="Aurora boreal sobre a paisagem nórdica" width="2000" height="1333" decoding="async" fetchpriority="high">
+        </picture>
+        <div class="institucional-mast-overlay" aria-hidden="true"></div>
+        <div class="institucional-mast-content section-container">
           <nav class="breadcrumb breadcrumb--light" aria-label="Breadcrumb">
             <a href="/">Início</a>
             <span class="breadcrumb-separator">/</span>
             <span class="breadcrumb-active">Institucional</span>
           </nav>
-          <p class="institucional-kicker">01 / Viagens personalizadas</p>
-          <h1 class="institucional-hero-brand">WallTravel</h1>
-          <p class="institucional-hero-title">Escolher bem muda tudo.</p>
-          <p class="institucional-hero-lede">Viagens personalizadas com assessoria completa.</p>
+          <p class="institucional-mast-brand">WallTravel</p>
+          <h1 class="institucional-mast-title">Escolher bem muda tudo.</h1>
+          <p class="institucional-mast-lede">Viagens personalizadas com assessoria completa.</p>
+          <div class="institucional-mast-cta">
+            <a
+              href="#"
+              data-wa-cta
+              data-wa-page-type="ABOUT"
+              data-wa-context="site"
+              data-wa-placement="institucional-hero"
+              target="_blank"
+              rel="noopener"
+              class="btn-primary"
+            >Falar com um especialista</a>
+          </div>
         </div>
       </header>
 
       <section class="section section-rhythm-a fade-in-section" id="institucional-quem-somos" aria-labelledby="institucional-quem-somos-title">
-        <div class="section-container">
-          <div class="institucional-quem">
-            <div class="institucional-quem-copy">
-              <span class="section-tag">02 / Quem somos</span>
-              <h2 class="section-title" id="institucional-quem-somos-title">Experiência para orientar. Cuidado para realizar.</h2>
-              <p class="section-lede">A WallTravel planeja viagens sob medida, combinando curadoria de destinos, organização e acompanhamento em cada etapa.</p>
-              <div class="team-stats institucional-stats" aria-label="Números da equipe">
-                <div class="stat-item">
-                  <h3>6+</h3>
-                  <p>anos de experiência da equipe</p>
-                </div>
-                <div class="stat-item">
-                  <h3>450+</h3>
-                  <p>viajantes atendidos</p>
-                </div>
+        <div class="section-container institucional-quem">
+          <div class="institucional-quem-copy">
+            <span class="section-tag">Quem somos</span>
+            <h2 class="section-title" id="institucional-quem-somos-title">Experiência para orientar. Cuidado para realizar.</h2>
+            <p class="section-lede">A WallTravel planeja viagens sob medida, combinando curadoria de destinos, organização e acompanhamento em cada etapa.</p>
+            <div class="team-stats institucional-stats" aria-label="Números da equipe">
+              <div class="stat-item">
+                <h3>6+</h3>
+                <p>anos de experiência da equipe</p>
+              </div>
+              <div class="stat-item">
+                <h3>450+</h3>
+                <p>viajantes atendidos</p>
               </div>
             </div>
-            <ul class="institucional-team" role="list">
-              <li class="institucional-team-card">
+          </div>
+          <ul class="institucional-team" role="list">
+            <li>
+              <div class="institucional-team-photo">
                 <picture>
                   <source type="image/webp" srcset="/images/institucional/wallace.webp">
                   <img src="/images/institucional/wallace.jpg" alt="Wallace, sócio da WallTravel" width="900" height="1200" loading="lazy" decoding="async">
                 </picture>
-                <div class="institucional-team-meta">
-                  <strong>Wallace</strong>
-                  <span>Sócio</span>
-                </div>
-              </li>
-              <li class="institucional-team-card">
+              </div>
+              <div class="institucional-team-meta">
+                <strong>Wallace</strong>
+                <span>Sócio</span>
+              </div>
+            </li>
+            <li>
+              <div class="institucional-team-photo">
                 <picture>
                   <source type="image/webp" srcset="/images/institucional/ronilson.webp">
                   <img src="/images/institucional/ronilson.jpg" alt="Ronilson, sócio da WallTravel" width="900" height="1200" loading="lazy" decoding="async">
                 </picture>
-                <div class="institucional-team-meta">
-                  <strong>Ronilson</strong>
-                  <span>Sócio</span>
-                </div>
-              </li>
-              <li class="institucional-team-card">
+              </div>
+              <div class="institucional-team-meta">
+                <strong>Ronilson</strong>
+                <span>Sócio</span>
+              </div>
+            </li>
+            <li>
+              <div class="institucional-team-photo">
                 <picture>
                   <source type="image/webp" srcset="/images/institucional/weslley.webp">
                   <img src="/images/institucional/weslley.jpg" alt="Weslley, sócio da WallTravel" width="900" height="1200" loading="lazy" decoding="async">
                 </picture>
-                <div class="institucional-team-meta">
-                  <strong>Weslley</strong>
-                  <span>Sócio</span>
-                </div>
-              </li>
-            </ul>
-          </div>
+              </div>
+              <div class="institucional-team-meta">
+                <strong>Weslley</strong>
+                <span>Sócio</span>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
 
-      <section class="section section-rhythm-b fade-in-section" id="institucional-personalizacao" aria-labelledby="institucional-personalizacao-title">
-        <div class="section-container institucional-personalizacao">
-          <div class="institucional-personalizacao-copy">
-            <span class="section-tag">03 / Personalização</span>
+      <section class="section section-rhythm-olive-soft fade-in-section" id="institucional-personalizacao" aria-labelledby="institucional-personalizacao-title">
+        <div class="section-container">
+          <div class="section-header section-header--manifesto">
+            <span class="section-tag">Personalização</span>
             <h2 class="section-title" id="institucional-personalizacao-title">Sua viagem começa com você.</h2>
-            <p class="section-lede">Seus interesses, seu ritmo e suas prioridades orientam cada escolha.</p>
-            <p class="institucional-body">Selecionamos destinos, hospedagens e experiências considerando o que você deseja viver e o investimento previsto para a viagem.</p>
+            <p class="section-lede">Seus interesses, seu ritmo e suas prioridades orientam cada escolha. Selecionamos destinos, hospedagens e experiências considerando o que você deseja viver e o investimento previsto para a viagem.</p>
           </div>
-          <ol class="institucional-olive-panel" aria-label="Como personalizamos">
+          <ul class="benefit-strip institucional-pillars" aria-label="Como personalizamos">
             <li>
-              <span class="institucional-olive-num">01</span>
-              <div>
-                <strong>Seus interesses</strong>
-                <p>O que você deseja conhecer e vivenciar.</p>
-              </div>
+              <strong>Seus interesses</strong>
+              <span>O que você deseja conhecer e vivenciar.</span>
             </li>
             <li>
-              <span class="institucional-olive-num">02</span>
-              <div>
-                <strong>Seu ritmo</strong>
-                <p>Um planejamento que respeita o seu tempo.</p>
-              </div>
+              <strong>Seu ritmo</strong>
+              <span>Um planejamento que respeita o seu tempo.</span>
             </li>
             <li>
-              <span class="institucional-olive-num">03</span>
-              <div>
-                <strong>Suas prioridades</strong>
-                <p>Escolhas alinhadas ao seu perfil e investimento.</p>
-              </div>
+              <strong>Suas prioridades</strong>
+              <span>Escolhas alinhadas ao seu perfil e investimento.</span>
             </li>
-          </ol>
+          </ul>
         </div>
       </section>
 
-      <section class="section section-rhythm-c fade-in-section" id="institucional-assessoria" aria-labelledby="institucional-assessoria-title">
+      <section class="section section-rhythm-b fade-in-section" id="institucional-assessoria" aria-labelledby="institucional-assessoria-title">
         <div class="section-container">
           <div class="section-header section-header--editorial">
-            <span class="section-tag">04 / Assessoria completa</span>
+            <span class="section-tag">Assessoria completa</span>
             <h2 class="section-title" id="institucional-assessoria-title">Seu tempo é precioso. Nós cuidamos dos detalhes.</h2>
           </div>
           <div class="features-grid">
             <div class="feature-item">
-              <span class="feature-number">01</span>
               <h3 class="feature-title">Passagens e hospedagens</h3>
               <p class="feature-desc">Voos e hotéis alinhados ao seu planejamento.</p>
             </div>
             <div class="feature-item">
-              <span class="feature-number">02</span>
               <h3 class="feature-title">Deslocamentos</h3>
               <p class="feature-desc">Transfers, carros, barcos privativos, helicópteros e outras opções sob medida.</p>
             </div>
             <div class="feature-item">
-              <span class="feature-number">03</span>
               <h3 class="feature-title">Passeios e experiências</h3>
               <p class="feature-desc">Atividades selecionadas conforme seus interesses.</p>
             </div>
             <div class="feature-item">
-              <span class="feature-number">04</span>
               <h3 class="feature-title">Roteiro e preparação</h3>
               <p class="feature-desc">Roteiro diário personalizado, orientações e apoio com check-ins.</p>
             </div>
@@ -893,10 +900,12 @@
       </section>
 
       <section class="section institucional-acompanhamento fade-in-section" id="institucional-acompanhamento" aria-labelledby="institucional-acompanhamento-title">
-        <div class="section-container institucional-acompanhamento-grid">
-          <div class="institucional-acompanhamento-copy">
-            <span class="section-tag">05 / Acompanhamento</span>
+        <div class="section-container">
+          <div class="institucional-acompanhamento-head">
+            <span class="section-tag">Acompanhamento</span>
             <h2 class="section-title" id="institucional-acompanhamento-title">O cuidado continua depois da reserva.</h2>
+          </div>
+          <div class="institucional-acompanhamento-grid">
             <div class="institucional-acompanhamento-points">
               <div>
                 <h3>Antes de viajar</h3>
@@ -904,107 +913,105 @@
               </div>
               <div>
                 <h3>Em cada etapa</h3>
-                <p>Você tem com quem contar para aproveitar a experiência com mais tranquilidade.</p>
+                <p>Você tem a equipe para contar e aproveitar a experiência com mais tranquilidade.</p>
               </div>
             </div>
-          </div>
-          <aside class="institucional-support-card" aria-label="Suporte durante a viagem">
-            <p class="institucional-support-label">Suporte durante a viagem</p>
-            <p class="institucional-support-figure">24h</p>
-            <p class="institucional-support-text">Nossa equipe está disponível a qualquer hora para auxiliar com dúvidas e imprevistos durante a sua viagem.</p>
-          </aside>
-        </div>
-      </section>
-
-      <section class="section section-rhythm-a fade-in-section" id="institucional-milena" aria-labelledby="institucional-milena-title">
-        <div class="section-container institucional-feedback">
-          <div class="institucional-feedback-media">
-            <picture>
-              <source type="image/webp" srcset="/images/institucional/milena-familia.webp">
-              <img src="/images/institucional/milena-familia.jpg" alt="Família Medeiros em viagem pela Itália e França" width="1200" height="1605" loading="lazy" decoding="async">
-            </picture>
-          </div>
-          <div class="institucional-feedback-copy">
-            <span class="section-tag">06 / Quem viajou conosco</span>
-            <h2 class="section-title" id="institucional-milena-title">A primeira viagem. A confiança para aproveitar.</h2>
-            <blockquote class="institucional-quote">
-              <p>“Na nossa primeira viagem internacional, para Itália e França, a organização e o suporte da equipe WallTravel fizeram toda a diferença. Sempre atenciosos e disponíveis, nos deram tranquilidade para aproveitar cada momento. Esperamos viajar com a WallTravel muitas outras vezes!”</p>
-            </blockquote>
-            <p class="institucional-quote-author"><strong>Milena Medeiros</strong></p>
-            <p class="institucional-quote-meta">Viagem em família · Itália e França</p>
-            <p class="institucional-quote-note">Depoimento resumido e adaptado.</p>
+            <aside class="institucional-support" aria-label="Suporte durante a viagem">
+              <p class="institucional-support-figure">24h</p>
+              <p class="institucional-support-text">Nossa equipe está disponível a qualquer hora para auxiliar com dúvidas e imprevistos durante a sua viagem.</p>
+            </aside>
           </div>
         </div>
       </section>
 
-      <section class="section section-rhythm-b fade-in-section" id="institucional-daniela" aria-labelledby="institucional-daniela-title">
-        <div class="section-container institucional-feedback institucional-feedback--reverse">
-          <div class="institucional-feedback-media institucional-feedback-media--pair">
-            <figure>
-              <picture>
-                <source type="image/webp" srcset="/images/institucional/daniela-maldivas.webp">
-                <img src="/images/institucional/daniela-maldivas.jpg" alt="Casal nas Maldivas, água turquesa e bangalôs sobre o mar" width="900" height="818" loading="lazy" decoding="async">
-              </picture>
-              <figcaption>Maldivas</figcaption>
-            </figure>
-            <figure>
-              <picture>
-                <source type="image/webp" srcset="/images/institucional/daniela-noruega.webp">
-                <img src="/images/institucional/daniela-noruega.jpg" alt="Casal na Noruega sob a aurora boreal" width="900" height="1289" loading="lazy" decoding="async">
-              </picture>
-              <figcaption>Noruega</figcaption>
-            </figure>
-          </div>
-          <div class="institucional-feedback-copy">
-            <span class="section-tag">07 / Quem viajou conosco</span>
-            <h2 class="section-title" id="institucional-daniela-title">Dois destinos dos sonhos. O mesmo cuidado.</h2>
-            <blockquote class="institucional-quote">
-              <p>“Realizamos dois sonhos com a WallTravel: Maldivas e Noruega. Do paraíso nas ilhas à realização do sonho de ver a aurora boreal, cada detalhe foi cuidadosamente organizado. O grande diferencial foi ter uma equipe presente e disponível, mesmo do outro lado do mundo. Nossa única preocupação era aproveitar!”</p>
-            </blockquote>
-            <p class="institucional-quote-author"><strong>Daniela Costa</strong></p>
-            <p class="institucional-quote-meta">Viagens a dois · Maldivas e Noruega</p>
-            <p class="institucional-quote-note">Depoimento resumido e adaptado.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section-rhythm-c fade-in-section" id="institucional-prova-social" aria-labelledby="institucional-prova-social-title">
+      <section class="section section-rhythm-a fade-in-section" id="institucional-feedbacks" aria-labelledby="institucional-feedbacks-title">
         <div class="section-container">
+          <div class="section-header section-header--editorial">
+            <span class="section-tag">Quem viajou conosco</span>
+            <h2 class="section-title" id="institucional-feedbacks-title">Histórias reais, o mesmo cuidado.</h2>
+          </div>
+
+          <article class="institucional-story">
+            <div class="institucional-story-media">
+              <picture>
+                <source type="image/webp" srcset="/images/institucional/milena-familia.webp">
+                <img src="/images/institucional/milena-familia.jpg" alt="Família Medeiros em viagem pela Itália e França" width="1200" height="1605" loading="lazy" decoding="async">
+              </picture>
+            </div>
+            <div class="institucional-story-copy">
+              <h3>A primeira viagem. A confiança para aproveitar.</h3>
+              <blockquote class="institucional-quote">
+                <p>“Na nossa primeira viagem internacional, para Itália e França, a organização e o suporte da equipe WallTravel fizeram toda a diferença. Sempre atenciosos e disponíveis, nos deram tranquilidade para aproveitar cada momento. Esperamos viajar com a WallTravel muitas outras vezes!”</p>
+              </blockquote>
+              <p class="institucional-quote-author"><strong>Milena Medeiros</strong></p>
+              <p class="institucional-quote-meta">Viagem em família · Itália e França</p>
+              <p class="institucional-quote-note">Depoimento resumido e adaptado.</p>
+            </div>
+          </article>
+
+          <article class="institucional-story institucional-story--flip">
+            <div class="institucional-story-media institucional-story-media--pair">
+              <figure>
+                <picture>
+                  <source type="image/webp" srcset="/images/institucional/daniela-maldivas.webp">
+                  <img src="/images/institucional/daniela-maldivas.jpg" alt="Casal nas Maldivas, água turquesa e bangalôs sobre o mar" width="900" height="818" loading="lazy" decoding="async">
+                </picture>
+                <figcaption>Maldivas</figcaption>
+              </figure>
+              <figure>
+                <picture>
+                  <source type="image/webp" srcset="/images/institucional/daniela-noruega.webp">
+                  <img src="/images/institucional/daniela-noruega.jpg" alt="Casal na Noruega sob a aurora boreal" width="900" height="1289" loading="lazy" decoding="async">
+                </picture>
+                <figcaption>Noruega</figcaption>
+              </figure>
+            </div>
+            <div class="institucional-story-copy">
+              <h3>Dois destinos dos sonhos. O mesmo cuidado.</h3>
+              <blockquote class="institucional-quote">
+                <p>“Realizamos dois sonhos com a WallTravel: Maldivas e Noruega. Do paraíso nas ilhas à realização do sonho de ver a aurora boreal, cada detalhe foi cuidadosamente organizado. O grande diferencial foi ter uma equipe presente e disponível, mesmo do outro lado do mundo. Nossa única preocupação era aproveitar!”</p>
+              </blockquote>
+              <p class="institucional-quote-author"><strong>Daniela Costa</strong></p>
+              <p class="institucional-quote-meta">Viagens a dois · Maldivas e Noruega</p>
+              <p class="institucional-quote-note">Depoimento resumido e adaptado.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-rhythm-b fade-in-section" id="institucional-prova-social" aria-labelledby="institucional-prova-social-title">
+        <div class="section-container institucional-social">
           <div class="section-header section-header--editorial">
             <span class="section-tag">Prova social</span>
             <h2 class="section-title" id="institucional-prova-social-title">Onde acompanhar a WallTravel</h2>
-            <p class="section-lede">Instagram ativo e avaliações públicas. Depoimentos acima vêm do material institucional (resumidos e adaptados).</p>
+            <p class="section-lede">Instagram e avaliações públicas. Os depoimentos acima vêm do material institucional, resumidos e adaptados.</p>
           </div>
-          <ul class="institucional-social-links" role="list">
+          <ul class="institucional-social-row" role="list">
             <li>
               <a
-                class="institucional-social-link"
+                class="home-teaser-link"
                 data-institucional-social="instagram"
                 href="https://www.instagram.com/walltravel_/"
                 target="_blank"
                 rel="noopener noreferrer"
-              >Instagram</a>
-              <span>@walltravel_</span>
+              >Instagram · @walltravel_</a>
             </li>
             <li>
               <a
-                class="institucional-social-link"
+                class="home-teaser-link"
                 data-institucional-social="google"
                 href="https://www.google.com/maps/search/?api=1&amp;query=WallTravel%20Av.%20das%20Am%C3%A9ricas%2C%2019050%2C%20Recreio%20dos%20Bandeirantes%2C%20Rio%20de%20Janeiro"
                 target="_blank"
                 rel="noopener noreferrer"
-              >Google</a>
-              <span>Avaliações no Google Maps</span>
+              >Avaliações no Google</a>
             </li>
             <li>
-              <!-- TODO: INSTITUCIONAL_RECLAME_AQUI_URL — slug oficial ainda não confirmado no site/docs -->
-              <a
-                class="institucional-social-link institucional-social-link--pending"
+              <!-- TODO: INSTITUCIONAL_RECLAME_AQUI_URL — slug oficial ainda não confirmado -->
+              <span
+                class="institucional-social-pending"
                 data-institucional-social="reclame-aqui"
                 aria-disabled="true"
-                role="link"
-              >Reclame Aqui</a>
-              <span>Link a confirmar</span>
+              >Reclame Aqui · link a confirmar</span>
             </li>
           </ul>
         </div>
@@ -1012,19 +1019,12 @@
 
       <section class="section section-rhythm-olive-soft fade-in-section" id="institucional-cta" aria-labelledby="institucional-cta-title">
         <div class="section-container institucional-cta">
-          <span class="section-tag">08 / Sua próxima viagem</span>
-          <h2 class="section-title" id="institucional-cta-title">Sua próxima viagem começa com uma conversa.</h2>
-          <div class="institucional-cta-columns">
-            <div>
-              <h3>Já tem um destino em mente?</h3>
-              <p>Transformamos seus planos em uma viagem personalizada.</p>
-            </div>
-            <div>
-              <h3>Ainda não sabe para onde ir?</h3>
-              <p>Entendemos o que você busca viver e orientamos a escolha dos destinos e experiências de acordo com seus objetivos.</p>
-            </div>
+          <div class="section-header section-header--manifesto">
+            <span class="section-tag">Próximo passo</span>
+            <h2 class="section-title" id="institucional-cta-title">Sua próxima viagem começa com uma conversa.</h2>
+            <p class="section-lede">Já tem um destino em mente? Transformamos seus planos em uma viagem personalizada. Ainda não sabe para onde ir? Entendemos o que você busca viver e orientamos a escolha dos destinos e experiências.</p>
           </div>
-          <p class="institucional-cta-bar">Fale com nossa equipe e conte-nos seus planos.</p>
+          <p class="institucional-cta-prompt">Fale com nossa equipe e conte-nos seus planos.</p>
           <div class="home-destinos-ctas">
             <a
               href="#"
