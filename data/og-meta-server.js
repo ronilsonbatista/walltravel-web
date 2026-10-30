@@ -3,6 +3,12 @@
  * Bots that do not execute SPA JS get absolute title/description/image/url.
  */
 
+import {
+  INSTITUCIONAL_DESCRIPTION,
+  INSTITUCIONAL_OG_IMAGE_PATH,
+  INSTITUCIONAL_TITLE,
+} from "./institucional-meta.js";
+
 export const CANONICAL_ORIGIN = "https://www.walltravel.com.br";
 export const DEFAULT_OG_IMAGE_PATH = "/images/vitrine/noronha.jpg";
 export const DEFAULT_TITLE = "WallTravel | Experiências Incríveis";
@@ -199,6 +205,57 @@ function categoryMeta(item, siteOrigin, pathname) {
   };
 }
 
+export function isInstitucionalPath(pathname) {
+  const path = String(pathname || "/");
+  const trimmed = path.length > 1 && path.endsWith("/") ? path.slice(0, -1) : path;
+  return trimmed === "/institucional";
+}
+
+export function institucionalMeta(siteOrigin) {
+  const origin = String(siteOrigin || CANONICAL_ORIGIN).replace(/\/$/, "");
+  return {
+    title: INSTITUCIONAL_TITLE,
+    description: INSTITUCIONAL_DESCRIPTION,
+    imageUrl: toAbsoluteImageUrl(INSTITUCIONAL_OG_IMAGE_PATH, origin),
+    pageUrl: `${origin}/institucional`,
+  };
+}
+
+/**
+ * Patch the SPA document so a direct request for /institucional does not
+ * advertise the home Noronha share image. Leaves the home hero slide intact.
+ * @param {string} html
+ * @param {string} siteOrigin
+ */
+export function applyInstitucionalDocument(html, siteOrigin) {
+  const meta = institucionalMeta(siteOrigin);
+  let out = String(html);
+  const titleNext = out.replace(
+    /<title>[^<]*<\/title>/,
+    `<title>${escapeHtmlAttr(meta.title)}</title>`,
+  );
+  if (titleNext === out) throw new Error("missing title");
+  out = titleNext;
+  out = replaceMetaContent(out, "name", "description", meta.description);
+  out = replaceMetaContent(out, "property", "og:title", meta.title);
+  out = replaceMetaContent(out, "property", "og:description", meta.description);
+  out = replaceMetaContent(out, "property", "og:image", meta.imageUrl);
+  out = replaceMetaContent(out, "property", "og:url", meta.pageUrl);
+  out = replaceMetaContent(out, "name", "twitter:title", meta.title);
+  out = replaceMetaContent(out, "name", "twitter:description", meta.description);
+  out = replaceMetaContent(out, "name", "twitter:image", meta.imageUrl);
+  return out;
+}
+
+function replaceMetaContent(html, attrName, attrValue, content) {
+  const pattern = new RegExp(
+    `(<meta\\s+${attrName}="${attrValue}"\\s+content=")[^"]*("\\s*>)`,
+  );
+  const next = html.replace(pattern, `$1${escapeHtmlAttr(content)}$2`);
+  if (next === html) throw new Error(`missing meta ${attrName}=${attrValue}`);
+  return next;
+}
+
 export function defaultMeta(siteOrigin, pathname = "/") {
   return {
     title: DEFAULT_TITLE,
@@ -248,6 +305,10 @@ export async function resolveOgMeta({
 }) {
   const siteOrigin = resolveSiteOrigin(requestUrl, headers);
   const route = parseOgRoute(requestUrl);
+
+  if (isInstitucionalPath(route.pathname)) {
+    return institucionalMeta(siteOrigin);
+  }
 
   if (route.kind === "default" || !route.slug) {
     return defaultMeta(siteOrigin, route.pathname || "/");
