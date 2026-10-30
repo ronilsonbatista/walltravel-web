@@ -804,6 +804,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     packageView.style.display = 'none';
     if (groupsView) groupsView.style.display = 'none';
     if (comoFuncionaView) comoFuncionaView.style.display = 'none';
+    stopInstitucionalReviews();
     if (institucionalViewEl) institucionalViewEl.style.display = 'none';
     if (privacidadeView) privacidadeView.style.display = 'none';
     
@@ -815,25 +816,110 @@ document.addEventListener('DOMContentLoaded', async () => {
   const hydrateInstitucionalSocial = (root) => {
     if (!root) return;
     const setLink = (key, url) => {
-      const el = root.querySelector(`[data-institucional-social="${key}"]`);
-      if (!el) return;
-      if (!url) {
-        el.setAttribute("aria-disabled", "true");
-        if (el.tagName === "A") {
-          el.removeAttribute("href");
-          el.classList.add("institucional-social-pending");
+      root.querySelectorAll(`[data-institucional-social="${key}"]`).forEach((el) => {
+        if (!url) {
+          el.setAttribute("aria-disabled", "true");
+          if (el.tagName === "A") {
+            el.removeAttribute("href");
+            el.classList.add("institucional-social-pending");
+          }
+          return;
         }
-        return;
-      }
-      if (el.tagName === "A") {
-        el.href = url;
-        el.removeAttribute("aria-disabled");
-        el.classList.remove("institucional-social-pending");
-      }
+        if (el.tagName === "A") {
+          el.href = url;
+          el.removeAttribute("aria-disabled");
+          el.classList.remove("institucional-social-pending");
+        }
+      });
     };
     setLink("instagram", INSTITUCIONAL_INSTAGRAM_URL);
     setLink("google", INSTITUCIONAL_GOOGLE_REVIEWS_URL);
     setLink("reclame-aqui", INSTITUCIONAL_RECLAME_AQUI_URL);
+  };
+
+  let reviewTimer = 0;
+  const stopInstitucionalReviews = () => {
+    if (!reviewTimer) return;
+    window.clearInterval(reviewTimer);
+    reviewTimer = 0;
+  };
+
+  const bindInstitucionalReviews = (root) => {
+    const box = root?.querySelector("[data-i2-reviews]");
+    if (!box) return;
+    const slides = [...box.querySelectorAll(".i2-review-slide")];
+    const status = box.querySelector("[data-i2-review-status]");
+    const pauseBtn = box.querySelector("[data-i2-review-pause]");
+    if (slides.length < 2) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let index = slides.findIndex((slide) => slide.classList.contains("is-active"));
+    if (index < 0) index = 0;
+
+    const show = (next) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        const on = i === index;
+        slide.classList.toggle("is-active", on);
+        slide.toggleAttribute("inert", !on);
+        slide.setAttribute("aria-hidden", on ? "false" : "true");
+      });
+      if (status) status.textContent = `${index + 1} de ${slides.length}`;
+    };
+
+    const start = () => {
+      stopInstitucionalReviews();
+      if (motion.matches) return;
+      if (pauseBtn?.getAttribute("aria-pressed") === "true") return;
+      reviewTimer = window.setInterval(() => show(index + 1), 8000);
+    };
+
+    if (box.dataset.bound !== "1") {
+      box.dataset.bound = "1";
+      box.querySelector("[data-i2-review-prev]")?.addEventListener("click", () => {
+        stopInstitucionalReviews();
+        if (pauseBtn) {
+          pauseBtn.setAttribute("aria-pressed", "true");
+          pauseBtn.textContent = "Continuar";
+        }
+        show(index - 1);
+      });
+      box.querySelector("[data-i2-review-next]")?.addEventListener("click", () => {
+        stopInstitucionalReviews();
+        if (pauseBtn) {
+          pauseBtn.setAttribute("aria-pressed", "true");
+          pauseBtn.textContent = "Continuar";
+        }
+        show(index + 1);
+      });
+      pauseBtn?.addEventListener("click", () => {
+        const paused = pauseBtn.getAttribute("aria-pressed") === "true";
+        pauseBtn.setAttribute("aria-pressed", paused ? "false" : "true");
+        pauseBtn.textContent = paused ? "Pausar" : "Continuar";
+        if (paused) start();
+        else stopInstitucionalReviews();
+      });
+      box.addEventListener("mouseenter", stopInstitucionalReviews);
+      box.addEventListener("mouseleave", start);
+      box.addEventListener("focusin", stopInstitucionalReviews);
+      box.addEventListener("focusout", (event) => {
+        if (!box.contains(event.relatedTarget)) start();
+      });
+      if (typeof motion.addEventListener === "function") {
+        motion.addEventListener("change", () => {
+          if (motion.matches) {
+            stopInstitucionalReviews();
+            if (pauseBtn) pauseBtn.hidden = true;
+          } else if (pauseBtn) {
+            pauseBtn.hidden = false;
+            start();
+          }
+        });
+      }
+    }
+
+    if (motion.matches && pauseBtn) pauseBtn.hidden = true;
+    show(index);
+    start();
   };
 
   let sectionObserver = null;
@@ -1135,6 +1221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             institucionalViewEl.querySelector('[data-route-hydrate="institucional"]')
           );
           hydrateInstitucionalSocial(institucionalViewEl);
+          bindInstitucionalReviews(institucionalViewEl);
           hydrateWhatsAppCTAs(institucionalViewEl);
         }
         updateSEO(

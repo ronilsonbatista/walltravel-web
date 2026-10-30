@@ -31,6 +31,8 @@ describe("/institucional editorial page", () => {
     assert.match(page, /Pessoas por trás de cada viagem/);
     assert.match(page, /Seu jeito de viajar\. Nosso cuidado/);
     assert.match(page, /Histórias que ficam/);
+    assert.match(page, /data-i2-reviews/);
+    assert.match(page, /Quem viajou com a gente/);
     assert.doesNotMatch(page, /Se quiser, a gente conversa/);
     assert.doesNotMatch(page, /Sem pressa/);
     assert.doesNotMatch(page, /Falar com a gente/);
@@ -60,6 +62,21 @@ describe("/institucional editorial page", () => {
     assert.doesNotMatch(page, /Prova social/);
     assert.doesNotMatch(page, /\+35/);
     assert.doesNotMatch(page, /24h/);
+    assert.doesNotMatch(page, /★|estrelas|5,0|5\.0/);
+  });
+
+  it("closes with the approved quotes and the existing Google reviews link", () => {
+    const css = readFileSync(join(root, "index.css"), "utf8");
+    const social = readFileSync(join(root, "data/institucional-social.js"), "utf8");
+    const google = social.match(/INSTITUCIONAL_GOOGLE_REVIEWS_URL\s*=\s*\n?\s*"([^"]+)"/);
+    assert.ok(google, "missing Google reviews URL");
+    assert.match(page, /data-i2-reviews/);
+    assert.equal((page.match(/Milena Medeiros/g) || []).length, 2);
+    assert.equal((page.match(/Daniela Costa/g) || []).length, 2);
+    assert.match(page, /data-institucional-social="google"/);
+    assert.ok(page.includes(google[1].replaceAll("&", "&amp;")));
+    assert.match(css, /prefers-reduced-motion:\s*reduce/);
+    assert.match(css, /\.i2-review-slide/);
   });
 
   it("redirects the comparison URL and stays out of the sitemap and the menu", () => {
