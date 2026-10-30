@@ -1131,6 +1131,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         header.classList.add('scrolled');
         if (institucionalViewEl) {
           institucionalViewEl.style.display = 'block';
+          hydrateDeferredPicture(
+            institucionalViewEl.querySelector('[data-route-hydrate="institucional"]')
+          );
           hydrateInstitucionalSocial(institucionalViewEl);
           hydrateWhatsAppCTAs(institucionalViewEl);
         }
