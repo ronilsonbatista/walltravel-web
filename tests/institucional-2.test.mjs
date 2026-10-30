@@ -23,15 +23,19 @@ describe("/institucional editorial page", () => {
   it("is the short editorial layout on the main route", () => {
     assert.equal((html.match(/id="institucional-view"/g) || []).length, 1);
     assert.doesNotMatch(html, /id="institucional-2-view"/);
-    assert.doesNotMatch(page, /institucional-mast/);
-    assert.doesNotMatch(page, /noruega-aurora/);
+    assert.match(page, /institucional-mast/);
+    assert.match(page, /noruega-aurora/);
+    assert.doesNotMatch(page, /i2-collage/);
     assert.match(page, /Escolher bem muda tudo/);
     assert.match(page, /Viagens sob medida, com pessoas que cuidam de cada detalhe/);
     assert.match(page, /Pessoas por trás de cada viagem/);
     assert.match(page, /Seu jeito de viajar\. Nosso cuidado/);
     assert.match(page, /Histórias que ficam/);
-    assert.match(page, /Vamos conversar sobre viajar\?/);
-    assert.match(page, /Entre em contato/);
+    assert.match(page, /Se quiser, a gente conversa/);
+    assert.match(page, /Sem pressa/);
+    assert.match(page, /Falar com a gente/);
+    assert.doesNotMatch(page, /Vamos conversar sobre viajar/);
+    assert.doesNotMatch(page, /Entre em contato/);
     assert.match(page, /<h3>Escuta<\/h3>/);
     assert.match(page, /<h3>Curadoria<\/h3>/);
     assert.match(page, /<h3>Acompanhamento<\/h3>/);

@@ -8186,24 +8186,96 @@ html.wt-route-institucional .whatsapp-float {
 }
 
 .i2-page .section {
-  padding-top: clamp(4.5rem, 8vw, 7.5rem);
-  padding-bottom: clamp(4.5rem, 8vw, 7.5rem);
+  padding-top: clamp(3.5rem, 5vw, 4.5rem);
+  padding-bottom: clamp(3.5rem, 5vw, 4.5rem);
+}
+
+.i2-page .i2-team-band {
+  padding-top: clamp(4.25rem, 6vw, 5.5rem);
 }
 
 .i2-page .section + .section {
-  border-top: 1px solid rgba(63, 67, 40, 0.12);
+  border-top: 1px solid rgba(63, 67, 40, 0.14);
 }
 
-.i2-page .i2-open-band {
-  /* Clear the fixed header only. The old .page-view offset left a cream band. */
-  padding-top: clamp(6.75rem, 5.4rem + 1.6vw, 7.75rem);
-}
-
-.i2-open {
+.institucional-mast {
+  position: relative;
+  min-height: clamp(58svh, 64vw, 74svh);
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: start;
+  align-items: end;
+  overflow: hidden;
+  background: #3F4328;
+  color: #F6F1E8;
+}
+
+.institucional-mast > picture,
+.institucional-mast > img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.institucional-mast img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  display: block;
+}
+
+.institucional-mast-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22, 23, 15, 0.28) 0%,
+      rgba(22, 23, 15, 0.2) 38%,
+      rgba(22, 23, 15, 0.82) 100%
+    );
+  pointer-events: none;
+}
+
+.institucional-mast-content {
+  position: relative;
+  z-index: 1;
+  padding-top: clamp(6.75rem, 5.4rem + 2vw, 8.5rem);
+  padding-bottom: clamp(2.75rem, 5vw, 4rem);
+  max-width: 40rem;
+}
+
+.institucional-mast-title {
+  margin: 1.15rem 0 0;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: clamp(2.55rem, 1.4rem + 3.1vw, 4.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  color: #F6F1E8;
+  max-width: 12ch;
+}
+
+.institucional-mast .i2-gold-rule {
+  background: #B8A66A;
+}
+
+.institucional-mast-lede {
+  margin: 0;
+  max-width: 28rem;
+  color: rgba(246, 241, 232, 0.92);
+  font-size: clamp(1.05rem, 0.98rem + 0.25vw, 1.22rem);
+  line-height: 1.7;
+}
+
+.institucional-mast .i2-text-link {
+  color: #F6F1E8;
+  border-bottom-color: rgba(246, 241, 232, 0.55);
+}
+
+.institucional-mast .i2-text-link:hover {
+  border-bottom-color: #F6F1E8;
 }
 
 .i2-title {
@@ -8257,74 +8329,6 @@ html.wt-route-institucional .whatsapp-float {
 
 .i2-text-link:hover {
   border-bottom-color: #3F4328;
-}
-
-.i2-collage {
-  position: relative;
-  width: 100%;
-  max-width: 34rem;
-  margin-left: auto;
-  aspect-ratio: 5 / 4.35;
-}
-
-.i2-shot {
-  position: absolute;
-  box-sizing: border-box;
-  margin: 0;
-  background: #F6F1E8;
-  border: 1px solid #3F4328;
-  padding: 0.4rem;
-  box-shadow: 0 14px 32px rgba(63, 67, 40, 0.12);
-  overflow: hidden;
-}
-
-.i2-shot picture {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.i2-shot img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.i2-shot--milena {
-  width: 48%;
-  height: 64%;
-  left: 0;
-  top: 12%;
-  z-index: 1;
-}
-
-.i2-shot--milena img {
-  object-position: center 70%;
-}
-
-.i2-shot--noruega {
-  width: 44%;
-  height: 58%;
-  right: 0;
-  top: 0;
-  z-index: 2;
-}
-
-.i2-shot--noruega img {
-  object-position: center 84%;
-}
-
-.i2-shot--maldivas {
-  width: 64%;
-  height: 46%;
-  left: 14%;
-  bottom: 0;
-  z-index: 3;
-}
-
-.i2-shot--maldivas img {
-  object-position: center 72%;
 }
 
 .i2-team-head {
@@ -8463,13 +8467,13 @@ html.wt-route-institucional .whatsapp-float {
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: clamp(1.75rem, 4vw, 3.5rem);
   align-items: start;
-  margin-top: clamp(2.75rem, 5vw, 4.25rem);
+  margin-top: clamp(2.25rem, 4vw, 3.25rem);
 }
 
 .i2-story + .i2-story {
-  margin-top: clamp(3.25rem, 6vw, 5.5rem);
-  padding-top: clamp(3.25rem, 6vw, 5.5rem);
-  border-top: 1px solid rgba(63, 67, 40, 0.12);
+  margin-top: clamp(3.25rem, 5vw, 4.5rem);
+  padding-top: clamp(3.25rem, 5vw, 4.5rem);
+  border-top: 1px solid rgba(63, 67, 40, 0.14);
 }
 
 .i2-photo {
@@ -8523,8 +8527,26 @@ html.wt-route-institucional .whatsapp-float {
   color: #5C5E54;
 }
 
+.i2-page .i2-close {
+  padding-top: clamp(3.25rem, 4.5vw, 4.25rem);
+  padding-bottom: clamp(1.25rem, 2.5vw, 2rem);
+  border-top: 0;
+}
+
 .i2-close-inner {
-  max-width: 34rem;
+  max-width: 26rem;
+}
+
+.i2-close .i2-title {
+  font-size: clamp(1.85rem, 1.15rem + 1.5vw, 2.45rem);
+  line-height: 1.15;
+  max-width: 14em;
+}
+
+.i2-close .i2-lede {
+  margin-top: 0.85rem;
+  color: #5C5E54;
+  font-size: 1.05rem;
 }
 
 .i2-btn {
@@ -8532,23 +8554,24 @@ html.wt-route-institucional .whatsapp-float {
   align-items: center;
   justify-content: center;
   min-height: 44px;
-  margin-top: 1.75rem;
-  padding: 0.75rem 1.3rem;
-  background: #3F4328;
-  color: #F6F1E8;
-  border: 1px solid #3F4328;
-  border-radius: 6px;
+  margin-top: 1.35rem;
+  padding: 0.65rem 1.15rem;
+  background: transparent;
+  color: #3F4328;
+  border: 1px solid rgba(63, 67, 40, 0.45);
+  border-radius: 999px;
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  text-transform: none;
   text-decoration: none;
 }
 
 .i2-btn:hover {
-  background: #31341f;
+  background: #3F4328;
   color: #F6F1E8;
+  border-color: #3F4328;
 }
 
 .i2-social-wrap {
@@ -8577,27 +8600,10 @@ html.wt-route-institucional .whatsapp-float {
   border-bottom-color: #3F4328;
 }
 
-@media (max-width: 1024px) {
-  .i2-open {
-    gap: 2.25rem;
-  }
-}
-
 @media (max-width: 900px) {
   .i2-team {
     grid-template-columns: 1fr;
     max-width: 26rem;
-  }
-}
-
-@media (max-width: 860px) {
-  .i2-open {
-    grid-template-columns: 1fr;
-  }
-
-  .i2-collage {
-    max-width: none;
-    margin-left: 0;
   }
 }
 
@@ -8623,6 +8629,10 @@ html.wt-route-institucional .whatsapp-float {
 }
 
 @media (max-width: 640px) {
+  .institucional-mast {
+    min-height: 70svh;
+  }
+
   .i2-pair {
     grid-template-columns: 1fr;
   }
@@ -8635,33 +8645,7 @@ html.wt-route-institucional .whatsapp-float {
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .i2-shot {
-    animation: i2Settle 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  .i2-shot--noruega {
-    animation-delay: 0.08s;
-  }
-
-  .i2-shot--maldivas {
-    animation-delay: 0.16s;
-  }
-}
-
-@keyframes i2Settle {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .i2-shot,
   .sobre-nos-arrow,
   .i2-btn,
   .i2-text-link {
