@@ -26,6 +26,7 @@
     /* Deep-links: hide footer/float until the route shell paints (avoids footer-first flash). */
     html.wt-boot-pending footer,
     html.wt-boot-pending .whatsapp-float{display:none!important}
+    html.wt-route-institucional-2 .whatsapp-float{display:none!important}
     html.wt-boot-pending .wt-route-shell{
       min-height:calc(100svh - 5rem);display:flex;align-items:center;justify-content:center;
       padding:6rem 1.25rem 4rem;background:#F6F1E8;box-sizing:border-box
@@ -207,7 +208,11 @@
           <li><a href="/black" class="nav-link nav-link--bwt">Black</a></li>
           <li><a href="/grupos" class="nav-link">Expedições em grupo</a></li>
           <li><a href="/como-funciona" class="nav-link">Como funciona</a></li>
-          <li class="nav-cta-item"><a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-context="site" data-wa-placement="nav-cta" target="_blank" rel="noopener" class="nav-cta">Falar com especialista</a></li>
+          <li class="i2-nav-item"><a href="#i2-viagem" class="nav-link">Viagem</a></li>
+          <li class="i2-nav-item"><a href="#i2-equipe" class="nav-link">Equipe</a></li>
+          <li class="i2-nav-item"><a href="#i2-cuidado" class="nav-link">Cuidado</a></li>
+          <li class="i2-nav-item"><a href="#i2-historias" class="nav-link">Histórias</a></li>
+          <li class="nav-cta-item"><a href="#" data-wa-cta data-wa-page-type="HOME" data-wa-context="site" data-wa-placement="nav-cta" target="_blank" rel="noopener" class="nav-cta"><span class="nav-cta-full">Falar com especialista</span><span class="nav-cta-quiet">Contato</span></a></li>
         </ul>
       </nav>
     </div>
@@ -538,7 +543,7 @@
     <div class="section-container">
       <div class="team-container team-container--editorial">
         <div class="team-content">
-          <span class="section-tag" style="margin-bottom: 1rem; display: block;">Sobre nós</span>
+          <span class="section-tag sobre-nos-mark">Sobre nós<a class="sobre-nos-arrow" href="/institucional-2" aria-label="Ver a página editorial Sobre nós"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h12M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
           <h2 class="section-title" style="margin-bottom: 2rem;">Quem cuida da sua viagem</h2>
           
           <p class="team-lead">Somos <strong>Wallace, Weslley e Ronilson</strong>: três pessoas que transformaram a paixão por viajar em um trabalho de seleção e presença.</p>
@@ -1038,6 +1043,199 @@
   </div>
 
   <!-- ==========================================================================
+       PAGE: INSTITUCIONAL 2 (/institucional-2) — editorial acolhedor, comparação
+       ========================================================================== -->
+  <div id="institucional-2-view" class="page-view" style="display: none;">
+    <div class="i2-page">
+      <section class="section i2-open-band" id="i2-viagem" aria-labelledby="i2-viagem-title">
+        <div class="section-container i2-open">
+          <div class="i2-open-copy">
+            <h1 class="i2-title" id="i2-viagem-title">Escolher bem muda tudo.</h1>
+            <span class="i2-gold-rule" aria-hidden="true"></span>
+            <p class="i2-lede">Viagens sob medida, com pessoas que cuidam de cada detalhe.</p>
+            <a class="i2-text-link" href="#i2-equipe">Conheça quem está por trás</a>
+          </div>
+          <div class="i2-collage" role="group" aria-label="Fotos de viagens de clientes">
+            <figure class="i2-shot i2-shot--milena">
+              <picture>
+                <source type="image/webp" srcset="/images/institucional/milena-familia.webp">
+                <img src="/images/institucional/milena-familia.jpg" alt="Família em um caminho entre ciprestes, na viagem pela Itália e França" width="1200" height="1605" decoding="async" fetchpriority="high">
+              </picture>
+            </figure>
+            <figure class="i2-shot i2-shot--noruega">
+              <picture>
+                <source type="image/webp" srcset="/images/institucional/daniela-noruega.webp">
+                <img src="/images/institucional/daniela-noruega.jpg" alt="Casal sob a aurora boreal na Noruega" width="900" height="1289" decoding="async">
+              </picture>
+            </figure>
+            <figure class="i2-shot i2-shot--maldivas">
+              <picture>
+                <source type="image/webp" srcset="/images/institucional/daniela-maldivas.webp">
+                <img src="/images/institucional/daniela-maldivas.jpg" alt="Casal nas águas turquesa das Maldivas, com bangalôs sobre o mar" width="900" height="818" decoding="async">
+              </picture>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section i2-team-band" id="i2-equipe" aria-labelledby="i2-equipe-title">
+        <div class="section-container">
+          <div class="i2-team-head">
+            <h2 class="i2-title i2-title--section" id="i2-equipe-title">Pessoas por trás de cada viagem.</h2>
+            <p class="i2-body">A WallTravel planeja viagens sob medida, combinando curadoria de destinos, organização e acompanhamento em cada etapa.</p>
+            <p class="i2-stats">
+              <span><strong>6+</strong> anos de experiência da equipe</span>
+              <span class="i2-stats-dot" aria-hidden="true"></span>
+              <span><strong>450+</strong> viajantes atendidos</span>
+            </p>
+          </div>
+          <ul class="i2-team" role="list">
+            <li class="i2-person">
+              <figure class="i2-frame">
+                <picture>
+                  <source type="image/webp" srcset="/images/institucional/wallace.webp">
+                  <img src="/images/institucional/wallace.jpg" alt="Wallace, sócio da WallTravel" width="900" height="1200" loading="lazy" decoding="async">
+                </picture>
+              </figure>
+              <p class="i2-person-name">Wallace</p>
+              <p class="i2-person-role">Sócio</p>
+            </li>
+            <li class="i2-person">
+              <figure class="i2-frame">
+                <picture>
+                  <source type="image/webp" srcset="/images/institucional/ronilson.webp">
+                  <img src="/images/institucional/ronilson.jpg" alt="Ronilson, sócio da WallTravel" width="900" height="1200" loading="lazy" decoding="async">
+                </picture>
+              </figure>
+              <p class="i2-person-name">Ronilson</p>
+              <p class="i2-person-role">Sócio</p>
+            </li>
+            <li class="i2-person">
+              <figure class="i2-frame">
+                <picture>
+                  <source type="image/webp" srcset="/images/institucional/weslley.webp">
+                  <img src="/images/institucional/weslley.jpg" alt="Weslley, sócio da WallTravel" width="900" height="1200" loading="lazy" decoding="async">
+                </picture>
+              </figure>
+              <p class="i2-person-name">Weslley</p>
+              <p class="i2-person-role">Sócio</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section i2-care" id="i2-cuidado" aria-labelledby="i2-cuidado-title">
+        <div class="section-container">
+          <h2 class="i2-title i2-title--section" id="i2-cuidado-title">Seu jeito de viajar. Nosso cuidado.</h2>
+          <ul class="i2-pillars" role="list">
+            <li>
+              <h3>Escuta</h3>
+              <p>Seus interesses, seu ritmo e suas prioridades orientam cada escolha.</p>
+            </li>
+            <li>
+              <h3>Curadoria</h3>
+              <p>Selecionamos destinos, hospedagens e experiências considerando o que você deseja viver e o investimento previsto para a viagem. Voos, deslocamentos e passeios entram nessa seleção.</p>
+            </li>
+            <li>
+              <h3>Acompanhamento</h3>
+              <p>Antes de viajar, organizamos reservas, roteiro e as informações essenciais. Durante a viagem, a equipe está disponível para auxiliar com dúvidas e imprevistos.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section i2-stories" id="i2-historias" aria-labelledby="i2-historias-title">
+        <div class="section-container">
+          <h2 class="i2-title i2-title--section" id="i2-historias-title">Histórias que ficam.</h2>
+
+          <article class="i2-story">
+            <figure class="i2-frame i2-frame--story">
+              <picture>
+                <source type="image/webp" srcset="/images/institucional/milena-familia.webp">
+                <img src="/images/institucional/milena-familia.jpg" alt="Família Medeiros em um caminho entre ciprestes, na viagem pela Itália e França" width="1200" height="1605" loading="lazy" decoding="async">
+              </picture>
+            </figure>
+            <div class="i2-story-copy">
+              <blockquote class="i2-quote">
+                <p>“Na nossa primeira viagem internacional, para Itália e França, a organização e o suporte da equipe WallTravel fizeram toda a diferença. Sempre atenciosos e disponíveis, nos deram tranquilidade para aproveitar cada momento. Esperamos viajar com a WallTravel muitas outras vezes!”</p>
+              </blockquote>
+              <p class="i2-story-name">Milena Medeiros</p>
+              <p class="i2-story-place">Itália e França</p>
+              <p class="i2-note">Depoimento resumido e adaptado.</p>
+            </div>
+          </article>
+
+          <article class="i2-story">
+            <div class="i2-pair">
+              <figure class="i2-photo">
+                <div class="i2-frame i2-frame--story">
+                  <picture>
+                    <source type="image/webp" srcset="/images/institucional/daniela-maldivas.webp">
+                    <img src="/images/institucional/daniela-maldivas.jpg" alt="Casal nas Maldivas, água turquesa e bangalôs sobre o mar" width="900" height="818" loading="lazy" decoding="async">
+                  </picture>
+                </div>
+                <figcaption>Maldivas</figcaption>
+              </figure>
+              <figure class="i2-photo">
+                <div class="i2-frame i2-frame--story">
+                  <picture>
+                    <source type="image/webp" srcset="/images/institucional/daniela-noruega.webp">
+                    <img src="/images/institucional/daniela-noruega.jpg" alt="Casal na Noruega sob a aurora boreal" width="900" height="1289" loading="lazy" decoding="async">
+                  </picture>
+                </div>
+                <figcaption>Noruega</figcaption>
+              </figure>
+            </div>
+            <div class="i2-story-copy">
+              <blockquote class="i2-quote">
+                <p>“Realizamos dois sonhos com a WallTravel: Maldivas e Noruega. Do paraíso nas ilhas à realização do sonho de ver a aurora boreal, cada detalhe foi cuidadosamente organizado. O grande diferencial foi ter uma equipe presente e disponível, mesmo do outro lado do mundo. Nossa única preocupação era aproveitar!”</p>
+              </blockquote>
+              <p class="i2-story-name">Daniela Costa</p>
+              <p class="i2-story-place">Maldivas e Noruega</p>
+              <p class="i2-note">Depoimento resumido e adaptado.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section i2-close" id="i2-contato" aria-labelledby="i2-contato-title">
+        <div class="section-container i2-close-inner">
+          <h2 class="i2-title i2-title--section" id="i2-contato-title">Vamos conversar sobre viajar?</h2>
+          <p class="i2-lede">Conte para a gente os seus planos.</p>
+          <a
+            class="i2-btn"
+            href="#"
+            data-wa-cta
+            data-wa-page-type="ABOUT"
+            data-wa-context="site"
+            data-wa-placement="institucional-2-cta"
+            target="_blank"
+            rel="noopener"
+          >Entre em contato</a>
+        </div>
+      </section>
+
+      <div class="i2-social-wrap">
+        <div class="section-container">
+          <ul class="i2-social" aria-label="Instagram e avaliações">
+            <li>
+              <a href="https://www.instagram.com/walltravel_/" target="_blank" rel="noopener noreferrer" data-institucional-social="instagram">Instagram</a>
+            </li>
+            <li>
+              <a
+                href="https://www.google.com/maps/search/?api=1&amp;query=WallTravel%20Av.%20das%20Am%C3%A9ricas%2C%2019050%2C%20Recreio%20dos%20Bandeirantes%2C%20Rio%20de%20Janeiro"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-institucional-social="google"
+              >Avaliações no Google</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
        PAGE: POLÍTICA DE PRIVACIDADE (/privacidade)
        ========================================================================== -->
   <div id="privacidade-view" class="page-view" style="display: none;">
@@ -1167,6 +1365,9 @@
   <script>
     (function () {
       var path = location.pathname || "/";
+      if (path === "/institucional-2" || path === "/institucional-2/") {
+        document.documentElement.classList.add("wt-route-institucional-2");
+      }
       var isHome = path === "/" || path === "/index.html";
       if (isHome) return;
       document.documentElement.classList.add("wt-boot-pending");
@@ -1180,6 +1381,7 @@
         if (p.indexOf("/pacote/") === 0 || p.indexOf("/viagens/") === 0) return "package-view";
         if (p === "/grupos" || p === "/grupos/" || p.indexOf("/grupos/") === 0) return "groups-view";
         if (p === "/como-funciona" || p === "/como-funciona/") return "como-funciona-view";
+        if (p === "/institucional-2" || p === "/institucional-2/") return "institucional-2-view";
         if (p === "/institucional" || p === "/institucional/") return "institucional-view";
         if (p === "/privacidade" || p === "/privacidade/") return "privacidade-view";
         return null;
@@ -1188,7 +1390,7 @@
       var el = id && document.getElementById(id);
       if (!el) return;
       el.style.display = "block";
-      if (id !== "como-funciona-view" && id !== "institucional-view" && id !== "privacidade-view" && el.children.length === 0) {
+      if (id !== "como-funciona-view" && id !== "institucional-view" && id !== "institucional-2-view" && id !== "privacidade-view" && el.children.length === 0) {
         el.innerHTML =
           '<div class="wt-route-shell" aria-busy="true" aria-live="polite">' +
           '<p class="wt-route-shell-label">Carregando…</p></div>';
