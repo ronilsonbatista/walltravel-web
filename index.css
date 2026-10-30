@@ -2582,7 +2582,9 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
 #black-view.page-view,
 #groups-view.page-view,
 #package-view.page-view,
-#como-funciona-view.page-view {
+#como-funciona-view.page-view,
+#institucional-view.page-view,
+#institucional-2-view.page-view {
   padding-top: 0;
 }
 
@@ -3492,7 +3494,9 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   #category-view.page-view,
   #groups-view.page-view,
   #package-view.page-view,
-  #como-funciona-view.page-view {
+  #como-funciona-view.page-view,
+  #institucional-view.page-view,
+  #institucional-2-view.page-view {
     padding-top: 0;
   }
 
@@ -8769,14 +8773,15 @@ html.wt-route-institucional-2 .whatsapp-float {
 }
 
 .i2-page .i2-open-band {
-  padding-top: clamp(2.5rem, 5vw, 4.25rem);
+  /* Clear the fixed header only. The old .page-view offset left a cream band. */
+  padding-top: clamp(6.75rem, 5.4rem + 1.6vw, 7.75rem);
 }
 
 .i2-open {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
   gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: center;
+  align-items: start;
 }
 
 .i2-title {
