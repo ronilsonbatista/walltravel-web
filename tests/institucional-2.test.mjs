@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(join(root, "index.html"), "utf8");
 const sitemap = readFileSync(join(root, "api/sitemap.js"), "utf8");
+const vercel = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
 
 function sliceView(id) {
   const start = html.indexOf(`id="${id}"`);
@@ -16,19 +17,27 @@ function sliceView(id) {
   return html.slice(start, end);
 }
 
-describe("/institucional-2 comparison page", () => {
-  const page = sliceView("institucional-2-view");
-  const current = sliceView("institucional-view");
+describe("/institucional editorial page", () => {
+  const page = sliceView("institucional-view");
 
-  it("keeps /institucional and adds a separate route", () => {
-    assert.match(current, /Escolher bem muda tudo/);
+  it("is the short editorial layout on the main route", () => {
+    assert.equal((html.match(/id="institucional-view"/g) || []).length, 1);
+    assert.doesNotMatch(html, /id="institucional-2-view"/);
+    assert.doesNotMatch(page, /institucional-mast/);
+    assert.doesNotMatch(page, /noruega-aurora/);
+    assert.match(page, /Escolher bem muda tudo/);
     assert.match(page, /Viagens sob medida, com pessoas que cuidam de cada detalhe/);
     assert.match(page, /Pessoas por trás de cada viagem/);
     assert.match(page, /Seu jeito de viajar\. Nosso cuidado/);
     assert.match(page, /Histórias que ficam/);
     assert.match(page, /Vamos conversar sobre viajar\?/);
     assert.match(page, /Entre em contato/);
-    assert.match(html, /href="\/institucional-2"/);
+    assert.match(page, /<h3>Escuta<\/h3>/);
+    assert.match(page, /<h3>Curadoria<\/h3>/);
+    assert.match(page, /<h3>Acompanhamento<\/h3>/);
+    assert.doesNotMatch(html, /href="\/institucional-2"/);
+    assert.match(html, /class="sobre-nos-arrow" href="\/institucional"/);
+    assert.doesNotMatch(html, /i2-nav-item/);
   });
 
   it("uses approved names, quotes, and secondary team stats", () => {
@@ -45,10 +54,21 @@ describe("/institucional-2 comparison page", () => {
     assert.doesNotMatch(page, /Reclame Aqui/);
     assert.doesNotMatch(page, /Prova social/);
     assert.doesNotMatch(page, /\+35/);
+    assert.doesNotMatch(page, /24h/);
   });
 
-  it("stays out of the sitemap", () => {
+  it("redirects the comparison URL and stays out of the sitemap and the menu", () => {
+    const redirect = (vercel.redirects || []).find((r) => r.source === "/institucional-2");
+    assert.ok(redirect);
+    assert.equal(redirect.destination, "/institucional");
+    assert.equal(redirect.permanent, true);
     assert.doesNotMatch(sitemap, /institucional-2/);
     assert.doesNotMatch(sitemap, /institucional/);
+    const nav = html.slice(html.indexOf('aria-label="Principal"'), html.indexOf("</nav>"));
+    assert.match(nav, />Vitrine</);
+    assert.match(nav, />Black</);
+    assert.match(nav, />Expedições em grupo</);
+    assert.match(nav, />Como funciona</);
+    assert.doesNotMatch(nav, /Sobre nós|Viagem|Equipe|Cuidado|Histórias/);
   });
 });

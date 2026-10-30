@@ -90,6 +90,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* ignore */
   }
 
+  if (
+    window.location.pathname === "/institucional-2" ||
+    window.location.pathname === "/institucional-2/"
+  ) {
+    window.history.replaceState(
+      null,
+      "",
+      "/institucional" + window.location.search + window.location.hash
+    );
+  }
+
   const bootPathEarly = window.location.pathname;
   const bootIsHomeEarly = bootPathEarly === "/" || bootPathEarly === "/index.html";
 
@@ -102,8 +113,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       return "groups-view";
     }
     if (path === "/como-funciona" || path === "/como-funciona/") return "como-funciona-view";
-    if (path === "/institucional-2" || path === "/institucional-2/") return "institucional-2-view";
-    if (path === "/institucional" || path === "/institucional/") return "institucional-view";
+    if (
+      path === "/institucional" ||
+      path === "/institucional/" ||
+      path === "/institucional-2" ||
+      path === "/institucional-2/"
+    ) {
+      return "institucional-view";
+    }
     if (path === "/privacidade" || path === "/privacidade/") return "privacidade-view";
     return null;
   };
@@ -133,7 +150,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (
       id !== "como-funciona-view" &&
       id !== "institucional-view" &&
-      id !== "institucional-2-view" &&
       id !== "privacidade-view" &&
       !el.querySelector(".wt-route-shell") &&
       el.children.length === 0
@@ -757,7 +773,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const groupsView = document.getElementById('groups-view');
   const comoFuncionaView = document.getElementById('como-funciona-view');
   const institucionalViewEl = document.getElementById('institucional-view');
-  const institucional2ViewEl = document.getElementById('institucional-2-view');
   const privacidadeView = document.getElementById('privacidade-view');
 
   /** Bumps on every navigation so late async paints cannot flash the previous slug. */
@@ -790,7 +805,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (groupsView) groupsView.style.display = 'none';
     if (comoFuncionaView) comoFuncionaView.style.display = 'none';
     if (institucionalViewEl) institucionalViewEl.style.display = 'none';
-    if (institucional2ViewEl) institucional2ViewEl.style.display = 'none';
     if (privacidadeView) privacidadeView.style.display = 'none';
     
     // Clean up any sticky bottom bar that might be active
@@ -975,9 +989,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Route router logic
   const handleRouting = async () => {
-    const path = window.location.pathname;
     const routeSearch = window.location.search || "";
     const routeHash = window.location.hash;
+    if (
+      window.location.pathname === "/institucional-2" ||
+      window.location.pathname === "/institucional-2/"
+    ) {
+      window.history.replaceState(null, "", "/institucional" + routeSearch + routeHash);
+    }
+    const path = window.location.pathname;
     const wantsHash = Boolean(routeHash && routeHash !== '#');
 
     // Parent date filters on /vitrine: update only the results region — keep mast/filters chrome.
@@ -1013,8 +1033,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     syncHomeIntroForRoute(path);
     syncBlackRouteChrome(path);
     document.documentElement.classList.toggle(
-      'wt-route-institucional-2',
-      path === '/institucional-2' || path === '/institucional-2/'
+      'wt-route-institucional',
+      path === '/institucional' || path === '/institucional/'
     );
     if (!wantsHash) resetScrollToTop();
 
@@ -1107,31 +1127,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           "Como funciona | WallTravel",
           "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem, com critério e presença."
         );
-      } else if (path === '/institucional-2' || path === '/institucional-2/') {
-        header.classList.add('scrolled');
-        if (institucional2ViewEl) {
-          institucional2ViewEl.style.display = 'block';
-          hydrateInstitucionalSocial(institucional2ViewEl);
-          hydrateWhatsAppCTAs(institucional2ViewEl);
-        }
-        updateSEO(
-          "Sobre nós",
-          "Escolher bem muda tudo. Viagens sob medida, com pessoas que cuidam de cada detalhe."
-        );
       } else if (path === '/institucional' || path === '/institucional/') {
         header.classList.add('scrolled');
         if (institucionalViewEl) {
           institucionalViewEl.style.display = 'block';
-          hydrateDeferredPicture(
-            institucionalViewEl.querySelector('[data-route-hydrate="institucional"]')
-          );
           hydrateInstitucionalSocial(institucionalViewEl);
           hydrateWhatsAppCTAs(institucionalViewEl);
-          revealFadeSections(institucionalViewEl);
         }
         updateSEO(
-          "Institucional | WallTravel",
-          "Escolher bem muda tudo. Viagens personalizadas com assessoria completa, equipe e acompanhamento em cada etapa."
+          "Sobre nós | WallTravel",
+          "Escolher bem muda tudo. Viagens sob medida, com pessoas que cuidam de cada detalhe."
         );
       } else if (path === '/privacidade' || path === '/privacidade/') {
         header.classList.add('scrolled');
@@ -1220,7 +1225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       pageType = "BLACK";
     }
 
-    const hideFloat = path === "/institucional-2" || path === "/institucional-2/";
+    const hideFloat = path === "/institucional" || path === "/institucional/";
     float.toggleAttribute("hidden", hideFloat);
     if (hideFloat) {
       float.setAttribute("aria-hidden", "true");

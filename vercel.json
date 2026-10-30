@@ -36,6 +36,11 @@
   ],
   "redirects": [
     {
+      "source": "/institucional-2",
+      "destination": "/institucional",
+      "permanent": true
+    },
+    {
       "source": "/viagens/japao-essencial",
       "destination": "/viagens/japao-essencial-sao-paulo",
       "permanent": true
