@@ -8527,53 +8527,6 @@ html.wt-route-institucional .whatsapp-float {
   color: #5C5E54;
 }
 
-.i2-page .i2-close {
-  padding-top: clamp(3.25rem, 4.5vw, 4.25rem);
-  padding-bottom: clamp(1.25rem, 2.5vw, 2rem);
-  border-top: 0;
-}
-
-.i2-close-inner {
-  max-width: 26rem;
-}
-
-.i2-close .i2-title {
-  font-size: clamp(1.85rem, 1.15rem + 1.5vw, 2.45rem);
-  line-height: 1.15;
-  max-width: 14em;
-}
-
-.i2-close .i2-lede {
-  margin-top: 0.85rem;
-  color: #5C5E54;
-  font-size: 1.05rem;
-}
-
-.i2-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  margin-top: 1.35rem;
-  padding: 0.65rem 1.15rem;
-  background: transparent;
-  color: #3F4328;
-  border: 1px solid rgba(63, 67, 40, 0.45);
-  border-radius: 999px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.95rem;
-  letter-spacing: 0;
-  text-transform: none;
-  text-decoration: none;
-}
-
-.i2-btn:hover {
-  background: #3F4328;
-  color: #F6F1E8;
-  border-color: #3F4328;
-}
-
 .i2-social-wrap {
   border-top: 1px solid rgba(63, 67, 40, 0.12);
 }
@@ -8647,7 +8600,6 @@ html.wt-route-institucional .whatsapp-float {
 
 @media (prefers-reduced-motion: reduce) {
   .sobre-nos-arrow,
-  .i2-btn,
   .i2-text-link {
     animation: none !important;
     transition: none !important;
