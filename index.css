@@ -8192,7 +8192,7 @@ html.wt-route-black footer.footer {
   position: relative;
   z-index: 1;
   padding-top: clamp(6.5rem, 14vw, 8.5rem);
-  padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  padding-bottom: clamp(3.75rem, 7vw, 5.5rem);
   max-width: 40rem;
   animation: institucionalCopyIn 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
 }
