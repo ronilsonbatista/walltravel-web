@@ -61,12 +61,12 @@ test.describe("SPA route scroll restoration", () => {
       .toBe(true);
   });
 
-  test("institucional deep-link opens at the top with hero copy", async ({ page }) => {
+  test("institucional deep-link opens at the top with editorial copy", async ({ page }) => {
     await page.goto("/institucional");
     await waitForRouteSettled(page);
     await expect(page).toHaveURL(/\/institucional\/?$/);
-    await expect(page.locator(".institucional-mast-brand")).toBeVisible();
-    await expect(page.locator(".institucional-mast-title")).toContainText(/Escolher bem muda tudo/);
+    await expect(page.locator("#i2-viagem-title")).toContainText(/Escolher bem muda tudo/);
+    await expect(page.locator(".institucional-mast")).toHaveCount(0);
     await expect(page.locator("body")).not.toContainText(/01 \/ Viagens/i);
     await expect.poll(async () => page.evaluate(() => window.scrollY)).toBeLessThan(8);
   });
