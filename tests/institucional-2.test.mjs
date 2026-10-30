@@ -31,9 +31,10 @@ describe("/institucional editorial page", () => {
     assert.match(page, /Pessoas por trás de cada viagem/);
     assert.match(page, /Seu jeito de viajar\. Nosso cuidado/);
     assert.match(page, /Histórias que ficam/);
-    assert.match(page, /Se quiser, a gente conversa/);
-    assert.match(page, /Sem pressa/);
-    assert.match(page, /Falar com a gente/);
+    assert.doesNotMatch(page, /Se quiser, a gente conversa/);
+    assert.doesNotMatch(page, /Sem pressa/);
+    assert.doesNotMatch(page, /Falar com a gente/);
+    assert.doesNotMatch(page, /i2-close/);
     assert.doesNotMatch(page, /Vamos conversar sobre viajar/);
     assert.doesNotMatch(page, /Entre em contato/);
     assert.match(page, /<h3>Escuta<\/h3>/);
