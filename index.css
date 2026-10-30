@@ -8541,20 +8541,30 @@ html.wt-route-institucional .whatsapp-float {
 }
 
 .i2-review-track {
-  display: grid;
+  position: relative;
 }
 
 .i2-review-slide {
-  grid-area: 1 / 1;
   margin: 0;
   opacity: 0;
   visibility: hidden;
+  position: absolute;
+  width: 100%;
 }
 
 .i2-review-slide.is-active {
+  position: relative;
   opacity: 1;
   visibility: visible;
   animation: i2ReviewIn 0.8s ease;
+}
+
+.i2-review-stars {
+  margin: 0 0 0.85rem;
+  color: #B8A66A;
+  letter-spacing: 0.18em;
+  font-size: 0.85rem;
+  line-height: 1;
 }
 
 @keyframes i2ReviewIn {

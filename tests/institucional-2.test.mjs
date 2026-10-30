@@ -57,12 +57,14 @@ describe("/institucional editorial page", () => {
     assert.match(page, /viajantes atendidos/);
     assert.equal((page.match(/Sócio/g) || []).length, 3);
     assert.doesNotMatch(page, /—/);
-    assert.doesNotMatch(page, /pacote/i);
+    const withoutReviews = page.replace(/<blockquote class="i2-review-slide[\s\S]*?<\/blockquote>/g, "");
+    assert.doesNotMatch(withoutReviews, /pacote/i);
     assert.doesNotMatch(page, /Reclame Aqui/);
     assert.doesNotMatch(page, /Prova social/);
     assert.doesNotMatch(page, /\+35/);
-    assert.doesNotMatch(page, /24h/);
-    assert.doesNotMatch(page, /★|estrelas|5,0|5\.0/);
+    assert.doesNotMatch(withoutReviews, /24h/);
+    assert.doesNotMatch(page, /5,0|5\.0/);
+    assert.doesNotMatch(page, /lucas biasotto/i);
   });
 
   it("closes with the approved quotes and the existing Google reviews link", () => {
@@ -73,6 +75,15 @@ describe("/institucional editorial page", () => {
     assert.match(page, /data-i2-reviews/);
     assert.equal((page.match(/Milena Medeiros/g) || []).length, 2);
     assert.equal((page.match(/Daniela Costa/g) || []).length, 2);
+    const slides = [...page.matchAll(/<blockquote class="i2-review-slide[^"]*">([\s\S]*?)<\/blockquote>/g)].map((m) => m[1]);
+    assert.equal(slides.length, 22);
+    assert.match(slides[0], /Obrigada, Walace!/);
+    assert.match(slides[0], /Christina/);
+    assert.match(slides[10], /Milena Medeiros/);
+    assert.match(slides[11], /Daniela Costa/);
+    assert.match(slides[2], /acampamento da Larissa/);
+    assert.match(page, /★★★★★/);
+    assert.match(page, /aria-label="5 estrelas"/);
     assert.match(page, /data-institucional-social="google"/);
     assert.ok(page.includes(google[1].replaceAll("&", "&amp;")));
     assert.match(css, /prefers-reduced-motion:\s*reduce/);
