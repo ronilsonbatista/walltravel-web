@@ -8137,16 +8137,12 @@ html.wt-route-black footer.footer {
    PAGE: INSTITUCIONAL (/institucional) — editorial web
    ========================================================================== */
 
-.institucional-home-link-wrap {
-  margin: 1.75rem 0 0;
-}
-
 .institucional-page .section {
-  padding-block: clamp(5rem, 9vw, 7.5rem);
+  padding-block: clamp(5.5rem, 10vw, 8rem);
 }
 
 .institucional-page .institucional-mast + .section {
-  padding-top: clamp(5.5rem, 10vw, 8rem);
+  padding-top: clamp(6.5rem, 11vw, 9rem);
 }
 
 .institucional-mast {
@@ -8313,35 +8309,6 @@ html.wt-route-black footer.footer {
 
 .institucional-pillars {
   margin-top: clamp(2.5rem, 4.5vw, 3.5rem);
-}
-
-.institucional-destinos-grid {
-  margin-top: clamp(2rem, 4vw, 3rem);
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 2.5vw, 1.75rem);
-}
-
-.institucional-destino {
-  margin: 0;
-}
-
-.institucional-destino picture,
-.institucional-destino img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 11;
-  object-fit: cover;
-  border-radius: var(--border-radius);
-  background: var(--surface-green-mist);
-}
-
-.institucional-destino figcaption {
-  margin-top: 0.7rem;
-  font-size: var(--text-xs);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
 }
 
 .institucional-acompanhamento {
@@ -8620,7 +8587,6 @@ html.wt-route-black footer.footer {
   .institucional-acompanhamento-grid,
   .institucional-story,
   .institucional-story--flip,
-  .institucional-destinos-grid,
   .institucional-cta-columns {
     grid-template-columns: 1fr;
   }
