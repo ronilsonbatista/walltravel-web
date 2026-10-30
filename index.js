@@ -65,6 +65,11 @@ import {
   prefersReducedMotion as immersivePrefersReducedMotion,
   IMMERSIVE_TOKENS,
 } from './data/immersive/primitives.js';
+import {
+  INSTITUCIONAL_INSTAGRAM_URL,
+  INSTITUCIONAL_GOOGLE_REVIEWS_URL,
+  INSTITUCIONAL_RECLAME_AQUI_URL,
+} from './data/institucional-social.js';
 
 /** Lazy-load motion/experience modules — not needed for first paint on Home. */
 async function loadGroupExperienceBinder() {
@@ -97,6 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return "groups-view";
     }
     if (path === "/como-funciona" || path === "/como-funciona/") return "como-funciona-view";
+    if (path === "/institucional" || path === "/institucional/") return "institucional-view";
     if (path === "/privacidade" || path === "/privacidade/") return "privacidade-view";
     return null;
   };
@@ -125,6 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     el.style.display = "block";
     if (
       id !== "como-funciona-view" &&
+      id !== "institucional-view" &&
       id !== "privacidade-view" &&
       !el.querySelector(".wt-route-shell") &&
       el.children.length === 0
@@ -731,6 +738,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const packageView = document.getElementById('package-view');
   const groupsView = document.getElementById('groups-view');
   const comoFuncionaView = document.getElementById('como-funciona-view');
+  const institucionalViewEl = document.getElementById('institucional-view');
   const privacidadeView = document.getElementById('privacidade-view');
 
   /** Bumps on every navigation so late async paints cannot flash the previous slug. */
@@ -762,11 +770,68 @@ document.addEventListener('DOMContentLoaded', async () => {
     packageView.style.display = 'none';
     if (groupsView) groupsView.style.display = 'none';
     if (comoFuncionaView) comoFuncionaView.style.display = 'none';
+    if (institucionalViewEl) institucionalViewEl.style.display = 'none';
     if (privacidadeView) privacidadeView.style.display = 'none';
     
     // Clean up any sticky bottom bar that might be active
     const oldSticky = document.querySelector('.sticky-bottom-bar');
     if (oldSticky) oldSticky.remove();
+  };
+
+  const hydrateInstitucionalSocial = (root) => {
+    if (!root) return;
+    const setLink = (key, url) => {
+      const el = root.querySelector(`[data-institucional-social="${key}"]`);
+      if (!el) return;
+      if (!url) {
+        el.setAttribute("aria-disabled", "true");
+        if (el.tagName === "A") {
+          el.removeAttribute("href");
+          el.classList.add("institucional-social-pending");
+        }
+        return;
+      }
+      if (el.tagName === "A") {
+        el.href = url;
+        el.removeAttribute("aria-disabled");
+        el.classList.remove("institucional-social-pending");
+      }
+    };
+    setLink("instagram", INSTITUCIONAL_INSTAGRAM_URL);
+    setLink("google", INSTITUCIONAL_GOOGLE_REVIEWS_URL);
+    setLink("reclame-aqui", INSTITUCIONAL_RECLAME_AQUI_URL);
+  };
+
+  let sectionObserver = null;
+  const revealFadeSections = (root = document) => {
+    const sections = root.querySelectorAll
+      ? root.querySelectorAll(".fade-in-section")
+      : [];
+    if (!sections.length) return;
+    if (!("IntersectionObserver" in window)) {
+      sections.forEach((section) => section.classList.add("is-visible"));
+      return;
+    }
+    if (!sectionObserver) {
+      sectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              sectionObserver.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.08,
+          rootMargin: "0px 0px -40px 0px",
+        }
+      );
+    }
+    sections.forEach((section) => {
+      section.classList.remove("is-visible");
+      sectionObserver.observe(section);
+    });
   };
 
   /** Immediate blank shell so the previous hero/title/media never paints on route change. */
@@ -1017,6 +1082,21 @@ document.addEventListener('DOMContentLoaded', async () => {
           "Como funciona | WallTravel",
           "Por que escolher a WallTravel, como trabalhamos e o que muda na sua viagem, com critério e presença."
         );
+      } else if (path === '/institucional' || path === '/institucional/') {
+        header.classList.add('scrolled');
+        if (institucionalViewEl) {
+          institucionalViewEl.style.display = 'block';
+          hydrateDeferredPicture(
+            institucionalViewEl.querySelector('[data-route-hydrate="institucional"]')
+          );
+          hydrateInstitucionalSocial(institucionalViewEl);
+          hydrateWhatsAppCTAs(institucionalViewEl);
+          revealFadeSections(institucionalViewEl);
+        }
+        updateSEO(
+          "Institucional | WallTravel",
+          "Escolher bem muda tudo. Viagens personalizadas com assessoria completa, equipe e acompanhamento em cada etapa."
+        );
       } else if (path === '/privacidade' || path === '/privacidade/') {
         header.classList.add('scrolled');
         if (privacidadeView) {
@@ -1088,6 +1168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       context = "black";
     } else if (
       path.startsWith("/como-funciona") ||
+      path.startsWith("/institucional") ||
       path.startsWith("/sobre") ||
       path.startsWith("/privacidade")
     ) {
@@ -1151,6 +1232,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           path.startsWith('/viagens') ||
           path.startsWith('/grupos') ||
           path.startsWith('/como-funciona') ||
+          path.startsWith('/institucional') ||
           path.startsWith('/privacidade')
         ) {
           e.preventDefault();
@@ -1777,28 +1859,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ==========================================================================
   // 8. SCROLL REVEAL EFFECT (FADE IN SECTIONS)
   // ==========================================================================
-  const fadeSections = document.querySelectorAll('.fade-in-section');
-  if ('IntersectionObserver' in window) {
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          sectionObserver.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.08,
-      rootMargin: '0px 0px -40px 0px'
-    });
-
-    fadeSections.forEach(section => {
-      sectionObserver.observe(section);
-    });
-  } else {
-    fadeSections.forEach(section => {
-      section.classList.add('is-visible');
-    });
-  }
+  revealFadeSections(document);
 
   // ==========================================================================
   // 9. FLOATING WHATSAPP BUTTON SCROLL EFFECT
