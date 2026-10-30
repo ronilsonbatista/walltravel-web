@@ -8527,6 +8527,103 @@ html.wt-route-institucional .whatsapp-float {
   color: #5C5E54;
 }
 
+.i2-reviews-inner {
+  max-width: 40rem;
+}
+
+.i2-reviews-label {
+  margin: 0 0 1.35rem;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 1.15rem + 1.2vw, 2.2rem);
+  line-height: 1.15;
+  color: #16170F;
+}
+
+.i2-review-track {
+  display: grid;
+}
+
+.i2-review-slide {
+  grid-area: 1 / 1;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.i2-review-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  animation: i2ReviewIn 0.8s ease;
+}
+
+@keyframes i2ReviewIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.i2-review-slide > p {
+  margin: 0;
+  max-width: 38rem;
+  font-size: clamp(1.05rem, 0.98rem + 0.25vw, 1.2rem);
+  line-height: 1.7;
+  color: #16170F;
+}
+
+.i2-review-slide footer .i2-story-name {
+  margin-top: 1.35rem;
+}
+
+.i2-review-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.35rem;
+  margin-top: 1.5rem;
+}
+
+.i2-review-controls button {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0.35rem 0;
+  min-height: 44px;
+  color: #3F4328;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.i2-review-controls button:hover,
+.i2-review-controls button:focus-visible {
+  border-bottom-color: #3F4328;
+}
+
+.i2-review-status {
+  margin: 0;
+  color: #5C5E54;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+}
+
+.i2-reviews-more {
+  margin: 0.35rem 0 0;
+}
+
+.i2-reviews-more a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #3F4328;
+  border-bottom: 1px solid rgba(63, 67, 40, 0.3);
+  font-size: 0.95rem;
+}
+
+.i2-reviews-more a:hover {
+  border-bottom-color: #3F4328;
+}
+
 .i2-social-wrap {
   border-top: 1px solid rgba(63, 67, 40, 0.12);
 }
@@ -8600,7 +8697,9 @@ html.wt-route-institucional .whatsapp-float {
 
 @media (prefers-reduced-motion: reduce) {
   .sobre-nos-arrow,
-  .i2-text-link {
+  .i2-text-link,
+  .i2-review-slide,
+  .i2-review-slide.is-active {
     animation: none !important;
     transition: none !important;
   }
