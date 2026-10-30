@@ -95,6 +95,14 @@
       ],
       "destination": "/api/og-meta?kind=vitrine&slug=:slug"
     },
+    {
+      "source": "/institucional",
+      "destination": "/api/institucional-document"
+    },
+    {
+      "source": "/institucional/",
+      "destination": "/api/institucional-document"
+    },
     { "source": "/((?!assets/|api/).*)", "destination": "/" }
   ]
 }

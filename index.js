@@ -70,6 +70,11 @@ import {
   INSTITUCIONAL_GOOGLE_REVIEWS_URL,
   INSTITUCIONAL_RECLAME_AQUI_URL,
 } from './data/institucional-social.js';
+import {
+  INSTITUCIONAL_DESCRIPTION,
+  INSTITUCIONAL_OG_IMAGE_PATH,
+  INSTITUCIONAL_TITLE,
+} from './data/institucional-meta.js';
 
 /** Lazy-load motion/experience modules — not needed for first paint on Home. */
 async function loadGroupExperienceBinder() {
@@ -1225,8 +1230,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           hydrateWhatsAppCTAs(institucionalViewEl);
         }
         updateSEO(
-          "Sobre nós | WallTravel",
-          "Escolher bem muda tudo. Viagens sob medida, com pessoas que cuidam de cada detalhe."
+          INSTITUCIONAL_TITLE,
+          INSTITUCIONAL_DESCRIPTION,
+          INSTITUCIONAL_OG_IMAGE_PATH
         );
       } else if (path === '/privacidade' || path === '/privacidade/') {
         header.classList.add('scrolled');
