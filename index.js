@@ -5,6 +5,7 @@ import {
   getCategoryBySlug, 
   getPackagesByCategory,
   getPackages,
+  getVitrinePackages,
   getPackageBySlug,
   hydrateStorefront,
   getStorefrontSource,
@@ -1506,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dateMode = parseVitrineDateMode(search);
     const dateQuery = vitrineDateQuery(dateMode);
     const allCategories = getCategories();
-    const packages = typeof getPackages === "function" ? getPackages() : [];
+    const packages = typeof getVitrinePackages === "function" ? getVitrinePackages() : [];
     const categories = filterCategoriesByDateMode(allCategories, packages, dateMode);
     const matchingPackages = dateMode
       ? packages.filter((pkg) => packageMatchesDateMode(pkg, dateMode))

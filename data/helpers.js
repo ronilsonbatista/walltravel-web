@@ -3,6 +3,7 @@ import {
   fetchPublicCategories,
   fetchPublicProducts,
   fetchPublicProductBySlug,
+  isBlackExclusivePackage,
   mapCategory,
   mapProduct,
   sortPackagesByCadastro,
@@ -107,8 +108,10 @@ export const getCategoryBySlug = (slug) =>
 
 // Packages / experiences
 export const getPackages = () => packages;
+/** Normal vitrine. November offer cards stay on /black only. */
+export const getVitrinePackages = () => packages.filter((pkg) => !isBlackExclusivePackage(pkg));
 export const getPackagesByCategory = (categorySlug) => {
-  return packages.filter(
+  return getVitrinePackages().filter(
     (p) =>
       p.categorySlug === categorySlug ||
       (categorySlug === "lua-de-mel" &&
@@ -118,7 +121,7 @@ export const getPackagesByCategory = (categorySlug) => {
 
 export const getPackageBySlug = (slug) => packages.find((p) => p.slug === slug);
 
-export const getFeaturedPackages = () => packages.filter((p) => p.featured);
+export const getFeaturedPackages = () => getVitrinePackages().filter((p) => p.featured);
 
 /** Prefer cached list; fetch detail from API when on platform source. */
 export async function resolvePackageBySlug(slug) {
@@ -147,12 +150,12 @@ export const getOrderedHeroSlides = () =>
 
 export const getHoneymoonSection = () => vitrineData.homeSections.honeymoon;
 export const getHoneymoonPackages = () =>
-  packages.filter((p) =>
+  getVitrinePackages().filter((p) =>
     (p.tags || []).map((t) => String(t).toLowerCase()).includes("lua-de-mel"),
   );
 export const getPackagesByTag = (tag) => {
   const t = String(tag).toLowerCase();
-  return packages.filter((p) =>
+  return getVitrinePackages().filter((p) =>
     (p.tags || []).map((x) => String(x).toLowerCase()).includes(t),
   );
 };

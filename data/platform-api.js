@@ -77,7 +77,7 @@ export function clearPlatformApiCache() {
 }
 
 /** Internal CMS/API metadata tags must never appear on the public storefront. */
-const INTERNAL_PACKAGE_TAG_RE = /^(legacy|source)\s*:/i;
+const INTERNAL_PACKAGE_TAG_RE = /^(legacy|source|bf|catalog)\s*:/i;
 
 export function isPublicPackageTag(tag) {
   const value = String(tag ?? "").trim();
@@ -87,6 +87,25 @@ export function isPublicPackageTag(tag) {
 
 export function publicPackageTags(tags) {
   return (Array.isArray(tags) ? tags : []).filter(isPublicPackageTag);
+}
+
+/** Campaign tags kept for /black after public chips strip bf: and catalog:. */
+export function campaignTags(tags) {
+  return (Array.isArray(tags) ? tags : [])
+    .map((tag) => String(tag ?? "").trim())
+    .filter((tag) => /^(bf|catalog):/i.test(tag));
+}
+
+export function listingTags(pkg) {
+  const raw = [];
+  if (Array.isArray(pkg?.campaignTags)) raw.push(...pkg.campaignTags);
+  if (Array.isArray(pkg?.tags)) raw.push(...pkg.tags);
+  return raw;
+}
+
+/** Offer cards published for November stay on /black and off the normal vitrine. */
+export function isBlackExclusivePackage(pkg) {
+  return listingTags(pkg).some((tag) => String(tag).trim().toLowerCase() === "catalog:black");
 }
 
 /**
@@ -338,6 +357,7 @@ export function mapProduct(apiProduct) {
     apiProduct.priceFrom == null || apiProduct.priceFrom === ""
       ? null
       : Number(apiProduct.priceFrom);
+  const rawTags = Array.isArray(apiProduct.tags) ? apiProduct.tags : [];
   return {
     id: apiProduct.slug,
     slug: apiProduct.slug,
@@ -358,7 +378,8 @@ export function mapProduct(apiProduct) {
       : apiProduct.coverImageUrl
         ? [apiProduct.coverImageUrl]
         : [],
-    tags: publicPackageTags(apiProduct.tags),
+    tags: publicPackageTags(rawTags),
+    campaignTags: campaignTags(rawTags),
     included: Array.isArray(apiProduct.includes) ? apiProduct.includes : [],
     notIncluded: Array.isArray(apiProduct.excludes) ? apiProduct.excludes : [],
     itinerary: filterPublicItinerary(apiProduct.itinerary).map((d) => ({
