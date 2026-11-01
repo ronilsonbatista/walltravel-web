@@ -8,7 +8,7 @@
  */
 
 import overlay from "./black-wall-overlay.js";
-import { publicPackageTags } from "./platform-api.js";
+import { listingTags, publicPackageTags } from "./platform-api.js";
 import { formatFixedDateRange, hasFixedDates } from "./fixed-dates.js";
 import { buildWhatsAppCTA } from "./whatsapp-cta.js";
 
@@ -106,7 +106,7 @@ function slugifyCountry(label) {
 
 /** Explicit campaign tags from CMS/SQL (`bf:nacional`, `bf:verao`, `bf:pais:japao`, …). */
 export function hasExplicitBlackTag(pkg) {
-  const tags = publicPackageTags(pkg?.tags).map(normalizeTag);
+  const tags = listingTags(pkg).map(normalizeTag);
   return tags.some(
     (t) =>
       t === "bf:nacional" ||
@@ -123,7 +123,7 @@ export function hasExplicitBlackTag(pkg) {
 export function resolveBlackMeta(pkg, opts = {}) {
   const allowOverlay = opts.allowOverlay === true;
   const slug = String(pkg?.slug || "");
-  const tags = publicPackageTags(pkg?.tags).map(normalizeTag);
+  const tags = listingTags(pkg).map(normalizeTag);
   const overlayRow = allowOverlay ? overlay?.bySlug?.[slug] || null : null;
 
   let segment = null;

@@ -71,7 +71,11 @@ export default async function handler() {
 
     if (productsBody?.ok && Array.isArray(productsBody.items)) {
       for (const item of productsBody.items) {
-        if (item?.slug) paths.add(`/viagens/${item.slug}`);
+        const tags = Array.isArray(item?.tags) ? item.tags : [];
+        const blackOnly = tags.some(
+          (tag) => String(tag).trim().toLowerCase() === "catalog:black",
+        );
+        if (item?.slug && !blackOnly) paths.add(`/viagens/${item.slug}`);
       }
     }
 
