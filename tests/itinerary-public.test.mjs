@@ -258,6 +258,51 @@ describe("roteiro on trip pages when the product has days", () => {
     assert.doesNotMatch(oneDay, /id="group-itinerary"/);
   });
 
+  it("keeps a single paragraph when the description has no breaks", () => {
+    const html = renderExperienceDetailPage(
+      {
+        ...basePkg,
+        itinerary: [
+          { day: 1, title: "Chegada", description: "Um parágrafo só, sem quebra." },
+          { day: 2, title: "Cidade", description: "Outro parágrafo contínuo." },
+        ],
+      },
+      { name: "Nacionais", slug: "nacionais" },
+      esc,
+      "5511999999999",
+    );
+    assert.equal((html.match(/group-itinerary-moment-lead/g) || []).length, 0);
+    assert.match(html, /Um parágrafo só, sem quebra\./);
+  });
+
+  it("splits blank lines into moments and emphasizes the time and place", () => {
+    const html = renderItineraryAccordion(
+      {
+        itinerary: [
+          { day: 1, title: "Abertura", description: "Dia livre." },
+          {
+            day: 3,
+            title: "Manaus para a floresta",
+            description: [
+              "26/06. De Manaus ao lago, no mesmo dia.",
+              "07h00 · Busca em Manaus\nA busca começa na região da cidade.",
+              "08h00 · Porto do CEASA\nSaída para o embarque.",
+              "Pernoite em chalé privativo na Pousada Juma Lake.",
+            ].join("\n\n"),
+          },
+        ],
+      },
+      esc,
+    );
+    assert.match(html, /group-itinerary-moment-open/);
+    assert.match(html, /26\/06\. De Manaus ao lago, no mesmo dia\./);
+    assert.match(html, /<p class="group-itinerary-moment-lead">07h00 · Busca em Manaus<\/p>/);
+    assert.match(html, /<p class="group-itinerary-moment-lead">08h00 · Porto do CEASA<\/p>/);
+    assert.match(html, /A busca começa na região da cidade\./);
+    assert.match(html, /<p class="group-itinerary-overnight">Pernoite em chalé privativo na Pousada Juma Lake\.<\/p>/);
+    assert.doesNotMatch(html, /07h00 · Busca em Manaus A busca/);
+  });
+
   it("renders product days with title and description, the shape travel_product_days stores", () => {
     const html = renderExperienceDetailPage(
       {

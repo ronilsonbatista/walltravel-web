@@ -413,10 +413,53 @@ export function renderRoute(group, esc) {
   return renderInteractiveRouteMap(group, esc) + renderHotels(group, esc);
 }
 
+const MOMENT_LEAD_RE = /^\d{1,2}h\d{2}\s*·\s*\S/;
+
+/**
+ * A plain description stays one paragraph. Blank lines split moments.
+ * A line like "07h00 · Porto do CEASA" is the olive lead; the lines under it
+ * are the moment body. A block that starts with "Pernoite" is the overnight line.
+ */
+function renderDescriptionMoments(description, esc) {
+  const raw = String(description ?? "")
+    .replace(/\r\n/g, "\n")
+    .trim();
+  if (!raw) return "";
+  const blocks = raw
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+  const structured = blocks.some((block) => {
+    const lead = block.split("\n")[0].trim();
+    return MOMENT_LEAD_RE.test(lead) || /^Pernoite\b/.test(lead) || block.includes("\n");
+  });
+  if (!structured) {
+    return `<p class="group-itinerary-desc">${esc(raw)}</p>`;
+  }
+  return blocks
+    .map((block) => {
+      const lines = block
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
+      const lead = lines[0] || "";
+      const rest = lines.slice(1).join(" ");
+      if (/^Pernoite\b/.test(lead) && !rest) {
+        return `<p class="group-itinerary-overnight">${esc(lead)}</p>`;
+      }
+      if (MOMENT_LEAD_RE.test(lead)) {
+        const body = rest ? `<p class="group-itinerary-desc">${esc(rest)}</p>` : "";
+        return `<p class="group-itinerary-moment-lead">${esc(lead)}</p>${body}`;
+      }
+      return `<p class="group-itinerary-desc group-itinerary-moment-open">${esc(lines.join(" "))}</p>`;
+    })
+    .join("");
+}
+
 function renderDayBody(day, esc) {
   return `
     ${day.location ? `<p class="group-itinerary-location">${esc(day.location)}</p>` : ""}
-    <p class="group-itinerary-desc">${esc(day.description)}</p>
+    ${renderDescriptionMoments(day.description, esc)}
     ${
       day.highlights?.length
         ? `<ul class="group-itinerary-highlights">${day.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>`

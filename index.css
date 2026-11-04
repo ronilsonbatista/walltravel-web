@@ -5435,6 +5435,28 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   margin: 0.75rem 0;
 }
 
+.group-itinerary-moment-open {
+  margin: 0.35rem 0 0.2rem;
+}
+
+.group-itinerary-moment-lead {
+  margin: 1rem 0 0.1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+.group-itinerary-moment-lead + .group-itinerary-desc {
+  margin: 0.1rem 0 0;
+  line-height: 1.65;
+}
+
+.group-itinerary-panel .group-itinerary-overnight {
+  margin: 1.15rem 0 0;
+}
+
 .group-itinerary-highlights {
   margin: 0.75rem 0 0 1.1rem;
   color: var(--color-text-muted);
