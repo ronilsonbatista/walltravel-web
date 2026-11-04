@@ -196,34 +196,87 @@ describe("isDisplayableItinerary (strong gate ≥2 activity days)", () => {
   });
 });
 
-describe("roteiro groups-only (experiências never show Sua jornada)", () => {
+describe("roteiro on trip pages when the product has days", () => {
   const esc = (s) => String(s);
+  const basePkg = {
+    slug: "multi-day-demo",
+    name: "Demo Multi",
+    destination: "Atenas",
+    duration: "5 dias",
+    description: "Uma experiência completa.",
+    included: ["Guia"],
+    priceFrom: 1000,
+  };
   const multiDayItinerary = [
     { day: 1, title: "Bem-vindos", description: "chegada", location: "Atenas" },
     { day: 2, title: "Acrópole", description: "passeio", location: "Atenas" },
     { day: 3, title: "Mykonos", description: "ilha", location: "Mykonos" },
   ];
 
-  it("experience page hides accordion and Roteiro nav even with displayable days", () => {
+  it("shows the group Sua jornada block for a displayable itinerary", () => {
     assert.equal(isDisplayableItinerary(multiDayItinerary), true);
     const html = renderExperienceDetailPage(
+      { ...basePkg, itinerary: multiDayItinerary },
+      { name: "Europa", slug: "europa" },
+      esc,
+      "5511999999999",
+    );
+    assert.match(html, /Sua jornada/);
+    assert.match(html, /id="group-itinerary"/);
+    assert.match(html, /Roteiro dia a dia/);
+    assert.match(html, /data-itinerary-explorer/);
+    assert.match(html, /Bem-vindos/);
+    assert.match(html, /Acrópole/);
+    assert.match(html, /Mykonos/);
+    assert.match(html, /href="#group-itinerary">Roteiro</);
+    assert.match(html, /Sobre a viagem/);
+    assert.doesNotMatch(html, /pacote/i);
+  });
+
+  it("keeps the block off hotel-only and single-day products", () => {
+    const hotelOnly = renderExperienceDetailPage(
       {
-        slug: "multi-day-demo",
-        name: "Demo Multi",
-        destination: "Atenas",
-        duration: "5 dias",
-        description: "Uma experiência completa.",
-        included: ["Guia"],
-        priceFrom: 1000,
-        itinerary: multiDayItinerary,
+        ...basePkg,
+        itinerary: [{ day: 1, title: "Hospedagem", description: "hotel" }],
       },
       { name: "Europa", slug: "europa" },
       esc,
       "5511999999999",
     );
-    assert.doesNotMatch(html, /Sua jornada/);
-    assert.doesNotMatch(html, /id="group-itinerary"/);
-    assert.doesNotMatch(html, />Roteiro</);
-    assert.match(html, /Sobre a viagem/);
+    assert.doesNotMatch(hotelOnly, /Sua jornada/);
+    assert.doesNotMatch(hotelOnly, /id="group-itinerary"/);
+
+    const oneDay = renderExperienceDetailPage(
+      {
+        ...basePkg,
+        itinerary: [{ day: 1, title: "Chegada", description: "tarde livre" }],
+      },
+      { name: "Europa", slug: "europa" },
+      esc,
+      "5511999999999",
+    );
+    assert.doesNotMatch(oneDay, /id="group-itinerary"/);
+  });
+
+  it("renders product days with title and description, the shape travel_product_days stores", () => {
+    const html = renderExperienceDetailPage(
+      {
+        ...basePkg,
+        slug: "manaus-amazonia-com-aereo",
+        name: "Manaus + Experiência Amazônia · com aéreo",
+        itinerary: [
+          { day: 1, title: "São Paulo para Manaus", description: "24/06. Saída às 07h50." },
+          { day: 3, title: "Manaus para a floresta", description: "26/06. Encontro das Águas." },
+        ],
+      },
+      { name: "Nacionais", slug: "nacionais" },
+      esc,
+      "5511999999999",
+    );
+    assert.match(html, /São Paulo para Manaus/);
+    assert.match(html, /Manaus para a floresta/);
+    assert.match(html, /24\/06\. Saída às 07h50\./);
+    assert.match(html, /01 \/ 02/);
+    assert.doesNotMatch(html, /pacote/i);
   });
 });
