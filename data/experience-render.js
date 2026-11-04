@@ -1,15 +1,17 @@
 /**
  * Experience landing (/viagens/[slug]) — TravelDetailShell + shared immersive primitives.
  * Modules render only when data exists. Exact CMS/local copy; no invented fields.
- * "Sua jornada" / Roteiro is groups-only (/grupos/...); never rendered here even when
- * the product has itinerary days in CMS.
+ * When the product has a displayable day list (travel_product_days), the same
+ * group "Sua jornada" explorer is shown here. Fewer than two public days stays hidden.
  */
 import {
   formatMoney,
+  JourneyTimeline,
   renderIncludesExcludes,
   renderTravelHeroCarousel,
   renderTravelGallery,
 } from "./group-render.js";
+import { isDisplayableItinerary } from "./platform-api.js";
 import { buildWhatsAppCTA } from "./whatsapp-cta.js";
 import {
   TravelDetailShell,
@@ -55,6 +57,9 @@ function packageHighlights(pkg, esc) {
 function experienceSubnav(pkg) {
   const links = [];
   if (pkg.description) links.push(["#exp-about", "Sobre"]);
+  if (isDisplayableItinerary(pkg.itinerary)) {
+    links.push(["#group-itinerary", "Roteiro"]);
+  }
   if (pkg.gallery?.length) links.push(["#group-gallery", "Galeria"]);
   if (pkg.included?.length || pkg.notIncluded?.length) links.push(["#exp-includes", "Incluso"]);
   if (pkg.priceFrom != null || pkg.importantNotes?.length || pkg.originPrices?.length) {
@@ -246,6 +251,9 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
       <div class="group-facts-after-hero">${highlights}</div>
       <div class="section-container">
         ${renderAbout(pkg, esc)}
+      </div>
+      <div class="section-container">
+        ${JourneyTimeline({ itinerary: pkg.itinerary, gallery: pkg.gallery }, esc)}
       </div>
       ${pkg.gallery?.length ? renderTravelGallery(pkg.gallery, pkg.name, esc) : ""}
       <div class="section-container">

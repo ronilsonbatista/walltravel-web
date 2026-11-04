@@ -133,10 +133,9 @@ export function filterPublicItinerary(itinerary) {
 }
 
 /**
- * Strong gate for the public "Sua jornada" section on group pages (/grupos/...).
- * Requires ≥2 non-hospedagem days so weak pages (hotel dump, single "Voos"
- * logistics day) stay hidden. Experience pages (/viagens/...) never render
- * roteiro regardless of day count.
+ * Strong gate for the public "Sua jornada" section on group pages (/grupos/...)
+ * and trip pages (/viagens/...). Requires ≥2 non-hospedagem days so weak pages
+ * (hotel dump, single "Voos" logistics day) stay hidden.
  */
 export function isDisplayableItinerary(days) {
   return filterPublicItinerary(days).length >= 2;
