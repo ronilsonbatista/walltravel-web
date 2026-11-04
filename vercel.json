@@ -41,6 +41,11 @@
       "permanent": true
     },
     {
+      "source": "/mjc-landing",
+      "destination": "/mjc-landing/",
+      "permanent": false
+    },
+    {
       "source": "/viagens/japao-essencial",
       "destination": "/viagens/japao-essencial-sao-paulo",
       "permanent": true
@@ -103,6 +108,6 @@
       "source": "/institucional/",
       "destination": "/api/institucional-document"
     },
-    { "source": "/((?!assets/|api/).*)", "destination": "/" }
+    { "source": "/((?!assets/|api/|mjc-landing/).*)", "destination": "/" }
   ]
 }

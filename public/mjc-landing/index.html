@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#151a35" />
+  <meta name="description" content="Brindes e kits personalizados para campanhas, eventos e equipes. A MJC sugere o produto, mostra o mockup antes de produzir e entrega em todo o Brasil." />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>MJC Personalizados — Sua marca merece ser lembrada</title>
+  <link rel="icon" href="media/favicon.png" />
+  <link rel="stylesheet" href="fonts/google.css" />
+  <style>
+    :root {
+      --navy: #151a35;
+      --navy-2: #1c2346;
+      --violet: #3e2c75;
+      --pink: #fa83b5;
+      --orange: #ff905b;
+      --cream: #f7f1e9;
+      --cream-2: #efe6da;
+      --paper: #fffdf9;
+      --ink: #19213b;
+      --muted: #5c6478;
+      --line: rgba(21, 26, 53, 0.14);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --header: 4.25rem;
+      --shell: min(1120px, calc(100% - 2rem));
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      font-size: 1.02rem;
+      line-height: 1.5;
+      text-rendering: optimizeLegibility;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; background: none; border: 0; color: inherit; }
+    ::selection { background: var(--pink); color: var(--navy); }
+
+    .skip {
+      position: absolute;
+      left: 0.75rem;
+      top: -4rem;
+      z-index: 80;
+      background: white;
+      color: var(--navy);
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+    }
+    .skip:focus { top: 0.75rem; }
+
+    .sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .shell { width: var(--shell); margin-inline: auto; }
+    .display {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      line-height: 0.96;
+      margin: 0;
+    }
+    .eyebrow {
+      margin: 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .dot { color: var(--orange); }
+    em.pink { font-style: normal; color: var(--pink); }
+
+    :focus-visible {
+      outline: 2px solid var(--pink);
+      outline-offset: 3px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      min-height: 3.25rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: 999px;
+      background: var(--pink);
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 0.95rem;
+      line-height: 1.1;
+      transition: transform 0.25s var(--ease), background 0.25s var(--ease);
+    }
+    .btn svg { width: 0.95rem; height: 0.95rem; flex: none; transition: transform 0.25s var(--ease); }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:hover svg { transform: translate(2px, -2px); }
+    .btn-navy { background: var(--navy); color: white; }
+    .btn-navy:hover { background: #0e1328; }
+
+    .top {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 40;
+      height: var(--header);
+      display: flex;
+      align-items: center;
+      background: rgba(21, 26, 53, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .top .shell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand { display: flex; align-items: center; height: 2rem; }
+    .brand img { height: 2rem; width: auto; }
+    .nav { display: flex; align-items: center; gap: 1.35rem; }
+    .nav a:not(.btn) {
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+    .nav a:not(.btn):hover { color: white; }
+    .nav .btn { min-height: 2.6rem; padding: 0.55rem 0.95rem; font-size: 0.84rem; }
+
+    section[id] { scroll-margin-top: calc(var(--header) + 0.4rem); }
+
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      background: var(--navy);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: calc(var(--header) + 1.4rem) 0 4.6rem;
+    }
+    .hero-glow {
+      position: absolute;
+      inset: auto -20% 10% auto;
+      width: min(70vw, 520px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(62, 44, 117, 0.95), transparent 68%);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+    .hero-glow::after {
+      content: "";
+      position: absolute;
+      width: 46%;
+      aspect-ratio: 1;
+      right: 8%;
+      bottom: -10%;
+      background: var(--orange);
+      filter: blur(70px);
+      opacity: 0.28;
+      border-radius: 50%;
+    }
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 1.6rem;
+      padding-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(3.05rem, 12.4vw, 7.4rem);
+      max-width: 11ch;
+      margin: 0.85rem 0 1rem;
+    }
+    .lede {
+      margin: 0;
+      max-width: 36rem;
+      color: #d5d8e6;
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem 1.25rem;
+      margin-top: 1.35rem;
+    }
+    .textlink {
+      color: white;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+      padding-bottom: 0.15rem;
+    }
+    .proofs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+      margin: 1.35rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .proofs li {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 0.75rem 0.8rem 0.7rem;
+      min-height: 4.6rem;
+    }
+    .proofs strong {
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.98rem;
+      letter-spacing: -0.03em;
+    }
+    .proofs span {
+      display: block;
+      margin-top: 0.15rem;
+      color: #c5c9da;
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .marquee {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      padding: 0.85rem 0;
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0.4rem;
+      width: max-content;
+      animation: ticker 42s linear infinite;
+    }
+    .marquee span {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
+      padding: 0 0.85rem;
+    }
+    .marquee span::before {
+      content: "✳";
+      color: var(--pink);
+      margin-right: 0.85rem;
+    }
+    @keyframes ticker { to { transform: translateX(-50%); } }
+
+    .jeito { padding: 4.5rem 0 4rem; }
+    .jeito h2 {
+      font-size: clamp(2.7rem, 10vw, 5.6rem);
+      max-width: 14ch;
+      margin: 0.8rem 0 1rem;
+    }
+    .statement {
+      margin: 0;
+      max-width: 40rem;
+      font-size: 1.12rem;
+      line-height: 1.55;
+      color: #3c4458;
+    }
+    .statement span { color: #8a8098; }
+
+    .highlights {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: min(78vw, 280px);
+      gap: 0.75rem;
+      margin: 1.8rem -1rem 0;
+      padding: 0.15rem 1rem 0.4rem;
+      list-style: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: 1rem;
+      scrollbar-width: none;
+    }
+    .highlights::-webkit-scrollbar { display: none; }
+    .highlights li {
+      scroll-snap-align: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      min-height: 13.5rem;
+      padding: 1.15rem 1.1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .highlights .n {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      color: var(--violet);
+      letter-spacing: -0.04em;
+    }
+    .highlights h3 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.7rem;
+      letter-spacing: -0.045em;
+      line-height: 1;
+    }
+    .highlights p { margin: auto 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.45; }
+    .jeito .btn { margin-top: 1.5rem; }
+
+    .projetos { padding: 1rem 0 4.2rem; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      margin-bottom: 1.15rem;
+    }
+    .section-head h2 {
+      font-size: clamp(2.6rem, 9vw, 4.8rem);
+      margin-top: 0.55rem;
+    }
+    .section-head .textlink { color: var(--navy); border-color: rgba(21, 26, 53, 0.4); white-space: nowrap; }
+    .mosaic {
+      display: grid;
+      gap: 0.7rem;
+    }
+    .project {
+      position: relative;
+      min-height: 16.5rem;
+      overflow: hidden;
+      background: #ddd4ea;
+      color: white;
+    }
+    .project img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s var(--ease);
+    }
+    .project:hover img { transform: scale(1.045); }
+    .project figcaption {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 3.2rem 1rem 0.95rem;
+      background: linear-gradient(transparent, rgba(12, 16, 36, 0.82));
+    }
+    .project small {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .project strong {
+      display: block;
+      margin-top: 0.25rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+    }
+    .caption-note {
+      margin: 0.85rem 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .interrupt {
+      background: var(--pink);
+      color: var(--navy);
+      padding: 3.2rem 0;
+    }
+    .interrupt .shell {
+      display: grid;
+      gap: 1.25rem;
+    }
+    .interrupt h2 {
+      font-size: clamp(2.5rem, 9vw, 4.6rem);
+      max-width: 12ch;
+    }
+
+    .voices {
+      background:
+        radial-gradient(60% 50% at 100% 0%, rgba(62, 44, 117, 0.55), transparent 70%),
+        var(--navy);
+      color: white;
+      padding: 4.2rem 0 4.4rem;
+    }
+    .voices-head { max-width: 40rem; }
+    .voices h2 {
+      font-size: clamp(2.7rem, 10vw, 5.2rem);
+      margin: 0.7rem 0 0.8rem;
+    }
+    .voices-note {
+      margin: 0;
+      color: #c9c4d8;
+      font-size: 0.92rem;
+      max-width: 36rem;
+    }
+
+    .carousel {
+      margin-top: 1.6rem;
+      background: #10142b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .slides { display: grid; }
+    .slide {
+      grid-area: 1 / 1;
+      display: grid;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .slide[hidden] { display: none !important; }
+    .slide.is-active,
+    .slide.is-leaving { visibility: visible; }
+    .slide.is-active { opacity: 1; z-index: 2; }
+    .slide.is-leaving { z-index: 1; }
+
+    .slide-photo {
+      position: relative;
+      min-height: 22rem;
+      background: #2a2148;
+      overflow: hidden;
+    }
+    .slide-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+    .slide-photo figcaption {
+      position: absolute;
+      left: 0.85rem;
+      bottom: 0.85rem;
+      background: var(--cream);
+      color: var(--navy);
+      padding: 0.65rem 0.8rem 0.6rem;
+      min-width: 10.5rem;
+    }
+    .slide-photo b {
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      letter-spacing: -0.04em;
+      font-size: 1.05rem;
+    }
+    .slide-photo figcaption span {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .mark {
+      position: absolute;
+      top: 0.85rem;
+      left: 0.85rem;
+      width: 0.7rem;
+      height: 0.7rem;
+      background: var(--pink);
+    }
+
+    .slide-copy {
+      padding: 1.35rem 1.15rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 16rem;
+    }
+    .slide-kicker {
+      margin: 0;
+      color: var(--orange);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .slide-copy blockquote {
+      margin: 0.7rem 0 1rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.35rem, 4.6vw, 2.15rem);
+      letter-spacing: -0.04em;
+      line-height: 1.18;
+    }
+    .slide-copy blockquote::before {
+      content: "“";
+      display: block;
+      color: var(--pink);
+      font-size: 3.2rem;
+      line-height: 0.7;
+      margin-bottom: 0.45rem;
+    }
+    .slide-who {
+      margin: auto 0 0;
+      color: #c9cde0;
+      font-size: 0.92rem;
+    }
+    .slide-who strong { color: white; font-weight: 700; }
+    .slide-who span::before { content: " · "; }
+
+    .carousel-bar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 0.85rem;
+      align-items: center;
+      padding: 0.85rem 1rem 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .segments { display: flex; gap: 0.35rem; }
+    .segments button {
+      flex: 1;
+      height: 2.25rem;
+      position: relative;
+      min-width: 1.6rem;
+    }
+    .segments button::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.22);
+    }
+    .segments button i {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      height: 2px;
+      width: 0;
+      transform: translateY(-50%);
+      background: var(--pink);
+    }
+    .segments button.is-done i { width: 100%; }
+    .segments button.is-on i { width: var(--p, 0%); }
+    .count {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+      font-size: 0.95rem;
+      color: #d5d8e8;
+      white-space: nowrap;
+    }
+    .count b { color: white; font-weight: 700; }
+    .arrows { display: flex; gap: 0.4rem; }
+    .arrows button {
+      width: 2.7rem;
+      height: 2.7rem;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: grid;
+      place-items: center;
+      transition: background 0.2s var(--ease), border-color 0.2s;
+    }
+    .arrows button:hover { background: white; color: var(--navy); border-color: white; }
+    .arrows svg { width: 1rem; height: 1rem; }
+
+    .paths { padding: 4.2rem 0 3.6rem; }
+    .paths h2 {
+      font-size: clamp(2.6rem, 9vw, 4.8rem);
+      max-width: 14ch;
+      margin: 0.7rem 0 0.6rem;
+    }
+    .paths-lead { margin: 0 0 1.4rem; max-width: 34rem; color: #42495d; }
+    .path-grid { display: grid; gap: 0.75rem; }
+    .path {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 1.2rem 1.1rem 1.15rem;
+      min-height: 14.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .path .glyph {
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--pink);
+      font-size: 1.3rem;
+    }
+    .path h3 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.55rem;
+      letter-spacing: -0.04em;
+    }
+    .path p { margin: 0; color: var(--muted); }
+    .path .textlink { margin-top: auto; padding-top: 1rem; align-self: flex-start; border-color: rgba(21, 26, 53, 0.45); font-weight: 700; }
+
+    .contato {
+      background: var(--orange);
+      color: var(--navy);
+      padding: 4rem 0 4.4rem;
+    }
+    .contato h2 {
+      font-size: clamp(3.1rem, 12vw, 6.4rem);
+      max-width: 10ch;
+      margin: 0.45rem 0 0.8rem;
+    }
+    .contato .lead {
+      margin: 0;
+      max-width: 34rem;
+      font-size: 1.08rem;
+    }
+    .contato .btn { margin-top: 1.25rem; }
+    .fine {
+      margin: 0.9rem 0 0;
+      font-size: 0.88rem;
+    }
+    .fine a { text-decoration: underline; text-underline-offset: 3px; }
+    .faq { margin-top: 2rem; border-top: 1px solid rgba(21, 26, 53, 0.22); }
+    .faq details { border-bottom: 1px solid rgba(21, 26, 53, 0.22); }
+    .faq summary {
+      list-style: none;
+      cursor: pointer;
+      min-height: 3.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-weight: 700;
+      padding: 0.85rem 0;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      content: "+";
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .faq details[open] summary::after { content: "–"; }
+    .faq details p { margin: 0 0 1rem; max-width: 40rem; line-height: 1.55; }
+
+    .footer {
+      background: var(--navy);
+      color: white;
+      padding: 1.6rem 0 calc(1.6rem + env(safe-area-inset-bottom));
+    }
+    .footer .shell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .footer .brand img { height: 1.7rem; }
+    .footer p { margin: 0; color: #c5c9da; font-size: 0.82rem; }
+    .footer nav { display: flex; flex-wrap: wrap; gap: 0.85rem 1.1rem; }
+    .footer nav a { font-size: 0.86rem; text-decoration: underline; text-underline-offset: 3px; }
+
+    .dock {
+      position: fixed;
+      z-index: 45;
+      left: 0.75rem;
+      right: 0.75rem;
+      bottom: calc(0.65rem + env(safe-area-inset-bottom));
+      min-height: 3.35rem;
+      border-radius: 999px;
+      background: var(--pink);
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.35rem 0.45rem 0.35rem 1.05rem;
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(21, 26, 53, 0.22);
+      transition: transform 0.35s var(--ease);
+    }
+    .dock span {
+      background: var(--navy);
+      color: white;
+      border-radius: 999px;
+      min-height: 2.55rem;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 0.9rem;
+      font-size: 0.86rem;
+    }
+    .dock.is-hidden { transform: translateY(160%); }
+    body { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.7s var(--ease), transform 0.75s var(--ease);
+    }
+    [data-reveal].is-in { opacity: 1; transform: none; }
+    [data-reveal].is-in[data-d="1"] { transition-delay: 0.08s; }
+    [data-reveal].is-in[data-d="2"] { transition-delay: 0.16s; }
+    [data-reveal].is-in[data-d="3"] { transition-delay: 0.24s; }
+
+    .rise { animation: rise 0.8s var(--ease) both; }
+    .rise.d1 { animation-delay: 0.08s; }
+    .rise.d2 { animation-delay: 0.16s; }
+    .rise.d3 { animation-delay: 0.26s; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .slide.is-active:not(.is-quiet)[data-dir="next"] { animation: enter-next 0.58s var(--ease) both; }
+      .slide.is-leaving[data-dir="next"] { animation: leave-next 0.58s var(--ease) both; }
+      .slide.is-active:not(.is-quiet)[data-dir="prev"] { animation: enter-prev 0.58s var(--ease) both; }
+      .slide.is-leaving[data-dir="prev"] { animation: leave-prev 0.58s var(--ease) both; }
+    }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
+    @keyframes leave-next { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(-22px); } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+    @keyframes leave-prev { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(22px); } }
+
+    @media (min-width: 720px) {
+      :root { --shell: min(1120px, calc(100% - 3.2rem)); }
+      .proofs { grid-template-columns: repeat(4, 1fr); }
+      .interrupt .shell { grid-template-columns: 1fr auto; align-items: end; }
+      .interrupt h2 { max-width: 16ch; }
+      .slide { grid-template-columns: 0.82fr 1.18fr; min-height: 34rem; }
+      .slide-photo { min-height: 100%; }
+      .slide-copy { padding: 2.2rem 2.2rem 1.6rem; }
+      .slide-copy blockquote { font-size: clamp(1.7rem, 2.5vw, 2.35rem); }
+      .path-grid { grid-template-columns: repeat(3, 1fr); }
+      .footer .shell { flex-direction: row; align-items: center; justify-content: space-between; }
+      .mosaic { grid-template-columns: 1.15fr 0.85fr; }
+      .project.feature { grid-column: 1; grid-row: 1 / span 2; min-height: 36rem; }
+      .mosaic .project:nth-child(2),
+      .mosaic .project:nth-child(3) { min-height: 17.4rem; }
+      .mosaic .project:last-child { grid-column: 1 / -1; min-height: 18rem; }
+    }
+
+    @media (min-width: 980px) {
+      .nav-links { display: flex; gap: 1.4rem; }
+      .hero { justify-content: center; }
+      .hero-grid {
+        grid-template-columns: 1.35fr 0.8fr;
+        align-items: end;
+        gap: 3rem;
+        padding-bottom: 4.5rem;
+      }
+      .proofs { grid-template-columns: 1fr 1fr; }
+      .highlights {
+        grid-auto-flow: row;
+        grid-template-columns: repeat(3, 1fr);
+        overflow: visible;
+        margin-inline: 0;
+        padding-inline: 0;
+      }
+      .contato-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 3.5rem;
+        align-items: start;
+      }
+      .faq { margin-top: 0.4rem; }
+      body { padding-bottom: 0; }
+      .hero { padding-bottom: 0; }
+      .dock { display: none; }
+    }
+
+    @media (max-width: 979px) {
+      .nav-links { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      [data-reveal] { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="top">
+    <div class="shell">
+      <a class="brand" href="#inicio" aria-label="MJC Personalizados, início">
+        <img src="media/logo-branco.png" alt="MJC Personalizados" />
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <div class="nav-links">
+          <a href="#jeito">Jeito MJC</a>
+          <a href="#projetos">Projetos</a>
+          <a href="#depoimentos">Depoimentos</a>
+        </div>
+        <a class="btn" data-origin="nav" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20nav.">Orçamento</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero" id="inicio">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow rise">MJC Personalizados · criado para marcas</p>
+          <h1 class="display rise d1">sua marca merece <em class="pink">ser lembrada</em><span class="dot">.</span></h1>
+          <p class="lede rise d2">A gente transforma a ocasião em um produto que fica. Campanha, evento ou equipe: a sugestão certa, o mockup antes de produzir e a entrega em todo o Brasil.</p>
+          <div class="hero-actions rise d3">
+            <a class="btn" data-origin="hero" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20hero.">
+              pedir orçamento no WhatsApp
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13L13 3M13 3H6M13 3v7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            </a>
+            <a class="textlink" href="#projetos">ver projetos</a>
+          </div>
+        </div>
+        <ul class="proofs rise d3" aria-label="Por que a MJC">
+          <li><strong>Todo o Brasil</strong><span>entrega nacional, do briefing ao recebimento</span></li>
+          <li><strong>Mockup antes</strong><span>você vê e aprova antes da produção</span></li>
+          <li><strong>Prazo alinhado</strong><span>produção no ritmo do seu cronograma</span></li>
+          <li><strong>Sugestão certa</strong><span>o produto parte da ocasião, não do catálogo</span></li>
+        </ul>
+      </div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>Sicoob</span><span>Bradesco</span><span>Nissan</span><span>Exclusive Gold</span><span>Petz</span><span>Suco Way</span><span>NFQ</span><span>Arbitralis</span>
+          <span>Sicoob</span><span>Bradesco</span><span>Nissan</span><span>Exclusive Gold</span><span>Petz</span><span>Suco Way</span><span>NFQ</span><span>Arbitralis</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="jeito" id="jeito">
+      <div class="shell">
+        <p class="eyebrow" data-reveal>o jeito MJC de ver as coisas</p>
+        <h2 class="display" data-reveal data-d="1">aparecer não é <em class="pink">ser lembrado</em><span class="dot">.</span></h2>
+        <p class="statement" data-reveal data-d="2">As marcas nunca tiveram tantas maneiras de aparecer. <span>Um anúncio passa. Um post desaparece. Uma campanha termina.</span> Uma experiência bem construída continua na mesa, na próxima viagem, na rotina de alguém.</p>
+        <ol class="highlights">
+          <li data-reveal>
+            <span class="n">01</span>
+            <h3>a ideia<span class="dot">.</span></h3>
+            <p>Antes do produto: a ocasião, quem recebe e o que a marca quer provocar.</p>
+          </li>
+          <li data-reveal data-d="1">
+            <span class="n">02</span>
+            <h3>a escolha<span class="dot">.</span></h3>
+            <p>Nem o mais caro, nem o mais popular. O certo é o que faz sentido para quem recebe.</p>
+          </li>
+          <li data-reveal data-d="2">
+            <span class="n">03</span>
+            <h3>a identidade<span class="dot">.</span></h3>
+            <p>Cor, textura, material, acabamento. Personalizar é dar forma à personalidade da marca.</p>
+          </li>
+          <li data-reveal>
+            <span class="n">04</span>
+            <h3>a conexão<span class="dot">.</span></h3>
+            <p>As pessoas lembram de ter sido lembradas. Aí a entrega vira relacionamento.</p>
+          </li>
+          <li data-reveal data-d="1">
+            <span class="n">05</span>
+            <h3>o cuidado<span class="dot">.</span></h3>
+            <p>Arte, gravação, acabamento, apresentação e prazo. Sem execução, a ideia perde força.</p>
+          </li>
+          <li data-reveal data-d="2">
+            <span class="n">06</span>
+            <h3>o que fica<span class="dot">.</span></h3>
+            <p>Continua quando alguém usa, compartilha ou pergunta de onde veio.</p>
+          </li>
+        </ol>
+        <a class="btn" data-origin="jeito" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20jeito.">
+          quero pensar um projeto
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13L13 3M13 3H6M13 3v7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="projetos" id="projetos">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" data-reveal>na prática</p>
+            <h2 class="display" data-reveal data-d="1">ideias que ganham forma<span class="dot">.</span></h2>
+          </div>
+          <a class="textlink" data-origin="projetos" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20projetos.">pedir um assim</a>
+        </div>
+        <div class="mosaic">
+          <figure class="project feature">
+            <img src="media/cases/arbitralis.jpg" alt="Kit corporativo Arbitralis com copo e caderno em caixa preta" />
+            <figcaption>
+              <small>Arbitralis</small>
+              <strong>kit com percepção premium</strong>
+            </figcaption>
+          </figure>
+          <figure class="project">
+            <img src="media/cases/petz.jpg" alt="Peças azuis personalizadas da Petz, incluindo necessaire e copos" />
+            <figcaption>
+              <small>Petz</small>
+              <strong>marca que conecta com o cliente</strong>
+            </figcaption>
+          </figure>
+          <figure class="project">
+            <img src="media/cases/nfq.jpg" alt="Copo personalizado NFQ Beyond Consulting" />
+            <figcaption>
+              <small>NFQ</small>
+              <strong>presença constante da marca</strong>
+            </figcaption>
+          </figure>
+          <figure class="project">
+            <img src="media/cases/sicoob.jpg" alt="Equipe da Sicoob com chapéus personalizados em confraternização" />
+            <figcaption>
+              <small>Sicoob</small>
+              <strong>1.000 chapéus, uma confraternização</strong>
+            </figcaption>
+          </figure>
+        </div>
+        <p class="caption-note">Também em Bradesco, Nissan, Exclusive Gold e Suco Way. Fotos de projetos publicados pela MJC.</p>
+      </div>
+    </section>
+
+    <aside class="interrupt">
+      <div class="shell">
+        <h2 class="display" data-reveal>tem um projeto na cabeça<span class="dot">?</span></h2>
+        <a class="btn btn-navy" data-origin="faixa" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20faixa.">
+          vamos conversar
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13L13 3M13 3H6M13 3v7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </a>
+      </div>
+    </aside>
+
+    <section class="voices" id="depoimentos">
+      <div class="shell">
+        <div class="voices-head">
+          <p class="eyebrow" data-reveal>quem recebe, lembra</p>
+          <h2 class="display" data-reveal data-d="1">o que fica depois da entrega<span class="dot">.</span></h2>
+          <p class="voices-note" data-reveal data-d="2">Depoimentos ilustrativos para esta prévia, com fotos de apoio. Antes de publicar, entram as falas e os retratos reais dos clientes.</p>
+        </div>
+
+        <div class="carousel" role="region" aria-roledescription="carrossel" aria-label="Depoimentos de clientes" tabindex="0">
+          <div class="slides">
+            <article class="slide is-active is-quiet" data-person="Marina Alves, Lume Saúde">
+              <figure class="slide-photo">
+                <img src="media/people/marina.jpg" alt="Retrato ilustrativo de Marina Alves" />
+                <span class="mark" aria-hidden="true"></span>
+                <figcaption><b>Marina Alves</b><span>Head de marketing</span></figcaption>
+              </figure>
+              <div class="slide-copy">
+                <p class="slide-kicker">kit de boas-vindas · 180 pessoas</p>
+                <blockquote>A gente chegou com uma data e um sentimento, sem lista de produto. O kit voltou com a cara da empresa, e a equipe usou no dia seguinte.</blockquote>
+                <p class="slide-who"><strong>Marina Alves</strong><span>Lume Saúde</span></p>
+              </div>
+            </article>
+
+            <article class="slide" data-person="Rafael Nogueira, Oficina Norte" hidden>
+              <figure class="slide-photo">
+                <img src="media/people/rafael.jpg" alt="Retrato ilustrativo de Rafael Nogueira" loading="lazy" />
+                <span class="mark" aria-hidden="true"></span>
+                <figcaption><b>Rafael Nogueira</b><span>Gerente de gente</span></figcaption>
+              </figure>
+              <div class="slide-copy">
+                <p class="slide-kicker">reconhecimento de fim de ano</p>
+                <blockquote>O mockup chegou antes de qualquer produção. Ajustamos o bordado e só então seguimos. A apresentação mudou o jeito que o time recebeu.</blockquote>
+                <p class="slide-who"><strong>Rafael Nogueira</strong><span>Oficina Norte</span></p>
+              </div>
+            </article>
+
+            <article class="slide" data-person="Camila Duarte, Atlas" hidden>
+              <figure class="slide-photo">
+                <img src="media/people/camila.jpg" alt="Retrato ilustrativo de Camila Duarte" loading="lazy" />
+                <span class="mark" aria-hidden="true"></span>
+                <figcaption><b>Camila Duarte</b><span>Diretora de experiência</span></figcaption>
+              </figure>
+              <div class="slide-copy">
+                <p class="slide-kicker">ativação em feira · 2.000 peças</p>
+                <blockquote>Prazo curto e volume alto. O que chegou no estande era o que a gente tinha aprovado. A marca ficou na mão das pessoas o evento inteiro.</blockquote>
+                <p class="slide-who"><strong>Camila Duarte</strong><span>Atlas</span></p>
+              </div>
+            </article>
+
+            <article class="slide" data-person="Thiago Mendes, Vila Café" hidden>
+              <figure class="slide-photo">
+                <img src="media/people/thiago.jpg" alt="Retrato ilustrativo de Thiago Mendes" loading="lazy" />
+                <span class="mark" aria-hidden="true"></span>
+                <figcaption><b>Thiago Mendes</b><span>Brand manager</span></figcaption>
+              </figure>
+              <div class="slide-copy">
+                <p class="slide-kicker">lançamento de loja</p>
+                <blockquote>Queríamos um objeto de rotina, não um item de um dia só. O copo ficou no balcão e no caminho de casa. Era isso.</blockquote>
+                <p class="slide-who"><strong>Thiago Mendes</strong><span>Vila Café</span></p>
+              </div>
+            </article>
+
+            <article class="slide" data-person="Helena Prado, Estúdio Horizonte" hidden>
+              <figure class="slide-photo">
+                <img src="media/people/helena.jpg" alt="Retrato ilustrativo de Helena Prado" loading="lazy" />
+                <span class="mark" aria-hidden="true"></span>
+                <figcaption><b>Helena Prado</b><span>Cultura e comunicação</span></figcaption>
+              </figure>
+              <div class="slide-copy">
+                <p class="slide-kicker">onboarding e aniversário de casa</p>
+                <blockquote>Dois momentos, a mesma linguagem. Quem entra e quem completa um ano recebe algo com a cara da casa. As pessoas perguntam onde foi feito.</blockquote>
+                <p class="slide-who"><strong>Helena Prado</strong><span>Estúdio Horizonte</span></p>
+              </div>
+            </article>
+          </div>
+
+          <div class="carousel-bar">
+            <div class="segments" role="tablist" aria-label="Escolher depoimento"></div>
+            <p class="count" aria-hidden="true"><b>01</b> / 05</p>
+            <div class="arrows">
+              <button type="button" data-dir="-1" aria-label="Depoimento anterior">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+              </button>
+              <button type="button" data-dir="1" aria-label="Próximo depoimento">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+              </button>
+            </div>
+          </div>
+          <p class="sr" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="paths" id="caminhos">
+      <div class="shell">
+        <p class="eyebrow" data-reveal>para quem criamos</p>
+        <h2 class="display" data-reveal data-d="1">escolha o contexto<span class="dot">.</span></h2>
+        <p class="paths-lead" data-reveal data-d="2">Você não precisa chegar com o produto definido. Conta a ocasião. A gente devolve um caminho.</p>
+        <div class="path-grid">
+          <article class="path" data-reveal>
+            <span class="glyph" aria-hidden="true">↗</span>
+            <h3>campanhas</h3>
+            <p>Lançamentos, presença de marca e ações em que o objeto continua depois do post.</p>
+            <a class="textlink" data-origin="campanhas" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20campanhas.%0AContexto%3A%20campanha%20de%20marketing.">pedir sugestão</a>
+          </article>
+          <article class="path" data-reveal data-d="1">
+            <span class="glyph" aria-hidden="true">✳</span>
+            <h3>RH e cultura</h3>
+            <p>Boas-vindas, reconhecimento e datas que aproximam as pessoas da casa.</p>
+            <a class="textlink" data-origin="rh" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20rh.%0AContexto%3A%20RH%20e%20cultura.">pedir sugestão</a>
+          </article>
+          <article class="path" data-reveal data-d="2">
+            <span class="glyph" aria-hidden="true">◎</span>
+            <h3>eventos</h3>
+            <p>Feiras, ativações e experiências em que a ideia precisa caber na mão.</p>
+            <a class="textlink" data-origin="eventos" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20eventos.%0AContexto%3A%20evento%20ou%20ativa%C3%A7%C3%A3o.">pedir sugestão</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contato" id="contato">
+      <div class="shell contato-grid">
+        <div>
+          <p class="eyebrow">seu próximo projeto começa aqui</p>
+          <h2 class="display">tem uma ideia aí<span class="dot">?</span></h2>
+          <p class="lead">Pode ser uma ação para 100 pessoas ou um projeto para milhares. Conta a ocasião, para quem é e quando precisa acontecer. O resto a gente constrói junto.</p>
+          <a class="btn btn-navy" data-origin="contato" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20contato.">
+            conversar sobre meu projeto
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13L13 3M13 3H6M13 3v7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
+          <p class="fine">Atendimento pelo WhatsApp <a href="https://wa.me/5511911495825">(11) 91149-5825</a> · São Paulo</p>
+        </div>
+        <div class="faq" id="perguntas">
+          <details>
+            <summary>Vocês atendem empresas de todo o Brasil?</summary>
+            <p>Sim. A produção e a logística entram no desenho de cada pedido, para qualquer estado.</p>
+          </details>
+          <details>
+            <summary>Preciso saber exatamente qual produto quero?</summary>
+            <p>Não. Ocasião, público, prazo e uma faixa de investimento já bastam para a gente sugerir um caminho.</p>
+          </details>
+          <details>
+            <summary>Existe quantidade mínima?</summary>
+            <p>Varia conforme o produto e a técnica. A equipe avalia a viabilidade no orçamento.</p>
+          </details>
+          <details>
+            <summary>Vocês fazem kits, eventos e ações internas?</summary>
+            <p>Sim. Campanhas, feiras, onboarding, reconhecimento e kits corporativos.</p>
+          </details>
+          <details>
+            <summary>Como recebo um orçamento?</summary>
+            <p>No WhatsApp: quantidade estimada, data, a ideia ou o produto, e o local de entrega. O mockup entra antes da produção.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell">
+      <a class="brand" href="#inicio" aria-label="MJC Personalizados, início">
+        <img src="media/logo-branco.png" alt="" />
+      </a>
+      <p>© <span id="year">2026</span> MJC Personalizados · criado para marcas que querem se destacar.</p>
+      <nav aria-label="Rodapé">
+        <a href="https://www.instagram.com/mjcpersonalizados" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://www.linkedin.com/company/mjc-personalizados/home/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="mailto:comercial@mjcpersonalizados.com.br">comercial@mjcpersonalizados.com.br</a>
+      </nav>
+    </div>
+  </footer>
+
+  <a class="dock" data-origin="dock" href="https://wa.me/5511911495825?text=Ol%C3%A1%2C%20MJC%21%20Vim%20pela%20p%C3%A1gina%20de%20campanha%20e%20quero%20um%20or%C3%A7amento.%0AOrigem%3A%20dock.">
+    pedir orçamento
+    <span>WhatsApp</span>
+  </a>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const revealItems = document.querySelectorAll("[data-reveal]");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduceMotion && "IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle("is-in", entry.isIntersecting);
+        });
+      }, { threshold: 0.28, rootMargin: "0px 0px -8% 0px" });
+      revealItems.forEach((el) => io.observe(el));
+    } else {
+      revealItems.forEach((el) => el.classList.add("is-in"));
+    }
+
+    document.querySelectorAll("a[data-origin]").forEach((link) => {
+      link.addEventListener("click", () => {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: "mjc_whatsapp_click",
+          cta_origin: link.dataset.origin,
+          page: "lp_campanha"
+        });
+      });
+    });
+
+    const dock = document.querySelector(".dock");
+    const contato = document.getElementById("contato");
+    if (dock && contato && "IntersectionObserver" in window) {
+      const dockIo = new IntersectionObserver((entries) => {
+        dock.classList.toggle("is-hidden", entries[0].isIntersecting);
+      }, { threshold: 0.18 });
+      dockIo.observe(contato);
+    }
+
+    const carousel = document.querySelector(".carousel");
+    const slides = [...carousel.querySelectorAll(".slide")];
+    const segments = carousel.querySelector(".segments");
+    const count = carousel.querySelector(".count b");
+    const live = carousel.querySelector("[aria-live]");
+    const DURATION = 6800;
+    let index = 0;
+    let timer = 0;
+    let acc = 0;
+    let paused = reduceMotion;
+    let raf = 0;
+    let last = 0;
+    const fill = [];
+
+    slides.forEach((slide, i) => {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-label", slide.dataset.person);
+      const bar = document.createElement("i");
+      tab.appendChild(bar);
+      tab.addEventListener("click", () => go(i, i > index ? 1 : -1));
+      segments.appendChild(tab);
+      fill.push(bar);
+      slide.setAttribute("role", "group");
+      slide.setAttribute("aria-roledescription", "slide");
+    });
+
+    function paint(progress) {
+      fill.forEach((bar, i) => {
+        const parent = bar.parentElement;
+        parent.classList.toggle("is-done", i < index);
+        parent.classList.toggle("is-on", i === index);
+        parent.setAttribute("aria-selected", i === index ? "true" : "false");
+        if (i === index) bar.parentElement.style.setProperty("--p", (progress * 100) + "%");
+      });
+      count.textContent = String(index + 1).padStart(2, "0");
+    }
+
+    function go(next, dir) {
+      const total = slides.length;
+      const target = (next + total) % total;
+      if (target === index && slides[index].classList.contains("is-active") && !slides[index].classList.contains("is-quiet")) {
+        acc = 0;
+        last = 0;
+        return;
+      }
+      const current = slides[index];
+      const incoming = slides[target];
+      const direction = dir < 0 ? "prev" : "next";
+      current.classList.remove("is-active", "is-quiet");
+      current.classList.add("is-leaving");
+      current.dataset.dir = direction;
+      current.hidden = false;
+      incoming.hidden = false;
+      incoming.dataset.dir = direction;
+      incoming.classList.remove("is-quiet");
+      incoming.classList.add("is-active");
+      slides.forEach((slide, i) => {
+        const on = i === target;
+        slide.setAttribute("aria-hidden", on ? "false" : "true");
+        slide.inert = !on;
+      });
+      const leaving = current;
+      window.setTimeout(() => {
+        leaving.classList.remove("is-leaving");
+        if (!leaving.classList.contains("is-active")) leaving.hidden = true;
+      }, 600);
+      index = target;
+      acc = 0;
+      last = 0;
+      paint(0);
+      live.textContent = "Depoimento de " + incoming.dataset.person;
+    }
+
+    slides.forEach((slide, i) => {
+      slide.setAttribute("aria-hidden", i === 0 ? "false" : "true");
+      slide.inert = i !== 0;
+      if (i !== 0) slide.hidden = true;
+    });
+    paint(0);
+
+    function frame(now) {
+      raf = requestAnimationFrame(frame);
+      if (paused) {
+        last = 0;
+        return;
+      }
+      if (!last) last = now;
+      acc += now - last;
+      last = now;
+      const progress = Math.min(1, acc / DURATION);
+      paint(progress);
+      if (progress >= 1) go(index + 1, 1);
+    }
+    if (!reduceMotion) raf = requestAnimationFrame(frame);
+
+    function setPaused(value) { paused = value || reduceMotion; }
+    carousel.addEventListener("mouseenter", () => setPaused(true));
+    carousel.addEventListener("mouseleave", () => setPaused(false));
+    carousel.addEventListener("focusin", () => setPaused(true));
+    carousel.addEventListener("focusout", (event) => {
+      if (!carousel.contains(event.relatedTarget)) setPaused(false);
+    });
+    document.addEventListener("visibilitychange", () => setPaused(document.hidden));
+
+    carousel.querySelectorAll(".arrows button").forEach((button) => {
+      button.addEventListener("click", () => go(index + Number(button.dataset.dir), Number(button.dataset.dir)));
+    });
+
+    carousel.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") { event.preventDefault(); go(index + 1, 1); }
+      if (event.key === "ArrowLeft") { event.preventDefault(); go(index - 1, -1); }
+    });
+
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    carousel.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("button")) return;
+      tracking = true;
+      startX = event.clientX;
+      startY = event.clientY;
+      setPaused(true);
+    });
+    carousel.addEventListener("pointerup", (event) => {
+      if (!tracking) return;
+      tracking = false;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) go(index + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+      setPaused(false);
+    });
+    carousel.addEventListener("pointercancel", () => { tracking = false; setPaused(false); });
+
+    if ("IntersectionObserver" in window) {
+      const carouselIo = new IntersectionObserver((entries) => {
+        if (!entries[0].isIntersecting) setPaused(true);
+        else if (!carousel.matches(":hover") && !carousel.contains(document.activeElement)) setPaused(false);
+      }, { threshold: 0.35 });
+      carouselIo.observe(carousel);
+    }
+  </script>
+</body>
+</html>

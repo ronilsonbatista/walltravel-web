@@ -24,6 +24,19 @@ describe("sitemap wiring", () => {
     assert.equal(redirect.permanent, true);
   });
 
+  it("keeps /mjc-landing out of the SPA catch-all", () => {
+    const vercel = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
+    const catchAll = (vercel.rewrites || []).find((r) => r.destination === "/");
+    assert.ok(catchAll);
+    assert.match(catchAll.source, /mjc-landing\//);
+    const redirect = (vercel.redirects || []).find((r) => r.source === "/mjc-landing");
+    assert.equal(redirect?.destination, "/mjc-landing/");
+    assert.equal(
+      readFileSync(join(root, "public/mjc-landing/index.html"), "utf8").includes("pedir orçamento"),
+      true,
+    );
+  });
+
   it("robots.txt advertises the sitemap", () => {
     const robots = readFileSync(join(root, "public/robots.txt"), "utf8");
     assert.match(robots, /Sitemap:\s*https:\/\/www\.walltravel\.com\.br\/sitemap\.xml/);
