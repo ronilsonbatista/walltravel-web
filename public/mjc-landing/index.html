@@ -715,10 +715,10 @@
       .slide.is-active:not(.is-quiet)[data-dir="prev"] { animation: enter-prev 0.58s var(--ease) both; }
       .slide.is-leaving[data-dir="prev"] { animation: leave-prev 0.58s var(--ease) both; }
     }
-    @keyframes enter-next { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
-    @keyframes leave-next { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(-22px); } }
-    @keyframes enter-prev { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
-    @keyframes leave-prev { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(22px); } }
+    @keyframes enter-next { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes leave-next { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes enter-prev { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes leave-prev { from { opacity: 1; } to { opacity: 0; } }
 
     @media (min-width: 720px) {
       :root { --shell: min(1120px, calc(100% - 3.2rem)); }
