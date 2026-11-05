@@ -25,6 +25,21 @@ export const BWT_SEGMENTS = [
 
 const SEGMENT_IDS = new Set(BWT_SEGMENTS.map((s) => s.id));
 
+/** Every season chip this row belongs to. One trip can sit in all of them. */
+function blackSeasonIds(pkg) {
+  const tags = listingTags(pkg).map(normalizeTag);
+  const ids = [];
+  for (const tag of tags) {
+    if (!tag.startsWith("bf:")) continue;
+    const id = tag.slice(3);
+    if (SEGMENT_IDS.has(id) && !ids.includes(id)) ids.push(id);
+  }
+  if (ids.length === 0 && pkg?.black?.segment && SEGMENT_IDS.has(pkg.black.segment)) {
+    ids.push(pkg.black.segment);
+  }
+  return ids;
+}
+
 const CATEGORY_COUNTRY = {
   nacionais: { country: "Brasil", countrySlug: "brasil", segment: "nacional" },
   nordeste: { country: "Brasil", countrySlug: "brasil", segment: "nacional" },
@@ -259,10 +274,12 @@ export function filterBlackPackages(packages, filters = {}) {
   const country = filters.country || "";
 
   return list.filter((pkg) => {
-    if (!pkg.black?.segment) return false;
-    if (segment && pkg.black.segment !== segment) return false;
+    const seasons = blackSeasonIds(pkg);
+    if (seasons.length === 0) return false;
+    if (segment && !seasons.includes(segment)) return false;
     if (segment && segment !== "nacional" && country) {
-      if (pkg.black.countrySlug !== country) return false;
+      const slug = pkg.black?.countrySlug || "";
+      if (!slug || slug === "internacional" || slug !== country) return false;
     }
     return true;
   });
@@ -276,7 +293,7 @@ export function visibleBlackSegments(packages) {
     pkg?.black ? pkg : enrichPackageForBlack(pkg),
   );
   return BWT_SEGMENTS.filter((seg) =>
-    enriched.some((pkg) => pkg.black?.segment === seg.id),
+    enriched.some((pkg) => blackSeasonIds(pkg).includes(seg.id)),
   );
 }
 
@@ -289,7 +306,7 @@ export function visibleBlackCountries(packages, segment) {
   const map = new Map();
   for (const pkg of enriched) {
     const slug = pkg.black?.countrySlug;
-    if (!slug || map.has(slug)) continue;
+    if (!slug || slug === "internacional" || map.has(slug)) continue;
     map.set(slug, { id: slug, label: pkg.black.country });
   }
   return [...map.values()].sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
