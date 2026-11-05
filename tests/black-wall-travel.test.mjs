@@ -138,6 +138,30 @@ test("visible segments hide outono when empty", () => {
   assert.ok(!segs.includes("outono"));
 });
 
+test("a trip tagged for every season shows in each Black filter", () => {
+  const pkg = {
+    slug: "sem-estacao",
+    tags: [
+      "bf:nacional",
+      "bf:inverno",
+      "bf:verao",
+      "bf:primavera",
+      "bf:outono",
+      "catalog:black",
+    ],
+    name: "Aberto",
+  };
+  const catalog = getBlackCatalogPackages([pkg], { seed: false });
+  for (const id of ["nacional", "inverno", "verao", "primavera", "outono"]) {
+    assert.equal(filterBlackPackages(catalog, { segment: id }).length, 1, id);
+  }
+  assert.deepEqual(
+    visibleBlackSegments(catalog).map((s) => s.id),
+    ["nacional", "inverno", "verao", "primavera", "outono"],
+  );
+  assert.equal(filterBlackPackages(catalog, { segment: "verao", country: "chile" }).length, 0);
+});
+
 test("visible countries only under international season", () => {
   const pkgs = getBlackCatalogPackages(
     [
