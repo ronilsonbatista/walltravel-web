@@ -4507,6 +4507,29 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   transition: transform 280ms ease, opacity 280ms ease, border-color 280ms ease;
 }
 
+/*
+ * Product pages: the subnav is hidden over the hero until scroll.
+ * Keeping it in flow left a blank cream band before "Sobre a viagem".
+ * Absolute until stuck, then fixed under the header — same reveal, no gap.
+ */
+.experience-detail {
+  position: relative;
+}
+
+.experience-detail .group-subnav {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.experience-detail .group-subnav.is-stuck {
+  position: fixed;
+  top: var(--header-offset, 4.25rem);
+  left: 0;
+  right: 0;
+  width: auto;
+}
+
 .group-subnav.is-stuck {
   top: var(--header-offset, 4.25rem);
   transform: none;
