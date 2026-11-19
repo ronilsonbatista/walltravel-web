@@ -895,8 +895,8 @@ function renderGalleryCinematic(group, esc) {
       ${group.gallery
         .map(
           (img, i) => `
-        <button type="button" class="group-gallery-item ${i % 3 === 0 ? "group-gallery-item--tall" : ""}" data-lightbox-src="${esc(img)}" data-lightbox-alt="${esc(group.name)}" data-reveal data-reveal-delay="${(i % 5) * 40}">
-          <img src="${esc(img)}" alt="" loading="lazy" onerror="this.parentElement.remove()">
+        <button type="button" class="group-gallery-item ${i % 3 === 0 ? "group-gallery-item--tall" : ""}" data-lightbox-src="${esc(img)}" data-lightbox-alt="${esc(group.name)}">
+          <img src="${esc(img)}" alt="" decoding="async" loading="eager">
         </button>`,
         )
         .join("")}

@@ -247,8 +247,12 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
   });
 
   const includesHtml = renderIncludesExcludes(includesGroup, esc);
+  // Empty facts strip is a white band under the hero. Only mount it when there are highlights.
+  const factsHtml = highlights
+    ? `<div class="group-facts-after-hero">${highlights}</div>`
+    : "";
   const bodyHtml = `
-      <div class="group-facts-after-hero">${highlights}</div>
+      ${factsHtml}
       <div class="section-container">
         ${renderAbout(pkg, esc)}
       </div>

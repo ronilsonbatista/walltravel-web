@@ -325,3 +325,67 @@ describe("roteiro on trip pages when the product has days", () => {
     assert.doesNotMatch(html, /pacote/i);
   });
 });
+
+describe("shared product page: hero follow and gallery", () => {
+  const esc = (s) => String(s);
+  const category = { name: "Nacionais", slug: "nacionais" };
+  const basePkg = {
+    slug: "pacote-ads-noronha",
+    name: "Pacote ADS Noronha",
+    destination: "Fernando de Noronha",
+    duration: "4 noites",
+    description: "Quatro noites na ilha.",
+    shortDescription: "Ilha com voo incluso.",
+    included: ["Hospedagem"],
+    priceFrom: 1000,
+  };
+
+  it("does not leave an empty band between the hero and Sobre a viagem", () => {
+    const html = renderExperienceDetailPage(basePkg, category, esc, "5511999999999");
+    assert.doesNotMatch(html, /group-facts-after-hero/);
+    assert.match(html, /Sobre a viagem/);
+    const heroAt = html.indexOf("wt-immersive-hero");
+    const aboutAt = html.indexOf('id="exp-about"');
+    assert.ok(heroAt >= 0 && aboutAt > heroAt);
+    const between = html.slice(heroAt, aboutAt);
+    assert.doesNotMatch(between, /group-facts-after-hero/);
+  });
+
+  it("still shows the facts strip when the product has highlights", () => {
+    const html = renderExperienceDetailPage(
+      {
+        ...basePkg,
+        highlights: [{ value: "04", label: "noites" }],
+      },
+      category,
+      esc,
+      "5511999999999",
+    );
+    assert.match(html, /group-facts-after-hero/);
+    assert.match(html, /group-highlight-value">04</);
+    assert.match(html, /noites/);
+  });
+
+  it("keeps gallery photos in the document without lazy-unload", () => {
+    const html = renderExperienceDetailPage(
+      {
+        ...basePkg,
+        gallery: ["/images/a.jpg", "/images/b.jpg", "/images/c.jpg"],
+      },
+      category,
+      esc,
+      "5511999999999",
+    );
+    const start = html.indexOf('id="group-gallery"');
+    assert.ok(start >= 0);
+    const gallery = html.slice(start, html.indexOf('id="exp-includes"'));
+    assert.match(gallery, /src="\/images\/a\.jpg"/);
+    assert.match(gallery, /src="\/images\/b\.jpg"/);
+    assert.match(gallery, /src="\/images\/c\.jpg"/);
+    assert.match(gallery, /loading="eager"/);
+    assert.doesNotMatch(gallery, /loading="lazy"/);
+    assert.doesNotMatch(gallery, /data-src=/);
+    assert.doesNotMatch(gallery, /parentElement\.remove/);
+    assert.doesNotMatch(gallery, /data-reveal-delay/);
+  });
+});
