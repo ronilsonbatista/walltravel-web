@@ -555,6 +555,33 @@ export function initSubnavSpy(root) {
   };
 }
 
+/** Mobile product bar: "Falar com especialista" docks after the gallery scrolls away. */
+export function initExperienceOfferDock(root) {
+  const bar = root.querySelector?.("[data-experience-offer]")
+    ? root.querySelector("[data-wt-sticky-cta]")
+    : null;
+  const heading = root.querySelector?.(".experience-detail-heading");
+  if (!bar || !heading) return () => {};
+
+  const dock = () => {
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    if (!mobile) {
+      bar.classList.remove("is-docked");
+      return;
+    }
+    const titleReachedTop = heading.getBoundingClientRect().top < 72;
+    bar.classList.toggle("is-docked", titleReachedTop);
+  };
+
+  window.addEventListener("scroll", dock, { passive: true });
+  window.addEventListener("resize", dock);
+  dock();
+  return () => {
+    window.removeEventListener("scroll", dock);
+    window.removeEventListener("resize", dock);
+  };
+}
+
 export function bindGroupExperience(root) {
   const cleanups = [
     initGroupHeroCarousel(root),
@@ -565,6 +592,7 @@ export function bindGroupExperience(root) {
     initRouteMap(root),
     initScrollProgress(root),
     initSubnavSpy(root),
+    initExperienceOfferDock(root),
   ];
 
   // Analytics hooks (Phase 14) — soft dependency

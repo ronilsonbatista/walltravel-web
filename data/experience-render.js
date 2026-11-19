@@ -122,6 +122,143 @@ export function filterExperienceInvestmentNotes(notes, { dateLabel = "", origins
   });
 }
 
+const INCLUDE_LINE_RULES = [
+  { re: /passagem|voos?\b|a[eé]reo/i, label: "Voos" },
+  { re: /caf[eé]/i, label: "Café da manhã" },
+  { re: /traslado|transfer/i, label: "Traslado" },
+];
+
+const CITY_STOP = /^(hotel|hotéis|hoteis|casa|quarto|dia|dias|até|ate|noite|noites|brasil|pix|são|rio|belo)$/i;
+
+function pushCity(cities, name) {
+  const city = String(name || "")
+    .trim()
+    .replace(/\s+/g, " ");
+  if (!city || CITY_STOP.test(city) || cities.includes(city)) return;
+  cities.push(city);
+}
+
+function canonicalCity(name) {
+  const raw = String(name || "").trim().replace(/\s+/g, " ");
+  if (/^são paulo$/i.test(raw)) return "São Paulo";
+  if (/^rio de janeiro$/i.test(raw)) return "Rio de Janeiro";
+  if (/^belo horizonte$/i.test(raw)) return "Belo Horizonte";
+  return raw;
+}
+
+function citiesFromIncludes(items) {
+  const stayed = [];
+  const other = [];
+  for (const item of items) {
+    for (const match of item.matchAll(/\bem\s+(Rio de Janeiro|São Paulo|Belo Horizonte)/gi)) {
+      pushCity(stayed, canonicalCity(match[1]));
+    }
+    for (const match of item.matchAll(/\bem\s+([A-ZÁÉÍÓÚÂÊÔÃÕÇ][\p{L}'’-]{2,})/gu)) {
+      pushCity(stayed, match[1]);
+    }
+    for (const match of item.matchAll(/\bde\s+(Rio de Janeiro|São Paulo|Belo Horizonte)/gi)) {
+      pushCity(other, canonicalCity(match[1]));
+    }
+    for (const match of item.matchAll(/\(([A-ZÁÉÍÓÚÂÊÔÃÕÇ][^)]{1,32})\)/g)) {
+      const inner = match[1].trim().replace(/\s+/g, " ");
+      if (/^(são paulo|rio de janeiro|belo horizonte)$/i.test(inner)) {
+        pushCity(other, canonicalCity(inner));
+      } else if (/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ][\p{L}'’-]{2,}$/u.test(inner)) {
+        pushCity(other, inner);
+      }
+    }
+  }
+  return [...stayed, ...other.filter((city) => !stayed.includes(city))];
+}
+
+function shortenInclude(text) {
+  const cut = String(text).split(/[:(]/)[0].trim();
+  if (cut.length <= 32) return cut;
+  const words = cut.split(/\s+/).slice(0, 4).join(" ");
+  return words.length > 32 ? words.slice(0, 32).trim() : words;
+}
+
+/**
+ * Three or four short lines from the product's own includes.
+ * Prefers flights, breakfast, transfer, and one city already named there.
+ */
+export function shortIncludedLines(included) {
+  const items = (Array.isArray(included) ? included : [])
+    .map((item) => String(item || "").trim())
+    .filter(Boolean);
+  const lines = [];
+  const used = new Set();
+  for (const rule of INCLUDE_LINE_RULES) {
+    const idx = items.findIndex((item) => rule.re.test(item));
+    if (idx >= 0 && !lines.includes(rule.label)) {
+      lines.push(rule.label);
+      used.add(idx);
+    }
+  }
+  const city = citiesFromIncludes(items)[0];
+  if (city && lines.length < 4 && !lines.includes(city)) lines.push(city);
+  if (lines.length < 3) {
+    for (let i = 0; i < items.length && lines.length < 3; i += 1) {
+      if (used.has(i)) continue;
+      const short = shortenInclude(items[i]);
+      if (!short || lines.includes(short)) continue;
+      lines.push(short);
+      used.add(i);
+    }
+  }
+  return lines.slice(0, 4);
+}
+
+/**
+ * One short installment line when a note already states one.
+ * Never returns PDF, profit, or "valor exibido" copy.
+ */
+export function experienceInstallmentLine(notes) {
+  const list = (Array.isArray(notes) ? notes : [])
+    .map((note) => String(note || "").replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
+  for (const note of list) {
+    const vezes = note.match(/(\d+)\s*x\s+de\s+(R\$\s*[\d.]+,\d{2})/i);
+    if (vezes) {
+      const money = vezes[2].replace(/\s+/g, " ").replace(/R\$\s*/, "R$ ");
+      return `${vezes[1]}x de ${money}`;
+    }
+  }
+  for (const note of list) {
+    const semJurosX = note.match(/em até\s+(\d+)\s*x\s+sem juros/i);
+    if (semJurosX) return `Em até ${semJurosX[1]}x sem juros`;
+    const semJurosP = note.match(/em até\s+(\d+)\s+parcelas?\s+sem juros/i);
+    if (semJurosP) return `Em até ${semJurosP[1]} parcelas sem juros`;
+    const ateX = note.match(/em até\s+(\d+)\s*x\b/i);
+    if (ateX) return `Em até ${ateX[1]}x`;
+    const ateP = note.match(/em até\s+(\d+)\s+parcelas?\b/i);
+    if (ateP) return `Em até ${ateP[1]} parcelas`;
+  }
+  return "";
+}
+
+function renderExperienceOffer(pkg, esc, price, priceUnitLabel, waHref) {
+  const installment = experienceInstallmentLine(pkg.importantNotes);
+  const lines = shortIncludedLines(pkg.included || pkg.includes || []);
+  const priceHtml = price
+    ? `<p class="experience-price">${esc(price)}</p>
+       <p class="experience-price-unit">${esc(priceUnitLabel)}</p>`
+    : `<p class="experience-price">Sob consulta</p>`;
+  return `<aside class="experience-offer" data-experience-offer>
+    ${priceHtml}
+    ${installment ? `<p class="experience-installment">${esc(installment)}</p>` : ""}
+    ${
+      lines.length
+        ? `<ul class="experience-offer-includes">${lines.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>`
+        : ""
+    }
+    <div class="sidebar-ctas experience-offer-cta">
+      <a href="${waHref}" target="_blank" rel="noopener" class="btn-primary" data-storefront-cta="specialist" data-specialist-cta>Falar com especialista</a>
+    </div>
+  </aside>`;
+}
+
 function renderExperiencePricing(pkg, esc, priceUnitLabel) {
   const price = formatMoney(pkg.priceFrom, pkg.currency || "BRL");
   const dateLabel = hasFixedDates(pkg)
@@ -230,20 +367,10 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
     .filter(Boolean)
     .join(" · ");
   const heroHtml = ImmersiveHero({
+    className: "group-hero--gallery",
     carouselHtml: renderTravelHeroCarousel(slides, esc),
     overlay: "strong",
-    contentHtml: `
-        <div class="breadcrumb breadcrumb--light">
-          <a href="/">Início</a><span class="breadcrumb-separator">/</span>
-          <a href="/vitrine">Vitrine</a><span class="breadcrumb-separator">/</span>
-          <a href="/vitrine/${esc(category.slug)}">${esc(category.name)}</a><span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-active">${esc(pkg.name)}</span>
-        </div>
-        <h1 data-reveal>${esc(pkg.name)}</h1>
-        <p class="group-hero-sub" data-reveal>
-          ${esc(heroMeta)}
-        </p>
-      `,
+    contentHtml: "",
   });
 
   const includesHtml = renderIncludesExcludes(includesGroup, esc);
@@ -251,27 +378,46 @@ export function renderExperienceDetailPage(pkg, category, esc, WA) {
   const factsHtml = highlights
     ? `<div class="group-facts-after-hero">${highlights}</div>`
     : "";
+  const offerHtml = renderExperienceOffer(
+    pkg,
+    esc,
+    price,
+    priceUnitLabel,
+    packageWaHref(pkg, WA, "specialist"),
+  );
   const bodyHtml = `
-      ${factsHtml}
       <div class="section-container">
-        ${renderAbout(pkg, esc)}
-      </div>
-      <div class="section-container">
-        ${JourneyTimeline({ itinerary: pkg.itinerary, gallery: pkg.gallery }, esc)}
-      </div>
-      ${pkg.gallery?.length ? renderTravelGallery(pkg.gallery, pkg.name, esc) : ""}
-      <div class="section-container">
-        ${includesHtml ? `<div id="exp-includes">${includesHtml}</div>` : ""}
-        ${renderExperiencePricing(pkg, esc, priceUnitLabel)}
-        ${renderExperienceCta(pkg, esc, WA)}
+        <div class="breadcrumb">
+          <a href="/">Início</a><span class="breadcrumb-separator">/</span>
+          <a href="/vitrine">Vitrine</a><span class="breadcrumb-separator">/</span>
+          <a href="/vitrine/${esc(category.slug)}">${esc(category.name)}</a><span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-active">${esc(pkg.name)}</span>
+        </div>
+        <div class="experience-detail-layout">
+          <header class="experience-detail-heading">
+            <h1>${esc(pkg.name)}</h1>
+            ${heroMeta ? `<p class="experience-detail-meta">${esc(heroMeta)}</p>` : ""}
+          </header>
+          ${offerHtml}
+          <div class="experience-detail-main">
+            ${factsHtml}
+            ${renderAbout(pkg, esc)}
+            ${JourneyTimeline({ itinerary: pkg.itinerary, gallery: pkg.gallery }, esc)}
+            ${pkg.gallery?.length ? renderTravelGallery(pkg.gallery, pkg.name, esc) : ""}
+            ${includesHtml ? `<div id="exp-includes">${includesHtml}</div>` : ""}
+            ${renderExperiencePricing(pkg, esc, priceUnitLabel)}
+            ${renderExperienceCta(pkg, esc, WA)}
+          </div>
+        </div>
       </div>`;
 
   const stickyHtml = StickyConversionCTA({
     priceHtml: price
-      ? `<span class="sticky-bottom-price-label">A partir de</span><span class="sticky-bottom-price">${esc(price)}</span>`
-      : `<span class="sticky-bottom-price">Fale conosco</span>`,
+      ? `<span class="sticky-bottom-price">${esc(price)}</span>`
+      : `<span class="sticky-bottom-price">Sob consulta</span>`,
     ctaHref: waSticky,
-    ctaLabel: pkg.ctaLabel || "WhatsApp",
+    ctaLabel: "Falar com especialista",
+    className: "experience-sticky-cta",
   });
 
   return TravelDetailShell({
