@@ -5526,6 +5526,145 @@ html.wt-route-home .header:not(.scrolled) .menu-btn-bar {
   margin-top: 1rem;
 }
 
+/* Product detail: gallery full width, then text | price */
+.experience-detail .group-hero--gallery {
+  min-height: 0;
+  height: min(68vh, 640px);
+  display: block;
+}
+
+.experience-detail .group-hero--gallery .group-hero-content {
+  display: none;
+}
+
+.experience-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(17rem, 22rem);
+  grid-template-areas:
+    "heading offer"
+    "main offer";
+  column-gap: clamp(2rem, 4vw, 4rem);
+  row-gap: 1.5rem;
+  align-items: start;
+}
+
+.experience-detail-heading {
+  grid-area: heading;
+}
+
+.experience-detail-heading h1 {
+  font-size: clamp(2.5rem, 5.5vw, 4rem);
+  margin: 0.15rem 0 0.55rem;
+  max-width: 16ch;
+}
+
+.experience-detail-meta {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.experience-detail-main {
+  grid-area: main;
+  min-width: 0;
+}
+
+.experience-offer {
+  grid-area: offer;
+  position: sticky;
+  /* Header plus the stuck section nav, so the price stays readable. */
+  top: calc(var(--header-offset, 4.25rem) + 5.5rem);
+  align-self: start;
+  z-index: 2;
+}
+
+.experience-offer .experience-price {
+  margin-top: 0;
+}
+
+.experience-offer .experience-price-unit {
+  margin-bottom: 0.2rem;
+}
+
+.experience-installment {
+  margin: 0.15rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.experience-offer-includes {
+  list-style: none;
+  margin: 1.1rem 0 0;
+  padding: 0;
+}
+
+.experience-offer-includes li {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--color-text);
+  padding: 0.45rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.experience-offer-cta {
+  margin-top: 1.25rem;
+}
+
+.experience-detail-main .group-gallery-cinematic {
+  grid-auto-columns: minmax(180px, 72%);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.experience-detail-main .group-facts-after-hero {
+  padding-left: 0;
+  padding-right: 0;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .experience-detail-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "offer"
+      "main";
+  }
+
+  .experience-offer {
+    position: static;
+  }
+
+  .experience-detail-heading h1 {
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .experience-detail .group-hero--gallery {
+    height: 58svh;
+    min-height: 260px;
+  }
+
+  .experience-offer-cta {
+    display: none;
+  }
+
+  .experience-detail .sticky-bottom-bar {
+    display: none;
+  }
+
+  .experience-detail .sticky-bottom-bar.is-docked {
+    display: flex;
+  }
+
+  .experience-detail {
+    padding-bottom: calc(95px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 /* Greece itinerary polish — cream stage + green active accents */
 .group-itinerary-section {
   background: linear-gradient(180deg, rgba(246, 241, 232, 0.95), rgba(250, 247, 241, 0.99));
